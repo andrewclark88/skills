@@ -268,12 +268,36 @@ After each phase, sync all docs to the code changes just made. Catches drift bet
 
 After 2-4 implementation phases, pause and run a quality pass:
 
-- **`/doc-review`** — audit planning docs for consistency. Uses **cascading passes**: system-level first (north star ↔ architecture ↔ roadmap), then system + each module (does the module doc match the system docs?). Run this first — doc issues reveal code issues.
-- **`/refactor-design`** — find duplication, missing abstractions, structural improvements. Produces a refactor plan. Implement the plan.
-- **`/extract-patterns`** — document reusable code patterns for consistency across future work. Other skills read these patterns.
-- **`/test-quality`** — spec-driven test gap analysis. Derives tests from behavioral contracts (specs, designs, interfaces), not from reading implementation code. Writes the tests.
+- **`/doc-review`** — audit planning docs for consistency (run first — doc issues reveal code issues)
+- **`/refactor-design`** — find duplication, missing abstractions. Produces a refactor plan. Implement it.
+- **`/extract-patterns`** — document reusable code patterns for consistency.
+- **`/test-quality`** — spec-driven test gap analysis. Writes missing tests.
 
-**Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree. For multi-module projects, the cascading approach catches module-vs-system drift that flat reviews miss.
+**Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree.
+
+### Doc Review: Cascading Passes (`/doc-review`)
+
+`/doc-review` uses cascading passes to check consistency at multiple levels. This is especially important for multi-module projects where module docs can drift from system-level docs.
+
+```
+Pass 1: System-Level
+  north-star ↔ architecture ↔ roadmap ↔ cross-cutting designs (knowledge-store, tool-use-map)
+  → Are these internally consistent?
+
+Pass 2+: System + Module (one pass per module, discovered dynamically)
+  All of Pass 1 + module's north star
+  → Does the module's scope match the roadmap phases?
+  → Does the module's architecture match the system architecture?
+  → Does the module reference cross-cutting systems correctly?
+  → Are MCP primitives, frontmatter specs, and phase numbers consistent?
+```
+
+**Module discovery is dynamic.** The skill finds modules by scanning the knowledge index and `docs/*/architecture/` directories. No hardcoded module list — works for any project with any number of modules.
+
+**Arguments:**
+- No args: full cascade (system + all modules)
+- Module name: system + that module only
+- `--system-only`: system-level only, skip module passes
 
 ### Pre-Deploy Security Review
 

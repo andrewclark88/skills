@@ -81,7 +81,7 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 | `/brief` | 5. Per phase | Curated domain brief for the builder |
-| `/doc-review` | Quality checkpoint + after design changes | Planning doc consistency report |
+| `/doc-review` | Quality checkpoint + after design changes | Planning doc consistency report (cascading: system → modules) |
 
 ### Adopted (from [nklisch/skills](https://github.com/nklisch/skills))
 
