@@ -268,12 +268,12 @@ After each phase, sync all docs to the code changes just made. Catches drift bet
 
 After 2-4 implementation phases, pause and run a quality pass:
 
-- **`/doc-review`** — audit planning docs for consistency, completeness, and drift. Finds stale references, conflicting decisions, missing cross-references, and docs that haven't kept up with design changes. Run this first — doc issues often reveal code issues.
+- **`/doc-review`** — audit planning docs for consistency. Uses **cascading passes**: system-level first (north star ↔ architecture ↔ roadmap), then system + each module (does the module doc match the system docs?). Run this first — doc issues reveal code issues.
 - **`/refactor-design`** — find duplication, missing abstractions, structural improvements. Produces a refactor plan. Implement the plan.
 - **`/extract-patterns`** — document reusable code patterns for consistency across future work. Other skills read these patterns.
 - **`/test-quality`** — spec-driven test gap analysis. Derives tests from behavioral contracts (specs, designs, interfaces), not from reading implementation code. Writes the tests.
 
-**Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree.
+**Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree. For multi-module projects, the cascading approach catches module-vs-system drift that flat reviews miss.
 
 ### Pre-Deploy Security Review
 

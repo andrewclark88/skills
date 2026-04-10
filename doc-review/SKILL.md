@@ -1,11 +1,10 @@
 ---
 name: doc-review
 description: >
-  Review core planning documents for consistency, completeness, and alignment. Checks that
-  north star, architecture, roadmap, features, briefs, and module docs tell the same story.
-  Finds stale references, conflicting decisions, missing cross-references, and docs that
-  haven't kept up with design changes. Run after major design changes, before starting a
-  new phase, or whenever you suspect doc drift.
+  Review core planning documents for consistency, completeness, and alignment. Uses cascading
+  passes: system-level first, then system + each module. Finds stale references, conflicting
+  decisions, missing cross-references, and docs that haven't kept up with design changes.
+  Run after major design changes, before starting a new phase, or at quality checkpoints.
   Use when user says "review docs", "check consistency", "audit planning docs", or "are our docs up to date".
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Agent, AskUserQuestion
@@ -19,126 +18,151 @@ You find the gaps between what was decided and what's documented — the drift t
 as a project evolves.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
-The document ownership rules define what belongs where.
 
 ## Why This Exists
 
 Planning documents drift. Architecture decisions get made in one doc but not reflected in
-others. Roadmap phases evolve but the north star still describes the old design. Briefs are
-written but the roadmap doesn't reference them. Cross-references break. Frontmatter specs
-diverge between docs. This skill catches all of that.
+others. In multi-module projects, module docs diverge from system-level docs. Cross-references
+break. Frontmatter specs diverge. This skill catches all of that.
 
 ## Arguments
 
-- No arguments: audit all core planning docs in the project
-- Module name (e.g. `brief`): audit docs related to that module
-- `--scope <path>`: audit docs in a specific directory
+- No arguments: full cascading review (system-level + each module)
+- Module name (e.g. `brief`): system-level + that module only
+- `--system-only`: system-level docs only, skip module passes
+
+---
 
 ## Phase 1: Discover Documents
 
-**Primary source:** Read `docs/knowledge-index.yaml` if it exists. This is the canonical catalog
-of all project knowledge, maintained by every doc-producing skill (`/ideate`, `/research`,
-`/architecture`, `/roadmap`, `/brief`).
+**Primary source:** Read `docs/knowledge-index.yaml` if it exists.
 
-Filter entries by type to find core planning docs:
-
-**Planning docs** — audited for structural consistency:
+**Planning docs** (`/doc-review` audits these):
 
 | Type | What to check | Examples |
 |------|--------------|---------|
-| `north-star` | Vision, principles, domain model — does it match what's built? | `north-star.md` |
-| `architecture` | Modules, data flow, conventions, features, cross-cutting designs — are they consistent? | `architecture.md`, `knowledge-store.md`, `tool-use-map.md` |
-| `roadmap` | Phases, status, dependencies — are they accurate given the codebase? | `roadmap.md` |
+| `north-star` | Vision, principles, domain model | `north-star.md`, module north stars |
+| `architecture` | Modules, data flow, conventions, cross-cutting designs | `architecture.md`, `knowledge-store.md`, `tool-use-map.md` |
+| `roadmap` | Phases, status, dependencies | `roadmap.md` |
 
-**NOT audited by doc-review** (checked by `knowledge/lint` instead):
+**Briefs** (`knowledge/lint` checks these, NOT doc-review):
 
 | Type | Checked by |
 |------|-----------|
 | `brief` | `knowledge/lint` — staleness, orphaned, contradictions |
 
-**Also always check** (even if not in the index):
-- `CLAUDE.md` — project-level rules
-- `docs/architecture/tool-use-map.md` — cross-module dependencies
-- `docs/architecture/knowledge-store.md` — knowledge store architecture (if it exists)
+**Also always check:** `CLAUDE.md` — project-level rules.
 
-**Fallback (if no knowledge index exists):** Scan directories:
-```
-docs/architecture/           → north star, architecture, roadmap, features
-docs/*/architecture/         → module north stars
-docs/briefs/                 → domain briefs
-docs/*/briefs/               → module-specific briefs
-```
+**Fallback (no index):** Scan `docs/architecture/`, `docs/*/architecture/`, `CLAUDE.md`.
 
-**Check the index itself:**
-- Are there `.md` files in `docs/` that aren't in the knowledge index? (Index drift)
-- Are there index entries pointing to files that don't exist? (Broken references)
+**Classify documents into levels:**
 
-**Present the document inventory** to the user:
-"Found N planning docs (M from knowledge index, K from directory scan). Checking consistency across: [list]"
+| Level | What | Examples |
+|-------|------|---------|
+| **System** | Project-wide planning docs | `north-star-grimoire.md`, `architecture.md`, `roadmap.md`, `knowledge-store.md`, `tool-use-map.md` |
+| **Module** | Module-specific planning docs | `docs/brief/architecture/north-star-brief.md`, `docs/ds-engine/architecture/north-star-ds-engine.md` |
 
-## Phase 2: Check Document Ownership
+**Present the inventory:**
+"Found N system-level docs and M module docs across K modules. Running cascading review."
 
-Per the build process, each doc has one job:
+---
 
-| Doc | Owns | Does NOT own |
-|-----|------|-------------|
-| North Star | Vision, principles, domain model | File paths, phase status, technical details |
-| Architecture | Modules, data flow, conventions, deps, features, cross-cutting designs | Vision, roadmap status |
-| Roadmap | Phases, status, dependencies, briefs, decisions | Module internals, domain model |
-| Briefs | Domain facts, research findings, implementation context | Design decisions, system architecture |
+## Phase 2: Cascading Review Passes
 
-**Check for:**
-- Content in the wrong doc (architecture details in the north star, phase status in architecture)
-- Duplicated content across docs (same table in two places, same decision described differently)
-- Missing content (design decisions made but not in any doc)
+Review in passes. Each pass is scoped enough for thorough checking. Launch each pass as
+a parallel Agent subagent where possible.
 
-## Phase 3: Cross-Reference Audit
+### Pass 1: System-Level Consistency
 
-**Launch parallel Agent subagents** — one per check category:
+**Scope:** Only system-level docs (north star, architecture, roadmap, cross-cutting designs).
 
-### 3a. Pipeline & Phase Consistency
-- Is the pipeline stated the same way everywhere? (`/ideate` → `/research` → `/architecture` → `/roadmap` → build loop)
-- Do phase numbers match across roadmap, architecture, and any module docs that reference them?
-- Are phase statuses (DONE/NEXT/blank) accurate given the codebase?
-- Do "blocking briefs" listed in roadmap phases actually exist?
-- Do "Read before building" docs in each phase actually exist?
+**Check:**
 
-### 3b. Decision Consistency
-- Are locked decisions stated the same in every doc that references them?
-- Does the architecture doc match the north star's domain model?
-- Does the roadmap's phase scope match what the architecture describes for each module?
-- Are open questions the same across docs, or resolved in one but open in another?
+**2a. Document ownership**
+- Content in the wrong doc? (Architecture details in north star, phase status in architecture)
+- Duplicated content across docs?
+- Missing content? (Decision made but not documented anywhere)
 
-### 3c. Cross-Reference Integrity
+**2b. Pipeline & phase consistency**
+- Pipeline stated the same everywhere?
+- Phase numbers match across roadmap and architecture?
+- Phase statuses (DONE/NEXT) accurate given the codebase?
+- Blocking briefs listed in phases actually exist?
+
+**2c. Decision consistency**
+- Locked decisions stated the same in every doc?
+- Architecture doc matches north star's domain model?
+- Roadmap phase scope matches what architecture describes?
+- Open questions: resolved in one doc but still open in another?
+
+**2d. Cross-reference integrity**
 - Every doc-to-doc reference: does the target exist?
-- Every phase that lists a blocking brief: does the brief exist and is it marked as written?
-- Every module north star: does it reference the architecture and roadmap correctly?
-- Does the tool-use-map match the actual module dependencies in the roadmap?
-- Does the knowledge index (if it exists) match the actual docs on disk?
+- Tool-use-map matches actual module dependencies in roadmap?
+- Knowledge index matches actual docs on disk?
+- Related Architecture Docs section is current?
 
-### 3d. Frontmatter & Schema Consistency
-- Are frontmatter fields defined identically across docs that specify them?
-- Are TypeScript interfaces (KnowledgeEntry, ModuleContribution, etc.) the same everywhere they appear?
-- Are BQ schemas consistent between the knowledge store doc and any SQL examples?
+**2e. Schema consistency**
+- TypeScript interfaces (KnowledgeEntry, ModuleContribution) identical everywhere they appear?
+- BQ schemas consistent across docs?
+- Frontmatter field specs identical where defined?
 
-### 3e. Staleness Detection
-- Any references to old phase numbers (e.g., Phase 3a/3b after renumbering)?
-- Any references to old file paths (e.g., `/dev/docs/build-process.md` after moving to skills)?
-- Any "Deferred" items in scope tables that are now actually implemented?
-- Any status markers that don't match the codebase (phase marked DONE but no code exists)?
-- Any references to tools/features that were renamed or superseded?
+**2f. Staleness**
+- Old phase numbers after renumbering?
+- Old file paths after reorganization?
+- "Deferred" items that are now implemented?
+- References to renamed/superseded tools or concepts?
 
-## Phase 4: Compile Report
+### Pass 2+: System + Module (one pass per module)
 
-Collect all subagent findings. Deduplicate. Classify by severity:
+For each module with its own planning docs, run a pass that checks the module docs
+against the system-level docs.
+
+**Example for grimoire:**
+- Pass 2: System + Brief module (`north-star-brief.md`)
+- Pass 3: System + DS-engine module (`north-star-ds-engine.md`)
+- Pass 4: System + Data module (`north-star-data.md`)
+
+**Each module pass checks:**
+
+**Module north star vs system north star:**
+- Does the module's vision align with the system vision?
+- Does the module reference system-level principles correctly?
+- Are module-specific principles consistent with system principles?
+
+**Module north star vs system architecture:**
+- Does the module's architecture description match what the system architecture says about it?
+- Are MCP primitives listed in the module doc consistent with the system's module map?
+- Does the module mention cross-cutting systems (knowledge store, tool-use-map) correctly?
+
+**Module north star vs roadmap:**
+- Do the roadmap phases for this module match what the module north star describes?
+- Are scope items in the module doc reflected in the roadmap?
+- Are features marked "v1" in the module doc actually scheduled in the roadmap?
+- Are "deferred" items in the module doc consistently deferred in the roadmap?
+
+**Module north star vs cross-cutting architecture docs:**
+- If the project has a knowledge-store.md: does the module's knowledge contribution match?
+- If the project has a tool-use-map.md: are the module's dependencies listed?
+
+**Module internal consistency:**
+- Does the module's scope table match its MCP primitives table?
+- Are frontmatter specs in the module doc consistent with the system-level spec?
+- Does the module reference the correct phase numbers from the roadmap?
+
+---
+
+## Phase 3: Compile Report
+
+Collect all pass findings. Deduplicate (same issue found in multiple passes → report once).
+Classify by severity:
 
 | Severity | Meaning | Examples |
 |----------|---------|---------|
-| **Critical** | Active contradiction between docs | Architecture says X, roadmap says Y for the same thing |
-| **High** | Missing content that could mislead a builder | Phase references a brief that doesn't exist. Module north star missing a major feature. |
-| **Medium** | Stale content that's technically wrong | Old phase number referenced. Deferred item now implemented. |
-| **Low** | Minor inconsistency or missing cross-reference | Doc references another doc but link format is wrong. |
-| **Info** | Observation, not an issue | Orphaned doc not referenced anywhere. Scope table could add phase numbers. |
+| **Critical** | Active contradiction between docs | Architecture says BQ-first, module doc says in-memory default |
+| **High** | Missing content that could mislead | Phase references brief that doesn't exist. Module scope says v1 but roadmap defers it. |
+| **Medium** | Stale content that's technically wrong | Old phase number. Deferred item now implemented. |
+| **Low** | Minor inconsistency | Broken cross-reference format. Missing Related Docs entry. |
+| **Info** | Observation | Orphaned doc. Scope table could add phase numbers. |
 
 **Format the report:**
 
@@ -147,47 +171,52 @@ Collect all subagent findings. Deduplicate. Classify by severity:
 
 **Project:** {project name}
 **Date:** {date}
-**Documents reviewed:** {count}
+**Documents reviewed:** {count} ({system} system + {module} module)
+**Passes run:** {count} (1 system + {N} module passes)
 **Issues found:** {count by severity}
 
-### Critical ({n})
+### Pass 1: System-Level
+{findings}
 
-#### {Issue title}
-**Files:** {file1} vs {file2}
-**What:** {description of the contradiction}
-**Fix:** {what should change in which doc}
+### Pass 2: System + {Module Name}
+{findings}
 
-### High ({n})
-...
+### Pass 3: System + {Module Name}
+{findings}
 
 ### Clean Areas
-- {What's consistent and correct — give credit}
+- {What's consistent — give credit}
 ```
 
-## Phase 5: Present & Fix
+---
+
+## Phase 4: Present & Fix
 
 Present the report. Highlight:
 - Count by severity
 - Top 3 most important fixes
-- Any patterns (e.g., "the brief north star hasn't kept up with knowledge store changes")
+- Which passes found the most issues (system drift vs module drift)
+- Any patterns ("module north stars haven't kept up with knowledge store changes")
 
-**AskUserQuestion:** "Found N issues. Want me to fix the Critical and High items now?"
+**AskUserQuestion:** "Found N issues across M passes. Want me to fix Critical and High items?"
 
-If yes: make the fixes, then re-run checks 3a-3e to verify nothing new was introduced.
+If yes: fix them, then re-run the affected passes to verify.
 
 ---
 
 ## When to Run This Skill
 
 - **After major design changes** — new architecture decisions, new modules, restructured docs
-- **Before starting a new phase** — verify the phase spec, blocking briefs, and dependencies are accurate
-- **At quality checkpoints** — alongside `/refactor-design` and `/extract-patterns`, run `/doc-review`
-- **After `/update-documentation`** — verify the automated doc updates didn't introduce inconsistencies
-- **Whenever it feels like docs are drifting** — trust the instinct
+- **Before starting a new phase** — verify the phase spec and dependencies are accurate
+- **At quality checkpoints** — first skill in the checkpoint (docs before code)
+- **After `/update-documentation`** — verify automated updates didn't introduce inconsistencies
+- **When adding a new module** — verify it's properly integrated with system-level docs
 
 ## Anti-Patterns
 
-- **Don't just check formatting.** Formatting issues are noise. Focus on semantic consistency — do the docs agree on what the system is and how it works?
-- **Don't skip the codebase check.** If a phase is marked DONE, verify code exists. If a brief is marked "written," verify the file exists.
-- **Don't fix silently.** Always present the report first. Some "inconsistencies" are intentional — the user knows which ones.
-- **Don't check docs that aren't core planning docs.** Source code comments, README files in module directories, and other documentation are out of scope unless they reference or are referenced by core planning docs.
+- **Don't review everything in one flat pass.** The cascading approach exists because flat reviews miss module-vs-system drift. Use it.
+- **Don't just check formatting.** Focus on semantic consistency — do the docs agree on what the system is?
+- **Don't skip the codebase check.** If a phase is marked DONE, verify code exists.
+- **Don't fix silently.** Present the report first. Some "inconsistencies" are intentional.
+- **Don't check briefs for structural consistency.** That's `knowledge/lint`'s job. Doc-review checks planning docs.
+- **Don't skip module passes.** Module drift is where the worst issues hide — a module doc that contradicts the system architecture can mislead an entire build phase.
