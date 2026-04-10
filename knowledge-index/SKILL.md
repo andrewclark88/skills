@@ -126,15 +126,15 @@ documents:
 
 ## Keeping the Index Current
 
-The index is updated by:
-1. **`/ideate`** — adds north star entry (built into the skill)
-2. **`/architecture`** — adds architecture entry (built into the skill)
-3. **`/roadmap`** — adds roadmap entry (built into the skill)
-4. **`/brief`** — adds brief entry (built into the skill)
-5. **`/research`** — the vendored skill does NOT auto-update the index. **After running `/research`, you must manually update the index** or run `/knowledge-index` to rescan.
-6. **`/knowledge-index`** — full rescan if the index is stale or missing. Use this after `/research` or any manual doc creation.
+The index is updated by every doc-producing skill:
+1. **`/ideate`** — adds north star entry
+2. **`/research`** — adds primer entry
+3. **`/architecture`** — adds architecture entry
+4. **`/roadmap`** — adds roadmap entry
+5. **`/brief`** — adds brief entry
+6. **`/knowledge-index`** — full rescan if the index is stale or missing. Use after manual doc creation or if entries are missing.
 
-Custom skills (1-4) append to the YAML file automatically. Vendored skills (5) don't — rescan with `/knowledge-index` to pick up their output.
+Each skill appends to the YAML file after writing its doc.
 
 ## Anti-Patterns
 

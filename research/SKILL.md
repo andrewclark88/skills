@@ -1,0 +1,211 @@
+---
+name: research
+description: >
+  Research external systems, libraries, APIs, protocols, domain knowledge, and patterns.
+  Investigates deeply, evaluates options, and produces a primer doc + auto-loading reference skill.
+  Use before designing features that depend on unfamiliar technology, when domain knowledge is
+  needed for architecture decisions, or when assumptions need verification.
+  Based on nklisch/skills research skill, extended for domain research and knowledge indexing.
+user-invocable: true
+allowed-tools: Read, Write, Glob, Grep, WebSearch, WebFetch, Agent, AskUserQuestion
+model: opus
+---
+
+# Research
+
+You research external systems deeply and produce two outputs: a primer document with your
+findings and an auto-loading reference skill. You also update the project's knowledge index.
+
+**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
+
+**Based on the research skill from [nklisch/skills](https://github.com/nklisch/skills), extended
+for domain research (protocols, game rules, analytical methods) and knowledge index integration.**
+
+## What This Covers
+
+This skill handles two types of research:
+
+**Technology research** — libraries, APIs, SDKs, frameworks:
+- Evaluate options against project needs
+- Verify API shapes from current docs (don't trust training data)
+- Check health: recent commits, releases, community, license
+- Produce code examples and integration patterns
+
+**Domain research** — protocols, game rules, hardware, analytical methods, regulations:
+- Investigate how external systems work
+- Document rules, specifications, edge cases with source citations
+- Produce implementation-relevant guidance (not textbook summaries)
+- Ground findings in real data when available
+
+## Phase 1: Scope the Research
+
+1. **Check the knowledge index** — run `/knowledge-index` or read `docs/knowledge-index.yaml`.
+   Does a primer already exist for this topic? Don't duplicate work.
+2. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
+3. Explore the codebase — find how the project currently handles the area being researched
+4. Define research questions:
+   - What specific problem does this knowledge solve for the project?
+   - What assumptions are we making that need verification?
+   - What could we get wrong that would force a redesign?
+
+**AskUserQuestion checkpoint:** Present:
+- The research questions you'll investigate
+- Options you plan to evaluate (if technology research)
+- Domains you plan to investigate (if domain research)
+- Any existing knowledge that's relevant (from the index)
+
+Ask: "Are these the right questions? Anything to add or exclude?"
+
+## Phase 2: Investigate
+
+### For Technology Research
+
+**2a. Official Sources**
+- Read official documentation — focus on getting-started guides and API reference
+- Check current version and recent changelog
+- Read migration guides if upgrading
+
+**2b. Health Check**
+- Repository: recent commits, open issues, PR response time
+- Releases: frequency, latest date, semver discipline
+- Community: download trends, Stack Overflow activity
+- License: compatible with project?
+
+**2c. API Verification**
+- Find the actual API surface — do NOT trust training data
+- Verify function signatures, config options, return types from docs
+- Find real-world usage examples (blog posts, open source projects)
+- Note breaking changes between major versions
+
+**2d. Integration Fit**
+- Works with project's runtime/framework/build system?
+- What does integration look like? (imports, config, initialization)
+- Known conflicts with other dependencies?
+
+### For Domain Research
+
+**2a. Authoritative Sources**
+- Official specifications, rule books, RFCs, API documentation
+- Use WebSearch and WebFetch to find current sources
+- Cite rule numbers, section references, version numbers
+
+**2b. Real Data Grounding**
+- If the project has data (card pools, tournament results, technique inventories), use it
+- "The top 100 meta cards" is better than "common cards"
+- "CR 603.3b" is better than "triggers go on the stack"
+
+**2c. Edge Cases and Interactions**
+- What are the complex interactions the system must handle?
+- What do practitioners get wrong?
+- What would break a naive implementation?
+
+**2d. Implementation Relevance**
+- What does this mean for the system we're building?
+- What data structures does this imply?
+- What decisions does this inform?
+
+**Use Agent subagents** for parallel investigation when multiple areas need research.
+
+## Phase 3: Evaluate and Synthesize
+
+**For technology:** Score each option against project-specific criteria. Present recommendation.
+
+**For domain:** Synthesize findings into a coherent reference. Flag gaps where authoritative
+sources disagree or are incomplete.
+
+**AskUserQuestion checkpoint:** Present:
+- Summary of findings (technology: comparison table; domain: key discoveries)
+- Your recommendation or synthesis
+- Any surprises or things that contradict assumptions
+- Gaps: what couldn't you find authoritative sources for?
+
+## Phase 4: Write Outputs
+
+### 4a. Primer Document
+
+Write to the project's briefs/research directory.
+
+**For technology research:**
+```markdown
+# Research: {Topic}
+
+## Context
+{Why this research was needed}
+
+## Options Evaluated
+### {Name} (v{version})
+- **Maturity**: {Active/Stable/Deprecated}
+- **License**: {license}
+- **Pros/Cons**: {list}
+- **Fit**: {project-specific}
+
+## Recommendation
+{Clear choice with rationale}
+
+## Implementation Notes
+{Key API patterns, pitfalls, configuration}
+
+## Code Examples
+{Concrete usage patterns}
+
+## Sources
+{URLs, doc references}
+```
+
+**For domain research:**
+```markdown
+# Brief: {Topic}
+
+## Purpose
+{What this covers and why it matters for the project}
+
+## {Core Sections}
+{Rules, specifications, interactions — with citations}
+
+## Implementation Notes
+{What this means for the system being built}
+
+## Sources
+{Every source consulted — URLs, rule numbers, doc names}
+```
+
+### 4b. Reference Skill (for technology research)
+
+Write an auto-loading reference skill at `.claude/skills/{topic-slug}/SKILL.md`:
+- Named after the technology (e.g., `hono-v4`, not `research-hono`)
+- `user-invocable: false` — auto-loads by keyword match
+- Key API patterns, code examples, pitfalls
+- Under 200 lines
+
+### 4c. Update Knowledge Index
+
+After writing the primer, update `docs/knowledge-index.yaml`:
+
+```yaml
+  - path: <path to primer doc>
+    title: <primer title>
+    type: primer
+    description: <one-line description>
+    updated: <today's date>
+```
+
+Create the file if it doesn't exist.
+
+## Anti-Patterns
+
+- **NEVER skip the knowledge index check.** If a primer exists, read it first. Don't duplicate.
+- **NEVER trust training data for API shapes.** Verify from current documentation.
+- **NEVER recommend without evaluating alternatives** (technology research).
+- **NEVER skip the health check** — a superior but abandoned library is a liability.
+- **NEVER produce a primer without source citations.** Every claim must be verifiable.
+- **NEVER produce generic findings.** Ground everything in this project's specific needs.
+- **NEVER skip AskUserQuestion checkpoints.** Wrong research direction wastes effort.
+- **NEVER forget to update the knowledge index.** Future sessions depend on it.
+
+## Completion Criteria
+
+- All research questions answered with evidence
+- Primer document written with source citations
+- Reference skill written (technology research only)
+- Knowledge index updated
+- User confirmed findings at Phase 3 checkpoint

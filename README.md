@@ -56,8 +56,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 Every project accumulates knowledge — primers, briefs, architecture docs. The knowledge index tracks all of it so you never lose context between sessions.
 
 - **`/knowledge-index`** — run at session start to see all available project knowledge
-- Custom skills (`/ideate`, `/architecture`, `/roadmap`, `/brief`) update `docs/knowledge-index.yaml` automatically after writing docs
-- After running `/research` (vendored skill), run `/knowledge-index` to rescan and pick up the new primer
+- All doc-producing skills (`/ideate`, `/research`, `/architecture`, `/roadmap`, `/brief`) update `docs/knowledge-index.yaml` automatically after writing docs
 - Before researching, check if a primer already exists. Before writing a brief, check if one covers the topic.
 
 ## How to Use
@@ -77,6 +76,7 @@ Every project accumulates knowledge — primers, briefs, architecture docs. The 
 |-------|------|-----------------|
 | `/knowledge-index` | Session start | Shows all available project knowledge |
 | `/ideate` | 1. Define | North star + research plan |
+| `/research` | 2. Research | Primer doc + auto-loading reference skill. Updates knowledge index. |
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 | `/brief` | 5. Per phase | Curated domain brief for the builder |
@@ -85,7 +85,6 @@ Every project accumulates knowledge — primers, briefs, architecture docs. The 
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
-| `/research` | 2. Research | Primer doc + auto-loading reference skill |
 | `/design` | 6. Per phase | Implementation spec (interfaces, types, acceptance criteria) |
 | `/implement` | 7. Per phase | Code + tests (<20 files) |
 | `/implement-orchestrator` | 7. Per phase | Code + tests (parallel agents, 20+ files) |
