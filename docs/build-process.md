@@ -10,7 +10,7 @@ This document is the source of truth. It's enforced through three layers:
 |------|-------|---------|
 | `~/.claude/CLAUDE.md` | Global — always loaded in every conversation | Hard guardrails. Cannot be dropped even in long sessions. |
 | `/dev/CLAUDE.md` | Loaded when working in any project under `/dev/` | Points to this document. |
-| `/dev/docs/build-process.md` | This file | Full methodology, reference, and checklists. Human-readable and portable. |
+| `/dev/skills/docs/build-process.md` | This file | Full methodology, reference, and checklists. Human-readable and portable. |
 
 If the rules here conflict with a project-level doc, this document wins.
 
@@ -23,31 +23,38 @@ Every project follows this pipeline. Skills in `code blocks` are slash commands.
 ```
 PROJECT START
 │
-├─ 0. Domain Primers          /research (for each unfamiliar domain)
+├─ 1. Define the Project       /ideate
+│     └─ produces: north-star.md (vision, principles, domain model)
+│     └─ produces: research plan (domains needing primers)
+│
+├─ 2. Research the Domain      /research (for each domain identified)
 │     └─ produces: primer docs + auto-loading reference skills
+│     └─ repeat until all critical domains are understood
+│     └─ don't rush this — assumptions here cause rewrites later
 │
-├─ 1. Foundation Docs          /ideate
-│     └─ produces: north-star.md, architecture.md (+ domain-specific docs)
+├─ 3. Design the Architecture  /architecture
+│     └─ produces: architecture.md (modules, data flow, conventions)
+│     └─ grounded in north star + primers — no unresearched assumptions
 │
-├─ 2. Phased Roadmap           /roadmap
+├─ 4. Plan the Build           /roadmap
 │     └─ produces: roadmap.md (blocking briefs, Input/Output/Tests per phase)
 │
 │  ┌── PER PHASE ──────────────────────────────────────────────┐
 │  │                                                           │
-│  ├─ 3. Brief (if listed)     /brief                          │
+│  ├─ 5. Brief (if listed)     /brief                          │
 │  │     └─ produces: curated domain brief for the builder     │
 │  │                                                           │
-│  ├─ 4. Design                /design                         │
+│  ├─ 6. Design                /design                         │
 │  │     └─ produces: design doc (interfaces, types,           │
 │  │        acceptance criteria, file paths)                    │
 │  │                                                           │
-│  ├─ 5. Build                 /implement or /implement-orchestrator
+│  ├─ 7. Build                 /implement or /implement-orchestrator
 │  │     └─ produces: code + tests                             │
 │  │                                                           │
-│  ├─ 6. PR + CI               (branch → PR → CI green → merge)
+│  ├─ 8. PR + CI               (branch → PR → CI green → merge)
 │  │     └─ phase done when PR merges                          │
 │  │                                                           │
-│  ├─ 7. Update Docs           /update-documentation           │
+│  ├─ 9. Update Docs           /update-documentation           │
 │  │     └─ syncs all docs to code changes                     │
 │  │                                                           │
 │  └───────────────────────────────────────────────────────────┘
@@ -87,21 +94,37 @@ PROJECT START
 
 ## Step Details
 
-### 0. Domain Primers
+### 1. Define the Project (`/ideate`)
 
-Before writing any code or planning docs, **research the domain deeply**. Use `/research` to investigate unfamiliar libraries, APIs, protocols, or domain knowledge. Each research run produces a primer doc AND an auto-loading reference skill.
+Interactive workshop. Explore the idea, refine it, produce a north star. Also identify what domains need research before architecture can be designed.
 
-**When to write primers:** When the project builds on complex external systems (protocols, game rules, hardware, APIs). Understand the domain precisely before designing. Primers prevent rework.
+**Produces:** `north-star.md` (vision, principles, domain model) + a research plan.
 
-### 1. Foundation Docs (`/ideate`)
+**Does NOT produce architecture.** Architecture requires domain research first. Don't design how to build something until you understand the domain it operates in.
 
-Interactive workshop that produces the project's foundation documents:
+### 2. Research the Domain (`/research`)
 
-- **North Star** — vision, principles, domain model. What and why.
-- **Architecture** — modules, data flow, conventions, dependencies. How.
-- **Domain-specific docs** — whatever the project needs (data specs, protocols, hardware specs, etc.)
+Deep investigation of each domain identified in step 1. Use for external systems, protocols, APIs, analytical methods, hardware, regulations — anything the project builds on.
 
-**Document ownership** — each doc has one job, no duplication:
+**Produces:** Primer docs + auto-loading reference skills.
+
+**Be aggressive about research.** It's far cheaper to spend a session researching than to discover mid-build that the domain works differently than assumed. If you're not sure whether something needs research, it does.
+
+**Run `/research` multiple times** — once per domain. Don't try to research everything in one pass.
+
+### 3. Design the Architecture (`/architecture`)
+
+Technical design, informed by the north star AND domain primers. Now you know enough to make real decisions.
+
+**Produces:** `architecture.md` (modules, data flow, conventions, dependencies).
+
+**Prerequisites:** North star and relevant primers MUST exist. If you discover during architecture that a domain isn't understood, stop and run `/research` first.
+
+**Ground every decision in research.** Not "we'll use BigQuery" but "we'll use BigQuery because the primer confirmed it's the existing platform."
+
+### Document Ownership
+
+Each doc has one job, no duplication:
 
 | Doc | Owns | Does not own |
 |-----|------|-------------|
@@ -113,7 +136,7 @@ Interactive workshop that produces the project's foundation documents:
 
 When content belongs in two places, put it in one and reference the other.
 
-### 2. Phased Roadmap (`/roadmap`)
+### 4. Plan the Build (`/roadmap`)
 
 Produces a roadmap where each phase is a self-contained build spec, completable in one session.
 
@@ -127,7 +150,7 @@ Produces a roadmap where each phase is a self-contained build spec, completable 
 
 Status tracking: DONE / NEXT / blank.
 
-### 3. Brief-Driven Development (`/brief`)
+### 5. Brief-Driven Development (`/brief`)
 
 Before each implementation phase, **write the brief that unblocks it.** Briefs are curated domain knowledge optimized for agent consumption — not raw research, not architecture, not tutorials. They answer: "what does the builder need to know to implement this phase correctly?"
 
@@ -135,7 +158,7 @@ Before each implementation phase, **write the brief that unblocks it.** Briefs a
 
 **`/research` vs `/brief`:** Research investigates broadly and produces a reference. Brief takes research (or does its own) and distills it into implementation-ready context for a specific phase. Research feeds briefs; briefs feed builds.
 
-### 4. Design (`/design`)
+### 6. Design (`/design`)
 
 Produces a detailed design document from the roadmap phase spec. Contains:
 - Exact file paths
@@ -147,7 +170,7 @@ Produces a detailed design document from the roadmap phase spec. Contains:
 
 **The design doc is the bridge between the roadmap (what to build) and implementation (building it).** An implementer agent can write code from it without asking questions.
 
-### 5. Build (`/implement` or `/implement-orchestrator`)
+### 7. Build (`/implement` or `/implement-orchestrator`)
 
 Implement the design document.
 
@@ -156,7 +179,7 @@ Implement the design document.
 
 Output includes code AND tests. Tests are the contract — a phase is done when its tests pass.
 
-### 6. PR + CI
+### 8. PR + CI
 
 All code goes through a PR. The phase is done when:
 
@@ -167,7 +190,7 @@ All code goes through a PR. The phase is done when:
 
 **A phase is not done until its PR is merged.** Working locally is not enough.
 
-### 7. Update Documentation (`/update-documentation`)
+### 9. Update Documentation (`/update-documentation`)
 
 After each phase, sync all docs to the code changes just made. Catches drift between what was planned and what was built.
 
@@ -364,17 +387,19 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 
 | Skill | When | What it produces |
 |-------|------|-----------------|
-| `/research` | Step 0 (primers) + before any phase using unfamiliar tech | Primer doc + auto-loading reference skill |
-| `/ideate` | Step 1 (project start) | North star, architecture, domain-specific docs |
-| `/roadmap` | Step 2 (after foundation docs) | Phased roadmap with blocking briefs, I/O/Tests |
-| `/brief` | Step 3 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
-| `/design` | Step 4 (per phase) | Design doc: interfaces, types, file paths, acceptance criteria |
-| `/implement` | Step 5 (per phase, <20 files) | Code + tests |
-| `/implement-orchestrator` | Step 5 (per phase, 20+ files) | Code + tests (parallel agents) |
-| `/update-documentation` | Step 7 (after each phase) | Updated docs synced to code |
+| `/ideate` | Step 1 (project start) | North star + research plan |
+| `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Primer doc + auto-loading reference skill |
+| `/architecture` | Step 3 (after north star + primers) | Architecture doc: modules, data flow, conventions |
+| `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |
+| `/brief` | Step 5 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
+| `/design` | Step 6 (per phase) | Design doc: interfaces, types, file paths, acceptance criteria |
+| `/implement` | Step 7 (per phase, <20 files) | Code + tests |
+| `/implement-orchestrator` | Step 7 (per phase, 20+ files) | Code + tests (parallel agents) |
+| `/update-documentation` | Step 9 (after each phase) | Updated docs synced to code |
 | `/refactor-design` | Quality checkpoint (every 2-4 phases) | Refactor plan |
 | `/extract-patterns` | Quality checkpoint | Pattern documentation |
 | `/test-quality` | Quality checkpoint | Spec-driven tests |
 | `/security-review` | Pre-deploy | Scored security report |
 | `/cruft-cleaner` | As needed | Cleanup report + fixes |
 | `/bold-refactor` | As needed | Architectural simplification plan |
+| `/repo-eval` | As needed | Multi-dimensional codebase scoring |

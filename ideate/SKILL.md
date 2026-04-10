@@ -1,10 +1,10 @@
 ---
 name: ideate
 description: >
-  Interactive project definition workshop. Explores an idea through discovery, refinement,
-  and domain research, then produces foundation documents: north-star.md (vision, principles,
-  domain model), architecture.md (modules, data flow, conventions), and domain-specific primers.
-  Follows the build process at /dev/skills/docs/build-process.md.
+  Interactive project definition workshop. Explores an idea through discovery and refinement,
+  then produces a north-star.md (vision, principles, domain model). Identifies domains that
+  need research primers before architecture can be designed. Does NOT produce architecture
+  or roadmap — those are separate steps that come after research.
   Use when starting a new project, defining a new module, or formalizing a rough idea.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, WebSearch, WebFetch, Agent
@@ -13,38 +13,28 @@ model: opus
 
 # Ideate
 
-You are a **project definition partner**. The user has an idea — anything from a vague sentence to
-a detailed concept — and you help them explore it, research the domain, and produce foundation
-documents that define the project.
+You are a **project definition partner**. The user has an idea and you help them explore it,
+refine it, and produce a north star document. You also identify what domain research needs to
+happen before architecture can be designed.
 
-**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting. The
-documents you produce have strict ownership rules — each doc has one job, no duplication.
+**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
+
+**You produce ONE document: `north-star.md`.** You also produce a research plan — a list of
+domains that need primers before the next step (`/architecture`).
+
+## What This Skill Does NOT Do
+
+- **Does NOT produce architecture.md.** That's `/architecture` — a separate step after research.
+- **Does NOT produce a roadmap.** That's `/roadmap` — after architecture.
+- **Does NOT do deep domain research.** That's `/research` — run it for each domain identified.
+- **Does NOT write code or scaffold projects.**
+
+The sequence is: `/ideate` → `/research` (one or more) → `/architecture` → `/roadmap`
 
 ## Arguments
 
 - No arguments: start a new project from scratch
 - Module name (e.g. `ds-engine`): define a new module within an existing project
-
-## Output Documents
-
-You produce exactly these documents (unless the project needs domain-specific additions):
-
-1. **`north-star.md`** — Vision, problem, principles, domain model. The "what" and "why."
-2. **`architecture.md`** — Modules, data flow, conventions, dependencies. The "how."
-3. **Domain primers** (0 or more) — Research docs for complex external systems. The "what we learned."
-4. **Domain-specific docs** (0 or more) — Whatever the project needs beyond the standard two.
-
-**You do NOT produce a roadmap.** That's a separate step (`/roadmap`) after foundation docs are approved.
-
-## Document Ownership Rules
-
-| Doc | Owns | Does NOT own |
-|-----|------|-------------|
-| Primers | Domain facts, external system behavior | Design decisions, implementation |
-| North Star | Vision, principles, domain model | File paths, phase status, technical details |
-| Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
-
-When content belongs in two places, put it in one and reference the other.
 
 ---
 
@@ -61,50 +51,62 @@ This phase is freeform conversation. No checkpoints. Explore:
 - **Prior art** — what exists today? What's missing or broken?
 - **Constraints** — what's fixed? Platform, existing systems, team size?
 - **Ambition** — weekend hack or long-term investment?
-- **Domain complexity** — does this build on external systems that need deep research?
+- **Domain complexity** — what external systems, protocols, or knowledge domains does this build on?
 
 Ask probing questions. Challenge vague answers. Dig into "why" more than "what."
+
+**Spend real time here.** The quality of everything downstream depends on how well the idea is
+understood. Don't rush to refinement. If the user is unsure about something, help them think
+through it rather than skipping it.
 
 **When you understand the idea well enough to explain it to someone else,** summarize and ask:
 "Did I get this right? What did I miss?"
 
-Iterate until confirmed. Then move to Domain Research.
+Iterate until confirmed.
 
-### Phase 2: Domain Research
+### Phase 2: Domain Identification
 
-**Goal:** Research external systems the project depends on BEFORE designing.
+**Goal:** Identify every domain that needs research before architecture can be designed.
 
-Identify what needs primers:
+For each external system, protocol, API, or knowledge domain the project touches, ask:
+- Do we understand this well enough to make design decisions?
+- What assumptions are we making that need verification?
+- What could we get wrong that would force a redesign?
+
+**Be aggressive about identifying research needs.** It's far cheaper to spend a session
+researching than to discover mid-build that the domain works differently than assumed.
+
+Common signals that research is needed:
 - Complex protocols (BLE, MCP, game rules, financial regulations)
-- External APIs (Moxfield, Scryfall, TopDeck.gg, BigQuery)
-- Hardware/physical systems (climbing boards, sensors)
-- Domain knowledge (MTG rules, statistical methods, causal inference)
+- External APIs the project integrates with (Moxfield, Scryfall, BigQuery)
+- Hardware or physical systems (sensors, boards, actuators)
+- Analytical domains (statistics, causal inference, ML techniques)
+- Regulatory or compliance requirements
+- Unfamiliar tech stack components
 
-For each domain that needs research:
+**AskUserQuestion checkpoint:** Present the research plan:
+- List of domains identified, each with:
+  - What we need to learn
+  - Why it matters for the architecture
+  - Suggested research approach (web search, API exploration, data analysis, etc.)
+- Which domains are most critical (should be researched first)
+- Which might be deferred (not needed until later phases)
 
-1. **Use WebSearch/WebFetch** to investigate the domain
-2. **Use Agent subagents** for parallel deep research when multiple domains need investigation
-3. **Write a primer document** capturing what was learned — facts, not opinions
-4. **Each primer is a reference doc** — it captures how the external system works, not how our project will use it
-
-**AskUserQuestion checkpoint:** Present the list of domains identified for research. Ask which
-to investigate now vs. defer. Then research the selected domains.
-
-If no domains need primers (simple project), skip this phase.
+The user approves, modifies, or adds to the list. This list becomes the input for `/research` runs.
 
 ### Phase 3: Refinement
 
-**Goal:** Converge from exploration to definition.
+**Goal:** Converge from exploration to a project definition.
 
 Sharpen the idea into something concrete:
 
 - **What this IS** — one-paragraph project definition
 - **What this is NOT** — explicit exclusions
-- **Principles** — 5-7 rules that guide every decision. These go in the north star.
+- **Principles** — 5-7 rules that guide every decision
 - **Domain model** — the core concepts and their relationships
 - **Success criteria** — how do you know this project succeeded?
 - **Key decisions** — what trade-offs have been made?
-- **Open questions** — what's still unresolved?
+- **Open questions** — what's still unresolved? (Many of these should map to research needs.)
 
 Push for specificity. Challenge scope that feels too broad.
 
@@ -114,22 +116,19 @@ Push for specificity. Challenge scope that feels too broad.
 - Principles (draft)
 - Domain model (draft)
 - Key decisions
+- Research plan (from Phase 2)
 - Open questions
 
 Iterate until approved.
 
-### Phase 4: Doc Writing
+### Phase 4: Write North Star
 
-**Goal:** Produce the foundation documents.
-
-Write docs one at a time, in this order:
-
-#### 4a. North Star (`north-star.md`)
-
-Structure:
+Write `north-star.md`. Structure:
 
 ```markdown
 # North Star: {Project Name}
+
+*Last updated: {date}*
 
 ## Vision
 {1-2 sentences}
@@ -140,76 +139,50 @@ Structure:
 ## Principles
 ### 1. {Principle name}
 {Explanation}
-### 2. ...
+...
 
 ## Domain Model
 ### {Concept}
 {Description, relationships, rules}
+...
+
+## Related Documents
+| Document | Purpose |
+|----------|---------|
+| [Architecture](architecture.md) | Technical design — modules, data flow, conventions (after research) |
+| [Roadmap](roadmap.md) | Phased build plan (after architecture) |
 ```
 
 **Contains:** Vision, problem, principles (5-7), domain model with all core concepts.
 **Does NOT contain:** Implementation details, file paths, phase status, module structure.
 
-#### 4b. Architecture (`architecture.md`)
+Ask the user where docs go before writing (usually `docs/architecture/`).
 
-Structure:
+### Phase 5: Summary + Next Steps
 
-```markdown
-# Architecture: {Project Name}
+Present:
+- The north star document (written to disk)
+- The research plan (domains that need `/research` before `/architecture`)
+- Recommended next step
 
-## System Overview
-{Diagram}
-
-## Module Map
-{file → responsibility → external dependency}
-
-## Data Flow
-{How data moves through the system}
-
-## Conventions
-{Code org, API access, CLI patterns}
-
-## Dependencies
-{Table}
-
-## What's Deferred
-{And why}
 ```
+"North star written. Before we can design the architecture, these domains need research:
 
-**Contains:** Modules, data flow, conventions, dependencies, what's deferred and why.
-**Does NOT contain:** Vision/principles, roadmap status, CLI usage examples.
+1. {Domain A} — {why it matters}
+2. {Domain B} — {why it matters}
+3. {Domain C} — {why it matters}
 
-#### 4c. Domain-Specific Docs (if needed)
-
-Propose additional docs based on the project's needs. Common types:
-- Data spec (schemas, pipeline architecture)
-- Protocol doc (communication protocols, state machines)
-- Hardware spec (physical components, constraints)
-- Knowledge store design (if cross-module search is needed)
-
-**For each doc:**
-1. Draft it based on everything discussed
-2. Present the draft — highlight decisions and assumptions
-3. Iterate until approved
-4. Write to disk
-
-**Ask the user** where docs go before writing the first one (usually `docs/architecture/`).
-
-### Phase 5: Summary
-
-After all docs are written, present:
-- Every file produced with a one-line description
-- What domain primers were written (or deferred)
-- Open questions that remain
-- Recommendation: "Run `/roadmap` next to create the phased build plan."
+Run /research for each of these. Then run /architecture to design the system.
+The sequence: /research → /architecture → /roadmap → build."
+```
 
 ---
 
 ## Anti-Patterns
 
-- **Don't rush discovery.** Shallow discovery produces shallow docs.
-- **Don't skip domain research.** If the project builds on a complex external system, write the primer BEFORE the north star. Understanding the domain shapes the principles.
-- **Don't duplicate across docs.** North star owns vision. Architecture owns modules. If you're writing the same thing twice, it's in the wrong place.
-- **Don't produce a roadmap.** That's `/roadmap`'s job.
-- **Don't write code or scaffold projects.** This skill produces documents, not implementation.
-- **Don't skip checkpoints.** The user must approve the research plan and project summary before you write docs.
+- **Don't rush discovery.** Shallow discovery produces shallow north stars.
+- **Don't skip domain identification.** If the project builds on external systems, those systems MUST be researched. Don't assume you know how they work.
+- **Don't produce architecture.** The north star captures what and why. Architecture captures how — and it needs research first.
+- **Don't produce a roadmap.** That comes after architecture.
+- **Don't be eager to build.** The whole point of this skill is to think deeply before building. Resist the urge to jump to implementation details.
+- **Don't gloss over open questions.** If something is unclear, flag it as a research need. Don't paper over uncertainty with assumptions.
