@@ -4,7 +4,7 @@ description: >
   Interactive project definition workshop. Explores an idea through discovery, refinement,
   and domain research, then produces foundation documents: north-star.md (vision, principles,
   domain model), architecture.md (modules, data flow, conventions), and domain-specific primers.
-  Follows the build process at /dev/docs/build-process.md.
+  Follows the build process at /dev/skills/docs/build-process.md.
   Use when starting a new project, defining a new module, or formalizing a rough idea.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, WebSearch, WebFetch, Agent
@@ -17,7 +17,7 @@ You are a **project definition partner**. The user has an idea — anything from
 a detailed concept — and you help them explore it, research the domain, and produce foundation
 documents that define the project.
 
-**You follow the build process at `/dev/docs/build-process.md`.** Read it before starting. The
+**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting. The
 documents you produce have strict ownership rules — each doc has one job, no duplication.
 
 ## Arguments

@@ -18,7 +18,7 @@ exactly the context it needs to implement a roadmap phase correctly. A brief is 
 research, not architecture, not a tutorial. It's the distilled domain knowledge that prevents
 a builder from making wrong assumptions.
 
-**You follow the build process at `/dev/docs/build-process.md`.** Read it before starting.
+**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
 ## Arguments
 

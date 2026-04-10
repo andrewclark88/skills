@@ -4,7 +4,7 @@ description: >
   Generate a phased roadmap from foundation documents. Reads north-star.md, architecture.md,
   and primers, then decomposes into phases with blocking briefs, Input/Output/Tests, dependencies,
   and acceptance gates. Each phase is scoped for one build session. Follows the build process
-  at /dev/docs/build-process.md.
+  at /dev/skills/docs/build-process.md.
   Use after /ideate, or when a project needs a build plan.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Agent
@@ -17,7 +17,7 @@ You are a **roadmap architect**. You read a project's foundation documents and p
 `roadmap.md` that can be executed phase by phase — each phase picked up by a fresh conversation
 with only the roadmap, relevant briefs, and codebase as context.
 
-**You follow the build process at `/dev/docs/build-process.md`.** Read it before starting.
+**You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
 ## Arguments
 
@@ -37,7 +37,7 @@ Read everything the project has:
 - **Domain primers** — any research docs in `docs/briefs/` or `docs/<module>/briefs/`
 - **Existing source code** — if the project has started, understand what's built
 - **`CLAUDE.md`** — project conventions
-- **`/dev/docs/build-process.md`** — the build process methodology (REQUIRED)
+- **`/dev/skills/docs/build-process.md`** — the build process methodology (REQUIRED)
 
 If no foundation docs exist, tell the user to run `/ideate` first.
 
