@@ -36,24 +36,40 @@ diverge between docs. This skill catches all of that.
 
 ## Phase 1: Discover Documents
 
-Scan the project for planning documents:
+**Primary source:** Read `docs/knowledge-index.yaml` if it exists. This is the canonical catalog
+of all project knowledge, maintained by every doc-producing skill (`/ideate`, `/research`,
+`/architecture`, `/roadmap`, `/brief`).
 
+Filter entries by type to find core planning docs:
+
+| Type | Role in review |
+|------|---------------|
+| `north-star` | Vision, principles, domain model — the "what and why" |
+| `architecture` | Modules, data flow, conventions — the "how" |
+| `roadmap` | Phases, status, dependencies — the "when and in what order" |
+| `features` | User-facing capabilities — the "what it can do today" |
+| `brief` | Domain knowledge for specific phases |
+| `primer` | Domain research findings |
+
+**Also always check** (even if not in the index):
+- `CLAUDE.md` — project-level rules
+- `docs/architecture/tool-use-map.md` — cross-module dependencies
+- `docs/architecture/knowledge-store.md` — knowledge store architecture (if it exists)
+
+**Fallback (if no knowledge index exists):** Scan directories:
 ```
-docs/architecture/           → north star, architecture, roadmap, features, knowledge store
-docs/brief/architecture/     → brief module north star
-docs/ds-engine/architecture/ → ds-engine module north star
-docs/*/briefs/               → domain briefs and primers
-docs/architecture/tool-use-map.md
-CLAUDE.md                    → project-level rules
+docs/architecture/           → north star, architecture, roadmap, features
+docs/*/architecture/         → module north stars
+docs/briefs/                 → briefs and primers
+docs/*/briefs/               → module-specific briefs
 ```
 
-Also check for:
-- `docs/knowledge-index.yaml` — is the knowledge index up to date?
-- Roadmap — what's the current phase? What's marked DONE vs NEXT?
-- Any `.md` files in docs/ that aren't referenced by any other doc
+**Check the index itself:**
+- Are there `.md` files in `docs/` that aren't in the knowledge index? (Index drift)
+- Are there index entries pointing to files that don't exist? (Broken references)
 
 **Present the document inventory** to the user:
-"Found N planning docs. Checking consistency across: [list]"
+"Found N planning docs (M from knowledge index, K from directory scan). Checking consistency across: [list]"
 
 ## Phase 2: Check Document Ownership
 
