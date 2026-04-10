@@ -62,6 +62,8 @@ PROJECT START
 │  ┌── EVERY 2-4 PHASES ──────────────────────────────────────┐
 │  │                                                           │
 │  ├─ Quality Checkpoint                                       │
+│  │  ├─ /doc-review         → audit planning docs for          │
+│  │  │                        consistency and drift             │
 │  │  ├─ /refactor-design    → find duplication, missing       │
 │  │  │                        abstractions → implement fixes   │
 │  │  ├─ /extract-patterns   → document reusable patterns      │
@@ -216,11 +218,12 @@ After each phase, sync all docs to the code changes just made. Catches drift bet
 
 After 2-4 implementation phases, pause and run a quality pass:
 
+- **`/doc-review`** — audit planning docs for consistency, completeness, and drift. Finds stale references, conflicting decisions, missing cross-references, and docs that haven't kept up with design changes. Run this first — doc issues often reveal code issues.
 - **`/refactor-design`** — find duplication, missing abstractions, structural improvements. Produces a refactor plan. Implement the plan.
 - **`/extract-patterns`** — document reusable code patterns for consistency across future work. Other skills read these patterns.
 - **`/test-quality`** — spec-driven test gap analysis. Derives tests from behavioral contracts (specs, designs, interfaces), not from reading implementation code. Writes the tests.
 
-**Don't refactor after every phase.** Let code accumulate so refactor-design can identify real duplication and missing abstractions, not one-off patterns.
+**Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree.
 
 ### Pre-Deploy Security Review
 
@@ -415,6 +418,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/implement` | Step 7 (per phase, <20 files) | Code + tests |
 | `/implement-orchestrator` | Step 7 (per phase, 20+ files) | Code + tests (parallel agents) |
 | `/update-documentation` | Step 9 (after each phase) | Updated docs synced to code |
+| `/doc-review` | Quality checkpoint + after major design changes | Doc consistency report |
 | `/refactor-design` | Quality checkpoint (every 2-4 phases) | Refactor plan |
 | `/extract-patterns` | Quality checkpoint | Pattern documentation |
 | `/test-quality` | Quality checkpoint | Spec-driven tests |

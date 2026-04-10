@@ -32,6 +32,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 └───────────────────────────────────────────────────────────────────┘
 
 ┌── EVERY 2-4 PHASES ──────────────────────────────────────────────┐
+│  /doc-review        → Audit planning docs for consistency.        │
 │  /refactor-design   → Find duplication, missing abstractions.     │
 │  /extract-patterns  → Document reusable code patterns.            │
 │  /test-quality      → Spec-driven test gap analysis.              │
@@ -80,6 +81,7 @@ Every project accumulates knowledge — primers, briefs, architecture docs. The 
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 | `/brief` | 5. Per phase | Curated domain brief for the builder |
+| `/doc-review` | Quality checkpoint + after design changes | Planning doc consistency report |
 
 ### Adopted (from [nklisch/skills](https://github.com/nklisch/skills))
 
