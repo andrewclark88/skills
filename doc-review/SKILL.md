@@ -114,13 +114,18 @@ a parallel Agent subagent where possible.
 
 ### Pass 2+: System + Module (one pass per module)
 
-For each module with its own planning docs, run a pass that checks the module docs
-against the system-level docs.
+**Discover modules dynamically.** Scan for module-level planning docs:
+1. Check knowledge index for `north-star` entries that aren't the system north star
+2. Scan `docs/*/architecture/` for any `north-star-*.md` files
+3. Scan `modules/` directories for any that have their own docs
 
-**Example for grimoire:**
-- Pass 2: System + Brief module (`north-star-brief.md`)
-- Pass 3: System + DS-engine module (`north-star-ds-engine.md`)
-- Pass 4: System + Data module (`north-star-data.md`)
+Each discovered module gets its own pass. No hardcoded module list — works for any project
+with any number of modules.
+
+**Example (a project with 3 modules):**
+- Pass 2: System + Module A (`docs/module-a/architecture/north-star-module-a.md`)
+- Pass 3: System + Module B (`docs/module-b/architecture/north-star-module-b.md`)
+- Pass 4: System + Module C (`docs/module-c/architecture/north-star-module-c.md`)
 
 **Each module pass checks:**
 
