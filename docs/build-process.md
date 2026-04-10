@@ -1,0 +1,380 @@
+# Build Process
+
+Standard methodology for building projects. Follow this process for all new projects and modules. Skills (slash commands) automate each step — see the Pipeline section for the full flow.
+
+## Where This Lives
+
+This document is the source of truth. It's enforced through three layers:
+
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.claude/CLAUDE.md` | Global — always loaded in every conversation | Hard guardrails. Cannot be dropped even in long sessions. |
+| `/dev/CLAUDE.md` | Loaded when working in any project under `/dev/` | Points to this document. |
+| `/dev/docs/build-process.md` | This file | Full methodology, reference, and checklists. Human-readable and portable. |
+
+If the rules here conflict with a project-level doc, this document wins.
+
+---
+
+## The Pipeline
+
+Every project follows this pipeline. Skills in `code blocks` are slash commands.
+
+```
+PROJECT START
+│
+├─ 0. Domain Primers          /research (for each unfamiliar domain)
+│     └─ produces: primer docs + auto-loading reference skills
+│
+├─ 1. Foundation Docs          /ideate
+│     └─ produces: north-star.md, architecture.md (+ domain-specific docs)
+│
+├─ 2. Phased Roadmap           /roadmap
+│     └─ produces: roadmap.md (blocking briefs, Input/Output/Tests per phase)
+│
+│  ┌── PER PHASE ──────────────────────────────────────────────┐
+│  │                                                           │
+│  ├─ 3. Brief (if listed)     /brief                          │
+│  │     └─ produces: curated domain brief for the builder     │
+│  │                                                           │
+│  ├─ 4. Design                /design                         │
+│  │     └─ produces: design doc (interfaces, types,           │
+│  │        acceptance criteria, file paths)                    │
+│  │                                                           │
+│  ├─ 5. Build                 /implement or /implement-orchestrator
+│  │     └─ produces: code + tests                             │
+│  │                                                           │
+│  ├─ 6. PR + CI               (branch → PR → CI green → merge)
+│  │     └─ phase done when PR merges                          │
+│  │                                                           │
+│  ├─ 7. Update Docs           /update-documentation           │
+│  │     └─ syncs all docs to code changes                     │
+│  │                                                           │
+│  └───────────────────────────────────────────────────────────┘
+│
+│  ┌── EVERY 2-4 PHASES ──────────────────────────────────────┐
+│  │                                                           │
+│  ├─ Quality Checkpoint                                       │
+│  │  ├─ /refactor-design    → find duplication, missing       │
+│  │  │                        abstractions → implement fixes   │
+│  │  ├─ /extract-patterns   → document reusable patterns      │
+│  │  └─ /test-quality       → spec-driven test gap analysis   │
+│  │                                                           │
+│  └───────────────────────────────────────────────────────────┘
+│
+│  ┌── PRE-DEPLOY ────────────────────────────────────────────┐
+│  │                                                           │
+│  ├─ /security-review       → comprehensive audit, scored     │
+│  │                           report, address Critical/High   │
+│  │                           before deploying                │
+│  └───────────────────────────────────────────────────────────┘
+│
+├─ Features Doc (after all phases built)
+│     └─ produces: features.md (user-facing CLI/capability reference)
+│
+├─ Deploy (final phase)
+│     └─ Terraform via CI only — see Infrastructure Safety
+│
+│  ┌── ONGOING / AS-NEEDED ───────────────────────────────────┐
+│  │                                                           │
+│  ├─ /cruft-cleaner         → remove dead code, AI bloat      │
+│  ├─ /bold-refactor         → find architectural              │
+│  │                           simplifications                  │
+│  └───────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Step Details
+
+### 0. Domain Primers
+
+Before writing any code or planning docs, **research the domain deeply**. Use `/research` to investigate unfamiliar libraries, APIs, protocols, or domain knowledge. Each research run produces a primer doc AND an auto-loading reference skill.
+
+**When to write primers:** When the project builds on complex external systems (protocols, game rules, hardware, APIs). Understand the domain precisely before designing. Primers prevent rework.
+
+### 1. Foundation Docs (`/ideate`)
+
+Interactive workshop that produces the project's foundation documents:
+
+- **North Star** — vision, principles, domain model. What and why.
+- **Architecture** — modules, data flow, conventions, dependencies. How.
+- **Domain-specific docs** — whatever the project needs (data specs, protocols, hardware specs, etc.)
+
+**Document ownership** — each doc has one job, no duplication:
+
+| Doc | Owns | Does not own |
+|-----|------|-------------|
+| Primers | Domain facts, external system behavior | Design decisions, implementation |
+| North Star | Vision, principles, domain model | File paths, phase status, technical details |
+| Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
+| Roadmap | Phases, status, dependencies, briefs, decisions, open questions | Module internals, domain model |
+| Features | User-facing capabilities, CLI reference | Architecture internals, future plans |
+
+When content belongs in two places, put it in one and reference the other.
+
+### 2. Phased Roadmap (`/roadmap`)
+
+Produces a roadmap where each phase is a self-contained build spec, completable in one session.
+
+**Every phase has:**
+- **Blocking briefs** — domain knowledge that must be written before the phase begins
+- **Read before building** — docs and code to load into context
+- **Build** — what to implement (specific files, endpoints, features)
+- **Output** — files produced
+- **Tests** — acceptance criteria, split into automated and manual
+- **Dependencies** — what must exist before this phase starts
+
+Status tracking: DONE / NEXT / blank.
+
+### 3. Brief-Driven Development (`/brief`)
+
+Before each implementation phase, **write the brief that unblocks it.** Briefs are curated domain knowledge optimized for agent consumption — not raw research, not architecture, not tutorials. They answer: "what does the builder need to know to implement this phase correctly?"
+
+**The rule:** If a roadmap phase lists a blocking brief, run `/brief` before the phase begins. The skill reads the roadmap phase, researches the domain, and produces a structured brief.
+
+**`/research` vs `/brief`:** Research investigates broadly and produces a reference. Brief takes research (or does its own) and distills it into implementation-ready context for a specific phase. Research feeds briefs; briefs feed builds.
+
+### 4. Design (`/design`)
+
+Produces a detailed design document from the roadmap phase spec. Contains:
+- Exact file paths
+- Full interfaces and types in the project's language
+- Function signatures
+- Implementation notes for non-obvious logic
+- Acceptance criteria (testable assertions, not subjective)
+- Implementation order (resolves dependencies)
+
+**The design doc is the bridge between the roadmap (what to build) and implementation (building it).** An implementer agent can write code from it without asking questions.
+
+### 5. Build (`/implement` or `/implement-orchestrator`)
+
+Implement the design document.
+
+- **`/implement`** — single agent, best for phases with <20 files
+- **`/implement-orchestrator`** — Opus orchestrator spawns parallel Sonnet agents, best for large phases or parallelizable work
+
+Output includes code AND tests. Tests are the contract — a phase is done when its tests pass.
+
+### 6. PR + CI
+
+All code goes through a PR. The phase is done when:
+
+1. Automated tests pass
+2. Docker build succeeds (if applicable)
+3. Human confirms manual checks (if any)
+4. PR is opened, CI passes, and PR is merged to main
+
+**A phase is not done until its PR is merged.** Working locally is not enough.
+
+### 7. Update Documentation (`/update-documentation`)
+
+After each phase, sync all docs to the code changes just made. Catches drift between what was planned and what was built.
+
+### Quality Checkpoints (every 2-4 phases)
+
+After 2-4 implementation phases, pause and run a quality pass:
+
+- **`/refactor-design`** — find duplication, missing abstractions, structural improvements. Produces a refactor plan. Implement the plan.
+- **`/extract-patterns`** — document reusable code patterns for consistency across future work. Other skills read these patterns.
+- **`/test-quality`** — spec-driven test gap analysis. Derives tests from behavioral contracts (specs, designs, interfaces), not from reading implementation code. Writes the tests.
+
+**Don't refactor after every phase.** Let code accumulate so refactor-design can identify real duplication and missing abstractions, not one-off patterns.
+
+### Pre-Deploy Security Review
+
+Before any production deployment:
+
+- **`/security-review`** — comprehensive audit. Discovers stack, lets you choose focus domains (auth, injection, secrets, dependencies, API, infra, crypto, data protection, error handling). Researches current best practices. Produces a scored markdown report with severity-classified findings.
+- **Address all Critical and High findings before deploying.** Medium findings should be tracked. Low/Info are best-effort.
+- The security report feeds into `/design` for remediation planning.
+
+### Cleanup (as needed)
+
+- **`/cruft-cleaner`** — remove dead code, stale comments, AI-accumulated bloat. Run when the codebase feels heavy.
+- **`/bold-refactor`** — find beautiful cross-cutting simplifications. Run when you suspect the architecture can be fundamentally simplified.
+
+---
+
+## Working Principles
+
+- **Data-driven over hand-curated.** When there's a data source, build a pipeline. Don't manually curate what can be automated.
+- **Repeatable processes.** Pipelines should re-run (new data, new releases, meta shifts). One-off scripts become recurring commands.
+- **Auto-generate, then enrich.** Generate what you can from existing data, layer in external sources, leave TODOs only for things requiring human judgment.
+- **Don't hand-write what can be researched.** Use `/research`, web search, API exploration, and data analysis before asking for manual input.
+
+---
+
+## Infrastructure Safety Practices
+
+These apply whenever a project deploys to shared cloud infrastructure (GCP, AWS, etc.). The goal: **never destroy or interfere with resources you don't own.**
+
+### Terraform Rules
+
+**Never apply locally.** Local `terraform apply` has no review, no audit trail, and no guardrails against destroying someone else's resources.
+
+| Action | Where it runs | When |
+|--------|--------------|------|
+| `terraform init` | Local or CI | Anytime (safe, idempotent) |
+| `terraform plan` | Local or CI | Anytime — review the plan carefully |
+| `terraform apply` | **CI only, on merge to main** | After plan is reviewed and approved in PR |
+| `terraform destroy` | **Never without explicit approval** | Requires manual confirmation + team review |
+
+**Remote state is mandatory.** Terraform state must be stored in a remote backend (GCS bucket, S3, Terraform Cloud) with state locking enabled. Never commit `.tfstate` files to git.
+
+```hcl
+terraform {
+  backend "gcs" {
+    bucket = "<project>-terraform-state"
+    prefix = "<service-name>"
+  }
+}
+```
+
+**State lock prevents concurrent applies.** If two CI jobs try to apply at the same time, the lock prevents conflicts. Never use `-lock=false`.
+
+### Shared Project Safety
+
+When deploying into a GCP project (or AWS account) that other teams use:
+
+**Prefix all resources.** Every resource your project creates should be namespaced:
+- GCS buckets: `<project-name>-<purpose>` (e.g., `grimoire-briefs`)
+- Service accounts: `<project-name>-<role>` (e.g., `grimoire-server`)
+- Secrets: `<project-name>-<secret>` (e.g., `grimoire-bearer-token`)
+- Cloud Run services: `<project-name>` (e.g., `grimoire`)
+
+**Never use wildcard IAM.** Don't grant project-level `roles/owner` or `roles/editor` to service accounts. Use the narrowest role on the specific resource.
+
+**Import before managing.** If a resource already exists (someone created it manually), `terraform import` it into your state before writing the `.tf` file.
+
+**Use `prevent_destroy` on critical resources:**
+
+```hcl
+resource "google_storage_bucket" "data" {
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+```
+
+**Tag everything.** Add labels to all resources so ownership is clear:
+
+```hcl
+labels = {
+  managed_by = "terraform"
+  project    = "grimoire"
+  team       = "data"
+}
+```
+
+### Secrets
+
+**Never in code.** Secrets (API keys, tokens, passwords) never appear in:
+- Source code (`.ts`, `.py`, `.tf` files)
+- Terraform state committed to git
+- Environment variable files committed to git (`.env`)
+- CI/CD logs
+
+**Where secrets live:**
+- GCP Secret Manager (for deployed services)
+- Local environment variables (for development)
+- CI/CD secret store (GitHub Actions secrets, etc.)
+
+### Pre-Flight Checklist (Before First `terraform apply`)
+
+- [ ] Remote state backend exists (GCS bucket for state)
+- [ ] State bucket has versioning enabled
+- [ ] CI/CD pipeline is configured for plan-on-PR, apply-on-merge
+- [ ] All resources are prefixed with project name
+- [ ] IAM bindings are scoped to specific resources (not project-wide)
+- [ ] Secrets are in Secret Manager (not in code or `.tfvars` committed to git)
+- [ ] `prevent_destroy` is set on any resource that would be catastrophic to lose
+- [ ] All resources have ownership labels
+- [ ] Team has reviewed the initial `terraform plan` output
+
+---
+
+## PR & CI Checkpoints
+
+**All code goes through PRs.** No direct pushes to main for application code or infrastructure.
+
+### Application Code PR Pipeline
+
+```
+PR opened/updated:
+  → Build (compile, lint)
+  → Run full test suite
+  → Docker build (verify the deployable image still builds)
+  → All checks must pass before merge is allowed
+
+Merge to main:
+  → Same checks run again
+  → (After deploy phase) Deploy
+```
+
+### Infrastructure PR Pipeline
+
+```
+PR opened/updated:
+  → terraform init
+  → terraform plan
+  → Post plan output as PR comment
+  → Require approval before merge
+
+Merge to main:
+  → terraform init
+  → terraform plan (again, to catch drift)
+  → terraform apply -auto-approve
+```
+
+### Branch Protection Rules
+
+| Rule | Required |
+|------|----------|
+| PRs required before merge to main | Yes |
+| At least 1 approval (or self-review for solo projects) | Yes |
+| CI checks must pass | Yes |
+| No direct pushes to main | Yes |
+| No force pushes to main | Yes |
+
+### What CI Checks Per Phase
+
+Each roadmap phase ships tests. CI runs them all, not just the new phase's tests. The full suite is the regression gate.
+
+| Check | When | Why |
+|-------|------|-----|
+| Build/compile | Every PR | Catch type errors, syntax issues |
+| Unit tests | Every PR | Phase acceptance + regression |
+| Docker build | Every PR | Verify the deployable image works |
+| Terraform plan | Infra PRs only | Review before apply |
+| Lint (if configured) | Every PR | Code quality |
+
+---
+
+## Git Practices
+
+- **Commits are small and focused.** One logical change per commit.
+- **PRs before merge.** No direct pushes to main. Code review required.
+- **Don't commit generated files.** Data caches, build outputs, `.env` files, `.tfstate` — all gitignored.
+- **Don't commit secrets.** Ever. Use pre-commit hooks or CI checks to catch accidental secret commits.
+
+---
+
+## Skill Reference
+
+| Skill | When | What it produces |
+|-------|------|-----------------|
+| `/research` | Step 0 (primers) + before any phase using unfamiliar tech | Primer doc + auto-loading reference skill |
+| `/ideate` | Step 1 (project start) | North star, architecture, domain-specific docs |
+| `/roadmap` | Step 2 (after foundation docs) | Phased roadmap with blocking briefs, I/O/Tests |
+| `/brief` | Step 3 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
+| `/design` | Step 4 (per phase) | Design doc: interfaces, types, file paths, acceptance criteria |
+| `/implement` | Step 5 (per phase, <20 files) | Code + tests |
+| `/implement-orchestrator` | Step 5 (per phase, 20+ files) | Code + tests (parallel agents) |
+| `/update-documentation` | Step 7 (after each phase) | Updated docs synced to code |
+| `/refactor-design` | Quality checkpoint (every 2-4 phases) | Refactor plan |
+| `/extract-patterns` | Quality checkpoint | Pattern documentation |
+| `/test-quality` | Quality checkpoint | Spec-driven tests |
+| `/security-review` | Pre-deploy | Scored security report |
+| `/cruft-cleaner` | As needed | Cleanup report + fixes |
+| `/bold-refactor` | As needed | Architectural simplification plan |
