@@ -139,11 +139,23 @@ decision to make during roadmapping}
 |----------|---------|
 | [North Star](north-star.md) | Vision, principles, domain model |
 | [Roadmap](roadmap.md) | Phased build plan (after this document) |
-| { domain briefs } | Domain research that informed this architecture |
+
+## Related Architecture Docs
+| Document | Purpose |
+|----------|---------|
+| {other architecture-type docs discovered from knowledge index} |
 ```
 
+**The Related Architecture Docs section** lists all other `type: architecture` entries from the
+knowledge index (knowledge-store.md, tool-use-map.md, module north stars, etc.). This tells an
+agent reading architecture.md that more architectural context is available.
+
+**Check the knowledge index** (`docs/knowledge-index.yaml`) for entries with `type: architecture`.
+If any exist besides this doc, list them. `/update-documentation` should maintain this section
+as new architecture docs are added.
+
 **Contains:** Modules, data flow, conventions, dependencies, what's deferred.
-**Does NOT contain:** Vision/principles (north star), phase status (roadmap), CLI usage (features).
+**Does NOT contain:** Vision/principles (north star), phase status (roadmap).
 
 ### Phase 5: Update Knowledge Index
 
