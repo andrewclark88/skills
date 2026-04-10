@@ -48,7 +48,7 @@ For each document found, extract:
 - **File path**
 - **Title** (first `# heading`)
 - **Description** (first paragraph or frontmatter `description` field)
-- **Type**: brief, architecture, north-star, roadmap, features, design-doc, other
+- **Type**: north-star, architecture, roadmap, brief
 - **Last modified** (from git or file system)
 
 ### Step 3: Present the Index

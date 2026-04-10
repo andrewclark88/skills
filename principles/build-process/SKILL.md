@@ -32,11 +32,10 @@ Each doc has one job. No duplication.
 
 | Doc | Owns | Does NOT own |
 |-----|------|-------------|
-| Primers | Domain facts, external system behavior | Design decisions, implementation |
 | North Star | Vision, principles, domain model | File paths, phase status, technical details |
-| Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
+| Architecture | Modules, data flow, conventions, deps, features, cross-cutting designs | Vision, roadmap status |
 | Roadmap | Phases, status, dependencies, briefs, decisions | Module internals, domain model |
-| Features | User-facing capabilities, CLI reference | Architecture internals, future plans |
+| Briefs | Domain facts, research findings, implementation context | Design decisions, system architecture |
 
 ## Phase Structure
 

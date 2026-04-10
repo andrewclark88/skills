@@ -78,8 +78,8 @@ PROJECT START
 │  │                           before deploying                │
 │  └───────────────────────────────────────────────────────────┘
 │
-├─ Features Doc (after all phases built)
-│     └─ produces: features.md (user-facing CLI/capability reference)
+├─ /update-documentation maintains the Features section of architecture.md
+│     └─ what the tool can do today — updated after each phase, not written once
 │
 ├─ Deploy (final phase)
 │     └─ Terraform via CI only — see Infrastructure Safety
@@ -142,19 +142,69 @@ Technical design, informed by the north star AND domain briefs. Now you know eno
 
 **Ground every decision in research.** Not "we'll use BigQuery" but "we'll use BigQuery because the domain brief confirmed it's the existing platform."
 
-### Document Ownership
+### Document Types & Ownership
 
-Each doc has one job, no duplication:
-
-| Doc | Owns | Does not own |
-|-----|------|-------------|
-| Briefs | Domain facts, external system behavior, implementation context | Design decisions, system architecture |
-| North Star | Vision, principles, domain model | File paths, phase status, technical details |
-| Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
-| Roadmap | Phases, status, dependencies, briefs, decisions, open questions | Module internals, domain model |
-| Features | User-facing capabilities, CLI reference | Architecture internals, future plans |
+Three planning doc types + one knowledge type. Each has one job. No duplication across types.
 
 When content belongs in two places, put it in one and reference the other.
+
+#### North Star (`type: north-star`)
+
+**Owns:** Vision, principles, domain model — the "what and why."
+**Does NOT own:** File paths, phase status, technical implementation, module structure.
+**Produced by:** `/ideate`
+
+**Required sections:**
+- **Vision** — 1-2 sentences
+- **Problem** — what's broken today
+- **Principles** — 5-7 rules that guide every decision
+- **Domain Model** — core concepts and their relationships
+- **Related Documents** — links to architecture + roadmap
+
+#### Architecture (`type: architecture`)
+
+**Owns:** How the system is built — modules, data flow, conventions, dependencies, cross-cutting design decisions.
+**Does NOT own:** Vision/principles (north star), phase status (roadmap).
+**Produced by:** `/architecture`. Maintained by `/update-documentation` after each phase.
+
+**Required sections:**
+- **System Overview** — diagram
+- **Module Map** — file/directory → responsibility → external dependency
+- **Data Flow** — how data moves through the system
+- **Conventions** — code org, API patterns, error handling, testing
+- **Dependencies** — table
+- **What's Deferred** — and why
+
+**Optional sections (as the project needs them):**
+- **Features** — what the tool can do today, organized by user-facing capability. Maintained by `/update-documentation`.
+- **Knowledge Store** — if the project has searchable knowledge (knowledge-store.md)
+- **Tool/Dependency Map** — cross-module dependencies (tool-use-map.md)
+- **Development Workflow** — local dev, CI, deployment model
+- **Other cross-cutting design docs** — whatever the project needs
+
+All architecture-type docs live in `docs/architecture/`. There can be multiple files — one main `architecture.md` plus supplementary docs like `knowledge-store.md`, `tool-use-map.md`, etc. All typed as `architecture` in the knowledge index.
+
+#### Roadmap (`type: roadmap`)
+
+**Owns:** Phases, status, dependencies, blocking briefs, decisions, open questions — the "when and in what order."
+**Does NOT own:** Module internals, domain model, architecture details.
+**Produced by:** `/roadmap`
+
+**Required sections:**
+- **Acceptance gate** — how a phase is considered done (PR + CI + tests)
+- **Phase table** — each phase with: blocking briefs, read before building, build, output, done-when (automated vs manual)
+- **Quality checkpoints** — every 2-4 phases
+- **Security review** — pre-deploy
+- **Dependency graph** — ASCII diagram
+- **Decisions (locked)** — choices made and rationale
+- **Open questions** — unresolved items
+
+#### Briefs (`type: brief`)
+
+**Owns:** Curated domain knowledge — facts, research findings, implementation context.
+**Does NOT own:** Design decisions, system architecture, phase status.
+**Produced by:** `/research` (domain investigation), `/brief` (phase-specific context)
+**Checked by:** `knowledge/lint` (staleness, orphans, contradictions) — NOT `/doc-review`
 
 ### 4. Plan the Build (`/roadmap`)
 

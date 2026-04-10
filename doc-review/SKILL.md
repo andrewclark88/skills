@@ -44,19 +44,17 @@ Filter entries by type to find core planning docs:
 
 **Planning docs** — audited for structural consistency:
 
-| Type | Role in review |
-|------|---------------|
-| `north-star` | Vision, principles, domain model — the "what and why" |
-| `architecture` | Modules, data flow, conventions — the "how" |
-| `roadmap` | Phases, status, dependencies — the "when and in what order" |
-| `features` | User-facing capabilities — the "what it can do today" |
-| `design-doc` | Cross-cutting architecture decisions (knowledge-store.md, tool-use-map.md) |
+| Type | What to check | Examples |
+|------|--------------|---------|
+| `north-star` | Vision, principles, domain model — does it match what's built? | `north-star.md` |
+| `architecture` | Modules, data flow, conventions, features, cross-cutting designs — are they consistent? | `architecture.md`, `knowledge-store.md`, `tool-use-map.md` |
+| `roadmap` | Phases, status, dependencies — are they accurate given the codebase? | `roadmap.md` |
 
-**Knowledge docs** — NOT audited by doc-review (checked by `knowledge/lint` instead):
+**NOT audited by doc-review** (checked by `knowledge/lint` instead):
 
 | Type | Checked by |
 |------|-----------|
-| `brief` | `knowledge/lint` — staleness, orphaned, contradictions, completeness |
+| `brief` | `knowledge/lint` — staleness, orphaned, contradictions |
 
 **Also always check** (even if not in the index):
 - `CLAUDE.md` — project-level rules
@@ -84,11 +82,10 @@ Per the build process, each doc has one job:
 
 | Doc | Owns | Does NOT own |
 |-----|------|-------------|
-| Primers | Domain facts, external system behavior | Design decisions, implementation |
 | North Star | Vision, principles, domain model | File paths, phase status, technical details |
-| Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
+| Architecture | Modules, data flow, conventions, deps, features, cross-cutting designs | Vision, roadmap status |
 | Roadmap | Phases, status, dependencies, briefs, decisions | Module internals, domain model |
-| Features | User-facing capabilities, CLI reference | Architecture internals, future plans |
+| Briefs | Domain facts, research findings, implementation context | Design decisions, system architecture |
 
 **Check for:**
 - Content in the wrong doc (architecture details in the north star, phase status in architecture)
