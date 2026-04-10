@@ -51,10 +51,19 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 └───────────────────────────────────────────────────────────────────┘
 ```
 
+## Knowledge Index
+
+Every project accumulates knowledge — primers, briefs, architecture docs. The knowledge index tracks all of it so you never lose context between sessions.
+
+- **`/knowledge-index`** — run at session start to see all available project knowledge
+- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`) updates `docs/knowledge-index.yaml` automatically
+- Before researching, check if a primer already exists. Before writing a brief, check if one covers the topic.
+
 ## How to Use
 
 1. **Start a new conversation.** Describe your idea.
-2. **Type the slash command** for the current step (e.g., `/ideate`).
+2. **Run `/knowledge-index`** to see what context already exists for this project.
+3. **Type the slash command** for the current step (e.g., `/ideate`).
 3. **The skill guides you.** It asks questions, researches, produces docs.
 4. **You decide when to advance.** Each skill has checkpoints. Say "this is solid" to move on, or "let's research more" to go deeper.
 5. **Repeat** through the pipeline until the project ships.
@@ -65,6 +74,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
+| `/knowledge-index` | Session start | Shows all available project knowledge |
 | `/ideate` | 1. Define | North star + research plan |
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
@@ -113,12 +123,13 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 ```bash
 # Copy all skills to your personal skills folder
-cp -r skills/ideate ~/.claude/skills/
-cp -r skills/architecture ~/.claude/skills/
-cp -r skills/roadmap ~/.claude/skills/
-cp -r skills/brief ~/.claude/skills/
-cp -r skills/principles/build-process ~/.claude/skills/
-cp -r skills/vendor/nklisch/* ~/.claude/skills/
+cp -r knowledge-index ~/.claude/skills/
+cp -r ideate ~/.claude/skills/
+cp -r architecture ~/.claude/skills/
+cp -r roadmap ~/.claude/skills/
+cp -r brief ~/.claude/skills/
+cp -r principles/build-process ~/.claude/skills/
+cp -r vendor/nklisch/* ~/.claude/skills/
 ```
 
 ## Attribution

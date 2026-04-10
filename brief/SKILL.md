@@ -147,6 +147,23 @@ Present the completed brief. Highlight:
 
 Iterate until approved, then write to disk.
 
+### Step 6: Update Knowledge Index
+
+After writing the brief, update the project's knowledge index at `docs/knowledge-index.yaml`.
+
+Append an entry:
+```yaml
+  - path: <path to the brief>
+    title: <brief title>
+    type: brief  # or primer
+    description: <one-line description>
+    updated: <today's date>
+    blocks_phase: <phase number if applicable>
+```
+
+If the index file doesn't exist, create it. This ensures `/knowledge-index` can find the
+brief in future sessions.
+
 ---
 
 ## Brief Types

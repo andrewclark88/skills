@@ -158,7 +158,19 @@ Write `north-star.md`. Structure:
 
 Ask the user where docs go before writing (usually `docs/architecture/`).
 
-### Phase 5: Summary + Next Steps
+### Phase 5: Update Knowledge Index
+
+After writing the north star, update the project's `docs/knowledge-index.yaml`:
+```yaml
+  - path: <path to north-star.md>
+    title: "North Star: {Project Name}"
+    type: north-star
+    description: <one-line summary>
+    updated: <today's date>
+```
+Create the file if it doesn't exist.
+
+### Phase 6: Summary + Next Steps
 
 Present:
 - The north star document (written to disk)

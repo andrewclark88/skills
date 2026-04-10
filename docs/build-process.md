@@ -88,7 +88,25 @@ PROJECT START
 │  ├─ /bold-refactor         → find architectural              │
 │  │                           simplifications                  │
 │  └───────────────────────────────────────────────────────────┘
+
+KNOWLEDGE INDEX (maintained automatically):
+  Every skill that produces a doc (/ideate, /research, /architecture,
+  /brief, /roadmap) updates docs/knowledge-index.yaml.
+  Run /knowledge-index at session start to see all available context.
 ```
+
+---
+
+## Knowledge Index
+
+Every project accumulates knowledge — primers, briefs, architecture docs, research findings. The knowledge index (`docs/knowledge-index.yaml`) tracks all of it so future sessions know what context is available.
+
+**How it works:**
+- `/knowledge-index` — scans the project and presents all available knowledge. Run at the start of any session.
+- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) appends an entry to the index after writing.
+- The index is a YAML file listing each doc's path, title, type, description, and last updated date.
+
+**The rule:** Before researching or writing a brief, check if one already exists. Before starting a phase, check what context is available. The index prevents duplicate work and ensures accumulated knowledge is used.
 
 ---
 
@@ -387,6 +405,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 
 | Skill | When | What it produces |
 |-------|------|-----------------|
+| `/knowledge-index` | Start of every session | Shows all available project knowledge (briefs, primers, docs) |
 | `/ideate` | Step 1 (project start) | North star + research plan |
 | `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Primer doc + auto-loading reference skill |
 | `/architecture` | Step 3 (after north star + primers) | Architecture doc: modules, data flow, conventions |

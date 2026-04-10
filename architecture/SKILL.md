@@ -145,7 +145,18 @@ decision to make during roadmapping}
 **Contains:** Modules, data flow, conventions, dependencies, what's deferred.
 **Does NOT contain:** Vision/principles (north star), phase status (roadmap), CLI usage (features).
 
-### Phase 5: Summary + Next Steps
+### Phase 5: Update Knowledge Index
+
+After writing the architecture doc, update `docs/knowledge-index.yaml`:
+```yaml
+  - path: <path to architecture.md>
+    title: "Architecture: {Project Name}"
+    type: architecture
+    description: <one-line summary>
+    updated: <today's date>
+```
+
+### Phase 6: Summary + Next Steps
 
 Present:
 - The architecture document (written to disk)
