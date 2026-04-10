@@ -56,7 +56,8 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 Every project accumulates knowledge — primers, briefs, architecture docs. The knowledge index tracks all of it so you never lose context between sessions.
 
 - **`/knowledge-index`** — run at session start to see all available project knowledge
-- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`) updates `docs/knowledge-index.yaml` automatically
+- Custom skills (`/ideate`, `/architecture`, `/roadmap`, `/brief`) update `docs/knowledge-index.yaml` automatically after writing docs
+- After running `/research` (vendored skill), run `/knowledge-index` to rescan and pick up the new primer
 - Before researching, check if a primer already exists. Before writing a brief, check if one covers the topic.
 
 ## How to Use

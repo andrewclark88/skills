@@ -52,7 +52,7 @@ Every roadmap phase MUST have:
 A phase is done when:
 1. Automated tests pass
 2. Docker build succeeds (if applicable)
-3. Human confirms manual checks
+3. Human confirms manual checks (if any)
 4. PR is opened, CI passes, and PR is merged to main
 
 **A phase is not done until its PR is merged.**
