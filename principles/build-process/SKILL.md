@@ -13,6 +13,12 @@ model: sonnet
 
 These rules are always active. They override defaults when conflicts arise.
 
+## The Pipeline
+
+`/ideate` → `/research` → `/architecture` → `/roadmap` → [per phase: `/brief` → `/design` → `/implement` → PR → `/update-documentation`]
+
+**Research before design.** Don't make architecture decisions based on assumptions. Run `/research` for every domain before `/architecture`. Be aggressive about research — assumptions cause rewrites.
+
 ## Document Ownership
 
 Each doc has one job. No duplication.
