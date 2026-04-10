@@ -19,6 +19,13 @@ These rules are always active. They override defaults when conflicts arise.
 
 **Research before design.** Don't make architecture decisions based on assumptions. Run `/research` for every domain before `/architecture`. Be aggressive about research — assumptions cause rewrites.
 
+## Knowledge Index
+
+Every project maintains `docs/knowledge-index.yaml` — a catalog of all briefs, primers, and docs.
+- **Start of every session:** check the index or run `/knowledge-index` to see available context.
+- **After writing any doc:** update the index (`/ideate`, `/research`, `/architecture`, `/brief` do this automatically).
+- **Before researching:** check if a primer already exists. Don't duplicate work.
+
 ## Document Ownership
 
 Each doc has one job. No duplication.

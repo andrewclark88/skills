@@ -189,6 +189,17 @@ Present to the user:
 
 Iterate until approved, then write final version.
 
+### Phase 7: Update Knowledge Index
+
+After writing the roadmap, update the project's `docs/knowledge-index.yaml`:
+```yaml
+  - path: <path to roadmap.md>
+    title: "Roadmap: {Project Name}"
+    type: roadmap
+    description: <one-line summary with phase count>
+    updated: <today's date>
+```
+
 ---
 
 ## Anti-Patterns
