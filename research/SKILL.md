@@ -2,7 +2,7 @@
 name: research
 description: >
   Research external systems, libraries, APIs, protocols, domain knowledge, and patterns.
-  Investigates deeply, evaluates options, and produces a primer doc + auto-loading reference skill.
+  Investigates deeply, evaluates options, and produces a domain brief + auto-loading reference skill.
   Use before designing features that depend on unfamiliar technology, when domain knowledge is
   needed for architecture decisions, or when assumptions need verification.
   Based on nklisch/skills research skill, extended for domain research and knowledge indexing.
@@ -13,7 +13,7 @@ model: opus
 
 # Research
 
-You research external systems deeply and produce two outputs: a primer document with your
+You research external systems deeply and produce two outputs: a domain brief with your
 findings and an auto-loading reference skill. You also update the project's knowledge index.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
@@ -40,7 +40,7 @@ This skill handles two types of research:
 ## Phase 1: Scope the Research
 
 1. **Check the knowledge index** — run `/knowledge-index` or read `docs/knowledge-index.yaml`.
-   Does a primer already exist for this topic? Don't duplicate work.
+   Does a brief already exist for this topic? Don't duplicate work.
 2. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
 3. Explore the codebase — find how the project currently handles the area being researched
 4. Define research questions:
@@ -179,12 +179,12 @@ Write an auto-loading reference skill at `.claude/skills/{topic-slug}/SKILL.md`:
 
 ### 4c. Update Knowledge Index
 
-After writing the primer, update `docs/knowledge-index.yaml`:
+After writing the brief, update `docs/knowledge-index.yaml`:
 
 ```yaml
-  - path: <path to primer doc>
-    title: <primer title>
-    type: primer
+  - path: <path to brief>
+    title: <brief title>
+    type: brief
     description: <one-line description>
     updated: <today's date>
 ```
@@ -193,11 +193,11 @@ Create the file if it doesn't exist.
 
 ## Anti-Patterns
 
-- **NEVER skip the knowledge index check.** If a primer exists, read it first. Don't duplicate.
+- **NEVER skip the knowledge index check.** If a brief exists, read it first. Don't duplicate.
 - **NEVER trust training data for API shapes.** Verify from current documentation.
 - **NEVER recommend without evaluating alternatives** (technology research).
 - **NEVER skip the health check** — a superior but abandoned library is a liability.
-- **NEVER produce a primer without source citations.** Every claim must be verifiable.
+- **NEVER produce a brief without source citations.** Every claim must be verifiable.
 - **NEVER produce generic findings.** Ground everything in this project's specific needs.
 - **NEVER skip AskUserQuestion checkpoints.** Wrong research direction wastes effort.
 - **NEVER forget to update the knowledge index.** Future sessions depend on it.
@@ -205,7 +205,7 @@ Create the file if it doesn't exist.
 ## Completion Criteria
 
 - All research questions answered with evidence
-- Primer document written with source citations
+- Domain brief written with source citations
 - Reference skill written (technology research only)
 - Knowledge index updated
 - User confirmed findings at Phase 3 checkpoint

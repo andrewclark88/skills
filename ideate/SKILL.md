@@ -3,7 +3,7 @@ name: ideate
 description: >
   Interactive project definition workshop. Explores an idea through discovery and refinement,
   then produces a north-star.md (vision, principles, domain model). Identifies domains that
-  need research primers before architecture can be designed. Does NOT produce architecture
+  need research briefs before architecture can be designed. Does NOT produce architecture
   or roadmap — those are separate steps that come after research.
   Use when starting a new project, defining a new module, or formalizing a rough idea.
 user-invocable: true
@@ -20,7 +20,7 @@ happen before architecture can be designed.
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
 **You produce ONE document: `north-star.md`.** You also produce a research plan — a list of
-domains that need primers before the next step (`/architecture`).
+domains that need briefs before the next step (`/architecture`).
 
 ## What This Skill Does NOT Do
 

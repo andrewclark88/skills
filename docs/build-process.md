@@ -25,16 +25,16 @@ PROJECT START
 │
 ├─ 1. Define the Project       /ideate
 │     └─ produces: north-star.md (vision, principles, domain model)
-│     └─ produces: research plan (domains needing primers)
+│     └─ produces: research plan (domains needing briefs)
 │
 ├─ 2. Research the Domain      /research (for each domain identified)
-│     └─ produces: primer docs + auto-loading reference skills
+│     └─ produces: domain briefs + auto-loading reference skills
 │     └─ repeat until all critical domains are understood
 │     └─ don't rush this — assumptions here cause rewrites later
 │
 ├─ 3. Design the Architecture  /architecture
 │     └─ produces: architecture.md (modules, data flow, conventions)
-│     └─ grounded in north star + primers — no unresearched assumptions
+│     └─ grounded in north star + domain briefs — no unresearched assumptions
 │
 ├─ 4. Plan the Build           /roadmap
 │     └─ produces: roadmap.md (blocking briefs, Input/Output/Tests per phase)
@@ -101,7 +101,7 @@ KNOWLEDGE INDEX (maintained automatically):
 
 ## Knowledge Index
 
-Every project accumulates knowledge — primers, briefs, architecture docs, research findings. The knowledge index (`docs/knowledge-index.yaml`) tracks all of it so future sessions know what context is available.
+Every project accumulates knowledge — briefs, architecture docs, research findings. The knowledge index (`docs/knowledge-index.yaml`) tracks all of it so future sessions know what context is available.
 
 **How it works:**
 - `/knowledge-index` — scans the project and presents all available knowledge. Run at the start of any session.
@@ -126,7 +126,7 @@ Interactive workshop. Explore the idea, refine it, produce a north star. Also id
 
 Deep investigation of each domain identified in step 1. Use for external systems, protocols, APIs, analytical methods, hardware, regulations — anything the project builds on.
 
-**Produces:** Primer docs + auto-loading reference skills.
+**Produces:** Domain briefs + auto-loading reference skills.
 
 **Be aggressive about research.** It's far cheaper to spend a session researching than to discover mid-build that the domain works differently than assumed. If you're not sure whether something needs research, it does.
 
@@ -134,13 +134,13 @@ Deep investigation of each domain identified in step 1. Use for external systems
 
 ### 3. Design the Architecture (`/architecture`)
 
-Technical design, informed by the north star AND domain primers. Now you know enough to make real decisions.
+Technical design, informed by the north star AND domain briefs. Now you know enough to make real decisions.
 
 **Produces:** `architecture.md` (modules, data flow, conventions, dependencies).
 
-**Prerequisites:** North star and relevant primers MUST exist. If you discover during architecture that a domain isn't understood, stop and run `/research` first.
+**Prerequisites:** North star and relevant domain briefs MUST exist. If you discover during architecture that a domain isn't understood, stop and run `/research` first.
 
-**Ground every decision in research.** Not "we'll use BigQuery" but "we'll use BigQuery because the primer confirmed it's the existing platform."
+**Ground every decision in research.** Not "we'll use BigQuery" but "we'll use BigQuery because the domain brief confirmed it's the existing platform."
 
 ### Document Ownership
 
@@ -148,7 +148,7 @@ Each doc has one job, no duplication:
 
 | Doc | Owns | Does not own |
 |-----|------|-------------|
-| Primers | Domain facts, external system behavior | Design decisions, implementation |
+| Briefs | Domain facts, external system behavior, implementation context | Design decisions, system architecture |
 | North Star | Vision, principles, domain model | File paths, phase status, technical details |
 | Architecture | Modules, data flow, conventions, deps | Vision, roadmap status, CLI usage |
 | Roadmap | Phases, status, dependencies, briefs, decisions, open questions | Module internals, domain model |
@@ -408,10 +408,10 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 
 | Skill | When | What it produces |
 |-------|------|-----------------|
-| `/knowledge-index` | Start of every session | Shows all available project knowledge (briefs, primers, docs) |
+| `/knowledge-index` | Start of every session | Shows all available project knowledge (briefs, docs) |
 | `/ideate` | Step 1 (project start) | North star + research plan |
-| `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Primer doc + auto-loading reference skill |
-| `/architecture` | Step 3 (after north star + primers) | Architecture doc: modules, data flow, conventions |
+| `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Domain brief + auto-loading reference skill |
+| `/architecture` | Step 3 (after north star + domain briefs) | Architecture doc: modules, data flow, conventions |
 | `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |
 | `/brief` | Step 5 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
 | `/design` | Step 6 (per phase) | Design doc: interfaces, types, file paths, acceptance criteria |

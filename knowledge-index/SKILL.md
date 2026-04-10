@@ -1,7 +1,7 @@
 ---
 name: knowledge-index
 description: >
-  Show all accumulated project knowledge — briefs, primers, research docs, architecture docs.
+  Show all accumulated project knowledge — briefs, architecture docs, and other project knowledge.
   Auto-loads at session start so the agent knows what context is available before doing work.
   Run at the start of any session, or anytime you need to find relevant project knowledge.
   Use when starting work on a project, looking for existing research, or checking what briefs exist.
@@ -20,7 +20,7 @@ happen at the start of every build session.
 
 - **Start of any session** where work will be done on a project
 - **Before writing a brief** — check if one already exists
-- **Before researching** — check if a primer already covers the topic
+- **Before researching** — check if a brief already covers the topic
 - **Anytime** you need to find relevant context
 
 ## Workflow
@@ -37,7 +37,7 @@ If it doesn't exist, **scan the project** to build one:
 Scan these locations for knowledge documents:
 
 ```
-docs/briefs/              ← domain briefs, primers
+docs/briefs/              ← domain briefs
 docs/architecture/        ← architecture docs, north star
 docs/*/briefs/            ← module-specific briefs (e.g., docs/ds-engine/briefs/)
 docs/*/architecture/      ← module-specific architecture docs
@@ -48,7 +48,7 @@ For each document found, extract:
 - **File path**
 - **Title** (first `# heading`)
 - **Description** (first paragraph or frontmatter `description` field)
-- **Type**: primer, brief, architecture, north-star, roadmap, features, other
+- **Type**: brief, architecture, north-star, roadmap, features, design-doc, other
 - **Last modified** (from git or file system)
 
 ### Step 3: Present the Index
@@ -59,25 +59,24 @@ Organize by type and present:
 📋 Project Knowledge Index
 ==========================
 
-North Star & Architecture:
+Planning Docs:
   • north-star.md — Vision, principles, domain model
   • architecture.md — Modules, data flow, conventions
   • roadmap.md — 14 phases, Phase 3 is NEXT
+  • knowledge-store.md — Knowledge store architecture
 
-Primers (domain research):
+Briefs (domain knowledge):
   • turn-structure.md — MTG turn phases/steps, priority loop, state machine (411 lines)
   • edh-tournament-rules.md — London mulligan, commander tax, win/loss conditions
   • meta-card-interactions.md — Trigger layering, APNAP, storm, LED timing, win cons
-
-Briefs (implementation context):
   • meta-seed-pipeline.md — TopDeck.gg → Moxfield → Scryfall pipeline
   • data-ingestion.md — All data source access patterns
-  • local-meta-tracker.md — Tournament location data, regional analytics
+  • knowledge-retrieval-patterns.md — LLM Wiki, MemPalace, MCP ecosystem research
 
 Commander Briefs (auto-generated):
-  • 32 briefs in docs/briefs/commanders/ — tournament stats + cEDH DDB primers
+  • 32 briefs in docs/briefs/commanders/ — tournament stats + cEDH DDB data
 
-Module-Specific:
+Module-Specific Briefs:
   • docs/ds-engine/briefs/technique-inventory-eda.md — 12 EDA techniques
   • docs/ds-engine/briefs/technique-inventory-causal.md — 10 causal techniques
   • docs/ds-engine/briefs/decision-dag-design.md — DAG routing patterns
@@ -112,7 +111,7 @@ documents:
 
   - path: docs/briefs/turn-structure.md
     title: "Brief: MTG Turn Structure"
-    type: primer
+    type: brief
     description: "Turn phases/steps, priority loop, state machine diagram, multiplayer specifics"
     updated: 2026-04-08
     blocks_phase: "2b"
@@ -128,7 +127,7 @@ documents:
 
 The index is updated by every doc-producing skill:
 1. **`/ideate`** — adds north star entry
-2. **`/research`** — adds primer entry
+2. **`/research`** — adds brief entry
 3. **`/architecture`** — adds architecture entry
 4. **`/roadmap`** — adds roadmap entry
 5. **`/brief`** — adds brief entry
@@ -138,6 +137,6 @@ Each skill appends to the YAML file after writing its doc.
 
 ## Anti-Patterns
 
-- **Don't skip the index check.** If you're about to research something, check if a primer already exists.
+- **Don't skip the index check.** If you're about to research something, check if a brief already exists.
 - **Don't present the full content of every doc.** The index is a catalog — show titles and descriptions. The user or agent reads full docs on demand.
 - **Don't forget to update the index.** When any skill produces a new knowledge document, it must add an entry.

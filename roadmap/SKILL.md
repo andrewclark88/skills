@@ -2,7 +2,7 @@
 name: roadmap
 description: >
   Generate a phased roadmap from foundation documents. Reads north-star.md, architecture.md,
-  and primers, then decomposes into phases with blocking briefs, Input/Output/Tests, dependencies,
+  and domain briefs, then decomposes into phases with blocking briefs, Input/Output/Tests, dependencies,
   and acceptance gates. Each phase is scoped for one build session. Follows the build process
   at /dev/skills/docs/build-process.md.
   Use after /ideate, or when a project needs a build plan.
@@ -34,7 +34,7 @@ Read everything the project has:
 
 - **`north-star.md`** — vision, principles, domain model
 - **`architecture.md`** — modules, data flow, conventions
-- **Domain primers** — any research docs in `docs/briefs/` or `docs/<module>/briefs/`
+- **Domain briefs** — any research docs in `docs/briefs/` or `docs/<module>/briefs/`
 - **Existing source code** — if the project has started, understand what's built
 - **`CLAUDE.md`** — project conventions
 - **`/dev/skills/docs/build-process.md`** — the build process methodology (REQUIRED)
@@ -55,7 +55,7 @@ If no foundation docs exist, tell the user to run `/ideate` first.
    — Determines whether infrastructure phases are needed and where they go (local-first = deploy last).
 
 4. **Domain complexity?** "Which parts need domain research before building? Any blocking briefs needed?"
-   — Surfaces primers/briefs that must be written before certain phases.
+   — Surfaces briefs that must be written before certain phases.
 
 ### Phase 3: Decompose
 

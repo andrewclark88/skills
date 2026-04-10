@@ -42,14 +42,21 @@ of all project knowledge, maintained by every doc-producing skill (`/ideate`, `/
 
 Filter entries by type to find core planning docs:
 
+**Planning docs** — audited for structural consistency:
+
 | Type | Role in review |
 |------|---------------|
 | `north-star` | Vision, principles, domain model — the "what and why" |
 | `architecture` | Modules, data flow, conventions — the "how" |
 | `roadmap` | Phases, status, dependencies — the "when and in what order" |
 | `features` | User-facing capabilities — the "what it can do today" |
-| `brief` | Domain knowledge for specific phases |
-| `primer` | Domain research findings |
+| `design-doc` | Cross-cutting architecture decisions (knowledge-store.md, tool-use-map.md) |
+
+**Knowledge docs** — NOT audited by doc-review (checked by `knowledge/lint` instead):
+
+| Type | Checked by |
+|------|-----------|
+| `brief` | `knowledge/lint` — staleness, orphaned, contradictions, completeness |
 
 **Also always check** (even if not in the index):
 - `CLAUDE.md` — project-level rules
@@ -60,7 +67,7 @@ Filter entries by type to find core planning docs:
 ```
 docs/architecture/           → north star, architecture, roadmap, features
 docs/*/architecture/         → module north stars
-docs/briefs/                 → briefs and primers
+docs/briefs/                 → domain briefs
 docs/*/briefs/               → module-specific briefs
 ```
 

@@ -155,7 +155,7 @@ Append an entry:
 ```yaml
   - path: <path to the brief>
     title: <brief title>
-    type: brief  # or primer
+    type: brief
     description: <one-line description>
     updated: <today's date>
     blocks_phase: <phase number if applicable>

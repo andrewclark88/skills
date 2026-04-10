@@ -21,10 +21,10 @@ These rules are always active. They override defaults when conflicts arise.
 
 ## Knowledge Index
 
-Every project maintains `docs/knowledge-index.yaml` — a catalog of all briefs, primers, and docs.
+Every project maintains `docs/knowledge-index.yaml` — a catalog of all briefs and planning docs.
 - **Start of every session:** check the index or run `/knowledge-index` to see available context.
-- **After writing any doc:** update the index (`/ideate`, `/research`, `/architecture`, `/brief` do this automatically).
-- **Before researching:** check if a primer already exists. Don't duplicate work.
+- **After writing any doc:** update the index (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap` do this automatically).
+- **Before researching:** check if a brief already exists. Don't duplicate work.
 
 ## Document Ownership
 

@@ -14,7 +14,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
                     Repeat for every domain. Don't rush — assumptions cause rewrites.
 
 /architecture     → Design the system. Modules, data flow, conventions.
-                    Grounded in north star + primers. No unresearched assumptions.
+                    Grounded in north star + domain briefs. No unresearched assumptions.
 
 /roadmap          → Plan the build. Phases with blocking briefs, I/O/Tests, dependencies.
                     Each phase scoped for one session.
@@ -54,11 +54,11 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 ## Knowledge Index
 
-Every project accumulates knowledge — primers, briefs, architecture docs. The knowledge index tracks all of it so you never lose context between sessions.
+Every project accumulates knowledge — briefs, architecture docs, research findings. The knowledge index tracks all of it so you never lose context between sessions.
 
 - **`/knowledge-index`** — run at session start to see all available project knowledge
 - All doc-producing skills (`/ideate`, `/research`, `/architecture`, `/roadmap`, `/brief`) update `docs/knowledge-index.yaml` automatically after writing docs
-- Before researching, check if a primer already exists. Before writing a brief, check if one covers the topic.
+- Before researching, check if a brief already exists. Don't duplicate work.
 
 ## How to Use
 

@@ -1,10 +1,10 @@
 ---
 name: architecture
 description: >
-  Design the technical architecture from a north star and research primers. Produces architecture.md
+  Design the technical architecture from a north star and research briefs. Produces architecture.md
   (modules, data flow, conventions, dependencies). Only run AFTER /ideate (north star) and /research
-  (domain primers) are complete — architecture decisions should be grounded in research, not assumptions.
-  Use when the north star and domain primers exist and you're ready to design how the system is built.
+  (domain briefs) are complete — architecture decisions should be grounded in research, not assumptions.
+  Use when the north star and domain briefs exist and you're ready to design how the system is built.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, WebSearch, WebFetch, Agent
 model: opus
@@ -13,12 +13,12 @@ model: opus
 # Architecture
 
 You design the **technical architecture** for a project. You read the north star (vision, principles,
-domain model) and all domain primers (research findings), then produce an architecture document that
+domain model) and all domain briefs (research findings), then produce an architecture document that
 defines how the system is built.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
-**Prerequisites:** The north star and relevant domain primers MUST exist. If they don't, tell the
+**Prerequisites:** The north star and relevant domain briefs MUST exist. If they don't, tell the
 user to run `/ideate` and `/research` first. Architecture decisions made without domain research
 are assumptions, and assumptions cause rewrites.
 
@@ -45,13 +45,13 @@ The sequence is: `/ideate` → `/research` → **`/architecture`** → `/roadmap
 Read everything that exists:
 
 1. **North star** (REQUIRED) — vision, principles, domain model
-2. **Domain primers** (REQUIRED if they exist) — research findings
+2. **Domain briefs** (REQUIRED if they exist) — research findings
 3. **Existing code** (if any) — understand what's already built
 4. **CLAUDE.md** — project conventions
 5. **Build process** at `/dev/skills/docs/build-process.md` — methodology rules
 
-**Check for research gaps.** As you read the north star and primers, ask yourself:
-- Are there domains mentioned in the north star that have no primer?
+**Check for research gaps.** As you read the north star and domain briefs, ask yourself:
+- Are there domains mentioned in the north star that have no brief?
 - Are there architectural decisions that depend on facts not yet researched?
 - Are there external systems mentioned that we don't have API/protocol documentation for?
 
@@ -71,14 +71,14 @@ Explore the design space with the user. This is a conversation, not a form.
 - **System boundaries** — what's one service vs. many? What's a module vs. a separate project?
 - **Module decomposition** — what are the major subsystems? What does each own?
 - **Data flow** — how does data move through the system? What are the inputs and outputs?
-- **External integrations** — how do we talk to each external system? (Should be informed by primers.)
+- **External integrations** — how do we talk to each external system? (Should be informed by domain briefs.)
 - **Storage strategy** — what lives where? Files, databases, caches, external services?
 - **Conventions** — code organization, naming, API patterns, error handling
 - **Technology choices** — language, framework, key libraries. Justify each with research.
 - **What's deferred** — what are we explicitly NOT building yet, and why?
 
 **Ground every decision in research.** Don't say "we'll use BigQuery" — say "we'll use BigQuery
-because the primer on the data warehouse confirmed it's the existing platform (see `primer-data-model.md`)."
+because the domain brief on the data warehouse confirmed it's the existing platform (see `data-model.md`)."
 
 **Challenge your own assumptions.** For every design decision, ask: "Do we know this is the right
 approach, or are we assuming?" If assuming, flag it as a research need or an open question.
@@ -119,7 +119,7 @@ Write `architecture.md`. Structure:
 {How data moves through the system. Diagrams encouraged.}
 
 ## External Integrations
-{How we talk to each external system. Reference primers for details.}
+{How we talk to each external system. Reference domain briefs for details.}
 
 ## Conventions
 {Code organization, naming, API patterns, error handling, testing approach.}
@@ -139,7 +139,7 @@ decision to make during roadmapping}
 |----------|---------|
 | [North Star](north-star.md) | Vision, principles, domain model |
 | [Roadmap](roadmap.md) | Phased build plan (after this document) |
-| {primers} | Domain research that informed this architecture |
+| { domain briefs } | Domain research that informed this architecture |
 ```
 
 **Contains:** Modules, data flow, conventions, dependencies, what's deferred.
@@ -165,7 +165,7 @@ Present:
 
 ```
 "Architecture written. Key decisions:
-- {Decision 1} — {rationale, grounded in {primer}}
+- {Decision 1} — {rationale, grounded in domain brief}
 - {Decision 2} — {rationale}
 
 Open questions for roadmapping:
@@ -185,10 +185,10 @@ Run /research for these before /roadmap, or flag them as open questions in the r
 
 ## Anti-Patterns
 
-- **Don't design without reading primers.** If domain primers exist, read them ALL before
+- **Don't design without reading briefs.** If domain briefs exist, read them ALL before
   making any design decisions. The whole point of research-before-architecture is to prevent
   assumptions.
-- **Don't assume how external systems work.** If there's no primer for an API/protocol, don't
+- **Don't assume how external systems work.** If there's no brief for an API/protocol, don't
   guess the architecture — flag it as a research gap.
 - **Don't include vision or principles.** That's the north star's job. Reference it, don't duplicate.
 - **Don't include a roadmap.** That's the next step.
