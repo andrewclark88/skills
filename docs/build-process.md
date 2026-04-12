@@ -92,8 +92,11 @@ PROJECT START
 │  └───────────────────────────────────────────────────────────┘
 
 KNOWLEDGE INDEX (maintained automatically):
-  Every skill that produces a doc (/ideate, /research, /architecture,
-  /brief, /roadmap) updates docs/knowledge-index.yaml.
+  Doc-producing skills (/ideate, /research, /architecture, /brief,
+  /roadmap) update docs/knowledge-index.yaml after writing.
+  Doc-maintaining skills (/update-documentation, /doc-review) update
+  the index when they create, modify, or fix docs.
+  /design checks the index for blocking briefs before designing.
   Run /knowledge-index at session start to see all available context.
 ```
 

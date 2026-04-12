@@ -232,6 +232,21 @@ Present the report. Highlight:
 
 If yes: fix them, then re-run the affected passes to verify.
 
+## Phase 5: Update Knowledge Index
+
+After fixing any issues, check whether the knowledge index (`docs/knowledge-index.yaml`)
+needs repairs:
+
+1. **Broken entries** — if a doc was moved, renamed, or deleted during fixes, update or
+   remove its index entry.
+2. **Stale timestamps** — if a doc was substantially modified during fixes, update its
+   `updated` date in the index.
+3. **Missing entries** — if Phase 1 discovered docs on disk that aren't in the index,
+   add entries for them.
+4. **Index timestamp** — update the `# Last updated:` comment at the top of the index.
+
+Skip this phase if no knowledge index exists in the project.
+
 ---
 
 ## When to Run This Skill
