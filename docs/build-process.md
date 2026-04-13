@@ -21,7 +21,15 @@ If the rules here conflict with a project-level doc, this document wins.
 Every project follows this pipeline. Skills in `code blocks` are slash commands.
 
 ```
-PROJECT START
+SESSION START (every session that isn't truly the first one on a project)
+│
+├─ 0. Load Existing Knowledge  /knowledge-index   ← ESSENTIAL
+│     └─ scans docs/knowledge-index.yaml + planning docs
+│     └─ shows what briefs, architecture, roadmap, and research exist
+│     └─ prevents duplicate work and surfaces relevant context for the task
+│     └─ skip ONLY when starting a brand-new project with no docs yet
+│
+PROJECT START (truly new project — no existing docs)
 │
 ├─ 1. Define the Project       /ideate
 │     └─ produces: north-star.md (vision, principles, domain model)
@@ -91,13 +99,18 @@ PROJECT START
 │  │                           simplifications                  │
 │  └───────────────────────────────────────────────────────────┘
 
-KNOWLEDGE INDEX (maintained automatically):
+KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
+  /knowledge-index runs at the start of every session that isn't truly
+  the first one on a project. This is non-negotiable — agents that skip
+  it duplicate prior work and miss available context.
+
   Doc-producing skills (/ideate, /research, /architecture, /brief,
   /roadmap) update docs/knowledge-index.yaml after writing.
   Doc-maintaining skills (/update-documentation, /doc-review) update
   the index when they create, modify, or fix docs.
-  /design checks the index for blocking briefs before designing.
-  Run /knowledge-index at session start to see all available context.
+  Skills that consume context (/design, /implement, /brief, etc.)
+  should check the index FIRST before researching from scratch or
+  duplicating work.
 ```
 
 ---
@@ -106,12 +119,21 @@ KNOWLEDGE INDEX (maintained automatically):
 
 Every project accumulates knowledge — briefs, architecture docs, research findings. The knowledge index (`docs/knowledge-index.yaml`) tracks all of it so future sessions know what context is available.
 
-**How it works:**
-- `/knowledge-index` — scans the project and presents all available knowledge. Run at the start of any session.
-- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) appends an entry to the index after writing.
-- The index is a YAML file listing each doc's path, title, type, description, and last updated date.
+**The knowledge index is essential infrastructure, not optional polish.** Skipping it leads to: duplicated research, contradicted prior decisions, agents flying blind on context that's already available, and architectural drift. Every project past day one should have a knowledge index, and every session past day one should consult it.
 
-**The rule:** Before researching or writing a brief, check if one already exists. Before starting a phase, check what context is available. The index prevents duplicate work and ensures accumulated knowledge is used.
+**How it works:**
+- `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
+- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) appends an entry to the index after writing.
+- Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
+- The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
+
+**The rules:**
+1. **Session start: load it.** First thing in any non-fresh session is `/knowledge-index`. The agent's first action should not be searching the codebase — it should be checking what's already known.
+2. **Before researching: check it.** A `/research` invocation should not begin without confirming a relevant brief doesn't already exist.
+3. **Before designing: check it.** `/design` reads the index for blocking briefs before producing a design doc.
+4. **After writing a doc: update it.** Every doc-producing skill must append/update its entry. Hand-written planning docs require manual entry (or a `/knowledge-index` regeneration).
+
+**Doc frontmatter convention:** Every indexable planning doc (north-star, architecture, roadmap, brief, primer, features) declares `description`, `type`, and `updated` in its frontmatter. This is what makes `/knowledge-index` regeneration reliable. See `knowledge-index/SKILL.md` → "Indexable Doc Frontmatter Convention" for the full spec. Doc-producing skills emit this format automatically; hand-written planning docs follow it explicitly.
 
 ---
 

@@ -165,7 +165,19 @@ Draw an ASCII dependency graph showing:
 
 ### Phase 5: Write
 
-Write `roadmap.md` to the project's docs directory.
+Write `roadmap.md` to the project's docs directory. **Required: emit standard frontmatter at the top** so `/knowledge-index` regeneration picks it up reliably.
+
+```markdown
+---
+description: {phase count + current status, e.g., "29 sub-phases across 4 tracks. Phase 5 is NEXT."}
+type: roadmap
+updated: {today's date, YYYY-MM-DD}
+---
+
+# Roadmap: {Project Name}
+
+...
+```
 
 **Format rules:**
 - Phases numbered sequentially (use a, b, c suffixes for split phases)

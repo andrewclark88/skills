@@ -1,12 +1,19 @@
 # skills
 
-A complete software development workflow suite for Claude Code. Custom methodology combined with adopted skills from [nklisch/skills](https://github.com/nklisch/skills).
+A complete software development workflow suite for Claude Code.
 
 Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 ## The Pipeline
 
 ```
+SESSION START (every non-fresh session)
+│
+└─ /knowledge-index → Load existing project knowledge before doing anything else.
+                      Essential infrastructure — skip only on truly brand-new projects.
+
+PROJECT START (truly new project)
+│
 /ideate           → Define the project. North star (vision, principles, domain model).
                     Identify domains that need research.
 
@@ -48,60 +55,81 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 │  /feature           → Quick extension outside core roadmap.       │
 │  /expand            → Scope expansion for subsystems.             │
 │  /repo-eval         → Multi-dimensional codebase scoring.         │
+│  /e2e-test-design   → End-to-end test suite design.               │
 │  /release           → Changelog + release.                        │
 └───────────────────────────────────────────────────────────────────┘
 ```
 
 ## Knowledge Index
 
-Every project accumulates knowledge — briefs, architecture docs, research findings. The knowledge index tracks all of it so you never lose context between sessions.
+The knowledge index (`docs/knowledge-index.yaml` per project) is **essential infrastructure, not optional polish**. It tracks every brief, architecture doc, roadmap, and research finding so future sessions never start blind.
 
-- **`/knowledge-index`** — run at session start to see all available project knowledge
-- All doc-producing skills (`/ideate`, `/research`, `/architecture`, `/roadmap`, `/brief`) update `docs/knowledge-index.yaml` automatically after writing docs
-- Before researching, check if a brief already exists. Don't duplicate work.
+- **`/knowledge-index`** — runs at the start of every non-fresh session. Skip only on truly brand-new projects.
+- All doc-producing skills (`/ideate`, `/research`, `/architecture`, `/roadmap`, `/brief`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) update the index after writing.
+- All doc-consuming skills (`/design`, `/implement`, `/implement-orchestrator`, `/update-documentation`, `/doc-review`) check the index FIRST before doing work.
+- All audit/review skills (`/security-review`, `/repo-eval`, `/bold-refactor`, `/test-quality`, `/cruft-cleaner`, `/e2e-test-design`) load the index for architectural context.
+
+**Doc frontmatter convention:** Every indexable planning doc declares `description`, `type`, `updated` in YAML frontmatter at the top. See `knowledge-index/SKILL.md` → "Indexable Doc Frontmatter Convention" for the spec.
 
 ## How to Use
 
-1. **Start a new conversation.** Describe your idea.
+1. **Start a new conversation.** Describe your idea or task.
 2. **Run `/knowledge-index`** to see what context already exists for this project.
-3. **Type the slash command** for the current step (e.g., `/ideate`).
-3. **The skill guides you.** It asks questions, researches, produces docs.
-4. **You decide when to advance.** Each skill has checkpoints. Say "this is solid" to move on, or "let's research more" to go deeper.
-5. **Repeat** through the pipeline until the project ships.
+3. **Type the slash command** for the current step (e.g., `/ideate` for a new project, or whatever the pipeline says is next).
+4. **The skill guides you.** It asks questions, researches, produces docs.
+5. **You decide when to advance.** Each skill has checkpoints. Say "this is solid" to move on, or "let's research more" to go deeper.
+6. **Repeat** through the pipeline until the project ships.
 
 ## Skills
 
-### Custom (this repo)
+All skills are first-party. Install/run from the top-level skill directories.
+
+### Pipeline & Planning
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
-| `/knowledge-index` | Session start | Shows all available project knowledge |
+| `/knowledge-index` | Session start | Loads all available project knowledge |
 | `/ideate` | 1. Define | North star + research plan |
-| `/research` | 2. Research | Primer doc + auto-loading reference skill. Updates knowledge index. |
+| `/research` | 2. Research | Brief + auto-loading reference skill. Updates knowledge index. |
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
-| `/brief` | 5. Per phase | Curated domain brief for the builder |
-| `/doc-review` | Quality checkpoint + after design changes | Planning doc consistency report (cascading: system → modules) |
 
-### Adopted (from [nklisch/skills](https://github.com/nklisch/skills))
+### Per Phase
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
-| `/design` | 6. Per phase | Implementation spec (interfaces, types, acceptance criteria) |
-| `/implement` | 7. Per phase | Code + tests (<20 files) |
-| `/implement-orchestrator` | 7. Per phase | Code + tests (parallel agents, 20+ files) |
-| `/update-documentation` | 9. Per phase | Docs synced to code changes |
-| `/refactor-design` | Quality checkpoint | Refactor plan |
-| `/extract-patterns` | Quality checkpoint | Pattern documentation |
-| `/test-quality` | Quality checkpoint | Spec-driven tests |
-| `/security-review` | Pre-deploy | Scored security report |
-| `/cruft-cleaner` | As needed | Dead code removal |
-| `/bold-refactor` | As needed | Architectural simplification |
-| `/e2e-test-design` | As needed | End-to-end test suite design |
-| `/feature` | As needed | Quick extension brief |
-| `/expand` | As needed | Scope expansion |
-| `/release` | As needed | Changelog + release |
-| `/repo-eval` | As needed | Codebase scoring |
+| `/brief` | 5. | Curated domain brief for the builder |
+| `/design` | 6. | Implementation spec (interfaces, types, acceptance criteria) |
+| `/implement` | 7. | Code + tests (<20 files) |
+| `/implement-orchestrator` | 7. | Code + tests (parallel agents, 20+ files) |
+| `/update-documentation` | 9. | Docs synced to code changes; frontmatter verified |
+
+### Quality Checkpoints
+
+| Skill | When | What it produces |
+|-------|------|-----------------|
+| `/doc-review` | Every 2-4 phases + after design changes | Planning doc consistency report (cascading: system → modules) |
+| `/refactor-design` | Every 2-4 phases | Refactor plan |
+| `/extract-patterns` | Every 2-4 phases | Pattern documentation |
+| `/test-quality` | Every 2-4 phases | Spec-driven tests |
+
+### Pre-Deploy
+
+| Skill | What it produces |
+|-------|-----------------|
+| `/security-review` | Scored security report — address Critical/High before deploying |
+
+### As-Needed
+
+| Skill | When | What it produces |
+|-------|------|-----------------|
+| `/cruft-cleaner` | Codebase has accumulated AI bloat | Dead-code/comment removal |
+| `/bold-refactor` | Architectural simplification opportunity | Refactor proposal |
+| `/feature` | Quick extension outside the roadmap | Feature brief |
+| `/expand` | Scope expansion for a subsystem | Expansion doc |
+| `/repo-eval` | Want a multi-dimensional view | Codebase scorecard |
+| `/e2e-test-design` | Building test coverage | E2E test design |
+| `/release` | Cutting a release | Changelog + release notes |
 
 ### Auto-Loading Principles
 
@@ -113,27 +141,30 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 ## Key Rules
 
-1. **Research before design.** Don't make architecture decisions based on assumptions.
-2. **Each doc has one job.** North star = vision. Architecture = how. Roadmap = phases. No duplication.
-3. **Every phase ships with tests.** A phase is done when its PR merges with CI green.
-4. **Never `terraform apply` locally.** CI only.
-5. **Never commit secrets.**
-6. **Quality checkpoint every 2-4 phases.** Refactor + patterns + test gaps.
-7. **Security review before deploy.** No Critical/High findings.
+1. **Load the knowledge index first.** Every non-fresh session starts with `/knowledge-index`.
+2. **Research before design.** Don't make architecture decisions based on assumptions.
+3. **Each doc has one job.** North star = vision. Architecture = how. Roadmap = phases. No duplication.
+4. **Every phase ships with tests.** A phase is done when its PR merges with CI green.
+5. **Never `terraform apply` locally.** CI only.
+6. **Never commit secrets.**
+7. **Quality checkpoint every 2-4 phases.** Refactor + patterns + test gaps.
+8. **Security review before deploy.** No Critical/High findings.
 
 ## Installation
 
 ```bash
 # Copy all skills to your personal skills folder
-cp -r knowledge-index ~/.claude/skills/
-cp -r ideate ~/.claude/skills/
-cp -r architecture ~/.claude/skills/
-cp -r roadmap ~/.claude/skills/
-cp -r brief ~/.claude/skills/
+for d in knowledge-index ideate research architecture roadmap brief doc-review \
+         design implement implement-orchestrator update-documentation \
+         refactor-design extract-patterns test-quality \
+         security-review cruft-cleaner bold-refactor feature expand \
+         repo-eval e2e-test-design release \
+         design-principles implementation-principles; do
+  cp -r "$d" ~/.claude/skills/
+done
 cp -r principles/build-process ~/.claude/skills/
-cp -r vendor/nklisch/* ~/.claude/skills/
 ```
 
-## Attribution
+## Acknowledgments
 
-Skills in `vendor/nklisch/` are from [nklisch/skills](https://github.com/nklisch/skills) by [@nklisch](https://github.com/nklisch). Vendored with attribution.
+A handful of these skills were originally inspired by the open suite from [nklisch/skills](https://github.com/nklisch/skills). Our versions have evolved independently — most notably with knowledge-index integration baked in across the suite — and we maintain them as our own. To compare against upstream, clone fresh from the source repo and diff against our top-level skills.

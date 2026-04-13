@@ -44,12 +44,33 @@ docs/*/architecture/      ← module-specific architecture docs
 *.md in docs/             ← any markdown in the docs tree
 ```
 
-For each document found, extract:
-- **File path**
-- **Title** (first `# heading`)
-- **Description** (first paragraph or frontmatter `description` field)
-- **Type**: north-star, architecture, roadmap, brief
-- **Last modified** (from git or file system)
+For each document found, extract these fields. **Frontmatter is the source of truth — fall back to body content only when frontmatter is missing.**
+
+| Field | Source (in priority order) |
+|-------|---------------------------|
+| **path** | The file path |
+| **title** | Frontmatter `title` → first `# heading` |
+| **description** | Frontmatter `description` → first paragraph |
+| **type** | Frontmatter `type` → inferred from path (`docs/architecture/` → architecture, `docs/briefs/` → brief, files starting with `north-star-` → north-star) |
+| **updated** | Frontmatter `updated` → git last-modified date → file mtime |
+| **blocks_phase** | Frontmatter `blocks_phase` (optional) |
+
+### Indexable Doc Frontmatter Convention
+
+Doc-producing skills (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) and any hand-written planning doc should include this minimum frontmatter:
+
+```yaml
+---
+description: One-line summary used in the knowledge index and search results
+type: north-star | architecture | roadmap | brief | primer | features | ideate | workon
+updated: 2026-04-13
+# Optional fields:
+title: Override for the title field (defaults to first # heading)
+blocks_phase: "5b"           # if this brief gates a specific roadmap phase
+---
+```
+
+`description` and `type` and `updated` are required for clean indexing. The other fields enrich the index entry. If a doc lacks this frontmatter, the scan falls back to inference — but inferred values are lower-quality, so authoring tools should always emit the frontmatter.
 
 ### Step 3: Present the Index
 

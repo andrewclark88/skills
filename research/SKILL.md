@@ -37,13 +37,23 @@ This skill handles two types of research:
 - Produce implementation-relevant guidance (not textbook summaries)
 - Ground findings in real data when available
 
+## Phase 0: Knowledge Index Check (HARD PRECONDITION)
+
+**Do not start research without this step.** Duplicated research is the #1 way knowledge layers rot.
+
+1. Read `docs/knowledge-index.yaml` (or run `/knowledge-index` if no file exists)
+2. Search the index for entries whose `description` or `title` overlaps with the research target
+3. **If a relevant brief exists:**
+   - Read it in full
+   - Decide one of: (a) the existing brief is sufficient — STOP, present the existing brief to the user and confirm, (b) the existing brief is incomplete — note specifically what's missing and proceed with research scoped to the gap, (c) the existing brief is stale (outdated facts, superseded by changes) — proceed with research and explicitly mark this as a refresh of the existing brief
+4. **If no relevant brief exists:** proceed to Phase 1
+5. Communicate the outcome to the user before starting Phase 1: "Index check complete. Found existing brief X / Found no existing brief / Found related brief Y, scoping research to gap."
+
 ## Phase 1: Scope the Research
 
-1. **Check the knowledge index** — run `/knowledge-index` or read `docs/knowledge-index.yaml`.
-   Does a brief already exist for this topic? Don't duplicate work.
-2. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
-3. Explore the codebase — find how the project currently handles the area being researched
-4. Define research questions:
+1. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
+2. Explore the codebase — find how the project currently handles the area being researched
+3. Define research questions:
    - What specific problem does this knowledge solve for the project?
    - What assumptions are we making that need verification?
    - What could we get wrong that would force a redesign?
@@ -123,10 +133,16 @@ sources disagree or are incomplete.
 
 ### 4a. Primer Document
 
-Write to the project's briefs/research directory.
+Write to the project's briefs/research directory. **Required: emit standard frontmatter at the top** so `/knowledge-index` regeneration picks it up.
 
 **For technology research:**
 ```markdown
+---
+description: {one-line summary — what was researched and key recommendation}
+type: brief
+updated: {today's date, YYYY-MM-DD}
+---
+
 # Research: {Topic}
 
 ## Context
@@ -154,6 +170,13 @@ Write to the project's briefs/research directory.
 
 **For domain research:**
 ```markdown
+---
+description: {one-line summary of what this brief covers}
+type: brief
+updated: {today's date, YYYY-MM-DD}
+blocks_phase: {phase number, if this brief gates a specific phase — optional}
+---
+
 # Brief: {Topic}
 
 ## Purpose

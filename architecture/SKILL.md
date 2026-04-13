@@ -99,9 +99,15 @@ Iterate until approved.
 
 ### Phase 4: Write Architecture
 
-Write `architecture.md`. Structure:
+Write `architecture.md`. **Required: emit standard frontmatter at the top** so `/knowledge-index` regeneration picks it up reliably without falling back to inference. Structure:
 
 ```markdown
+---
+description: {one-line summary of the architecture — what the system is and how it's organized}
+type: architecture
+updated: {today's date, YYYY-MM-DD}
+---
+
 # Architecture: {Project Name}
 
 *Last updated: {date}*

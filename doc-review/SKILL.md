@@ -71,8 +71,28 @@ Each discovered module gets its own pass. No hardcoded module list.
 | **System** | Project-wide planning docs |
 | **Module** | Module-specific planning docs (one set per discovered module) |
 
+**Step 5: Verify frontmatter compliance on every discovered doc.**
+
+Every indexable planning doc (north-star, architecture, roadmap, brief, primer, features) should declare standard frontmatter at the top:
+
+```yaml
+---
+description: One-line summary
+type: north-star | architecture | roadmap | brief | primer | features
+updated: YYYY-MM-DD
+---
+```
+
+For each discovered doc, check:
+- Frontmatter present? If missing entirely → flag as **Medium**: "Missing frontmatter — `/knowledge-index` falls back to inference, producing lower-quality entries"
+- `description` field present and non-empty? If missing → **Medium**: "Missing `description` field"
+- `type` field present with valid value? If missing → **Medium**: "Missing `type` field"
+- `updated` field present and not absurdly old (>1 year suggests forgotten)? If missing → **Medium**: "Missing `updated` field"
+
+These findings go in the report (Phase 3) and get fixed in Phase 4 (along with the index update in Phase 5).
+
 **Present the inventory:**
-"Found N system-level docs and M module docs across K modules. Running cascading review."
+"Found N system-level docs and M module docs across K modules. Frontmatter compliance: X/total docs fully compliant. Running cascading review."
 
 ---
 
