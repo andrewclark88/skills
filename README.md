@@ -29,6 +29,9 @@ PROJECT START (truly new project)
 ┌── PER PHASE ──────────────────────────────────────────────────────┐
 │                                                                   │
 │  /brief          → Write the blocking brief (if one is listed).   │
+│  /update-roadmap → Revisit phases after building (scope shifts,   │
+│                    new blockers, splits/merges). Run every 2-4     │
+│                    phases or when the plan no longer fits reality.  │
 │  /design         → Detailed implementation spec (interfaces,      │
 │                    types, file paths, acceptance criteria).        │
 │  /implement      → Build it. Code + tests. (Or /implement-        │
@@ -99,6 +102,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 | Skill | Step | What it produces |
 |-------|------|-----------------|
 | `/brief` | 5. | Curated domain brief for the builder |
+| `/update-roadmap` | After building phases | Revised roadmap reflecting what was learned |
 | `/design` | 6. | Implementation spec (interfaces, types, acceptance criteria) |
 | `/implement` | 7. | Code + tests (<20 files) |
 | `/implement-orchestrator` | 7. | Code + tests (parallel agents, 20+ files) |
@@ -136,8 +140,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 | Principle | Enforces |
 |-----------|----------|
 | `build-process` | The methodology. Always loaded. |
-| `design-principles` | Ports & Adapters, Single Source of Truth, Generated Contracts. |
-| `implementation-principles` | Fail Fast, guard clauses, data-driven extensibility. |
+| `engineering-principles` | Ports & Adapters, Single Source of Truth, Generated Contracts, Fail Fast. Design-time and implementation-time in one skill. |
 
 ## Key Rules
 
@@ -155,11 +158,10 @@ All skills are first-party. Install/run from the top-level skill directories.
 ```bash
 # Copy all skills to your personal skills folder
 for d in knowledge-index ideate research architecture roadmap brief doc-review \
-         design implement implement-orchestrator update-documentation \
-         refactor-design extract-patterns test-quality \
+         update-roadmap design implement implement-orchestrator \
+         update-documentation refactor-design extract-patterns test-quality \
          security-review cruft-cleaner bold-refactor feature expand \
-         repo-eval e2e-test-design release \
-         design-principles implementation-principles; do
+         repo-eval e2e-test-design release engineering-principles; do
   cp -r "$d" ~/.claude/skills/
 done
 cp -r principles/build-process ~/.claude/skills/

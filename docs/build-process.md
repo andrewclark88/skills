@@ -144,6 +144,25 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 ---
 
+## When to Use `/brief` vs `/feature` vs `/expand`
+
+These three skills all produce scoping documents but serve different purposes:
+
+| Situation | Skill | Why |
+|-----------|-------|-----|
+| A roadmap phase lists a **blocking brief** — domain knowledge is needed before building | `/brief` | Domain research for the knowledge layer. Produces a curated brief optimized for agent consumption. Updates the knowledge index. |
+| You need a **quick software extension** outside the core roadmap — self-contained, typically small | `/feature` | Software-dev scoped. Explores the codebase, interviews about requirements, produces a feature brief that `/design` consumes. Doesn't change the roadmap. |
+| You're adding a **new subsystem or capability** that changes the project's scope | `/expand` | Larger than a feature, smaller than re-running `/ideate`. Updates foundation docs (north star, architecture) and feeds into a roadmap update. |
+
+**Decision tree:**
+- Does this change the project's architecture or scope? → `/expand`
+- Does this need domain knowledge research (rules, APIs, protocols)? → `/brief`
+- Is this a self-contained software addition within existing architecture? → `/feature`
+
+If you're unsure, start with `/brief` — domain knowledge never hurts, and `/feature` can consume a brief's output.
+
+---
+
 ## Step Details
 
 ### 1. Define the Project (`/ideate`)
@@ -520,6 +539,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/architecture` | Step 3 (after north star + domain briefs) | Architecture doc: modules, data flow, conventions |
 | `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |
 | `/brief` | Step 5 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
+| `/update-roadmap` | After building phases, when scope or blockers have shifted | Revised roadmap reflecting what was learned |
 | `/design` | Step 6 (per phase) | Design doc: interfaces, types, file paths, acceptance criteria |
 | `/implement` | Step 7 (per phase, <20 files) | Code + tests |
 | `/implement-orchestrator` | Step 7 (per phase, 20+ files) | Code + tests (parallel agents) |
