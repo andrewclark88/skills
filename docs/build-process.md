@@ -193,7 +193,7 @@ Technical design, informed by the north star AND domain briefs. Now you know eno
 
 **Prerequisites:** North star and relevant domain briefs MUST exist. If you discover during architecture that a domain isn't understood, stop and run `/research` first.
 
-**Ground every decision in research.** Not "we'll use BigQuery" but "we'll use BigQuery because the domain brief confirmed it's the existing platform."
+**Ground every decision in research.** Not "we'll use X" but "we'll use X because the domain brief confirmed it fits our constraints."
 
 ### Document Types & Ownership
 
@@ -409,10 +409,10 @@ terraform {
 When deploying into a GCP project (or AWS account) that other teams use:
 
 **Prefix all resources.** Every resource your project creates should be namespaced:
-- GCS buckets: `<project-name>-<purpose>` (e.g., `grimoire-briefs`)
-- Service accounts: `<project-name>-<role>` (e.g., `grimoire-server`)
-- Secrets: `<project-name>-<secret>` (e.g., `grimoire-bearer-token`)
-- Cloud Run services: `<project-name>` (e.g., `grimoire`)
+- GCS buckets: `<project-name>-<purpose>` (e.g., `myproject-briefs`)
+- Service accounts: `<project-name>-<role>` (e.g., `myproject-server`)
+- Secrets: `<project-name>-<secret>` (e.g., `myproject-bearer-token`)
+- Cloud Run services: `<project-name>` (e.g., `myproject`)
 
 **Never use wildcard IAM.** Don't grant project-level `roles/owner` or `roles/editor` to service accounts. Use the narrowest role on the specific resource.
 
@@ -433,7 +433,7 @@ resource "google_storage_bucket" "data" {
 ```hcl
 labels = {
   managed_by = "terraform"
-  project    = "grimoire"
+  project    = "<project-name>"
   team       = "data"
 }
 ```

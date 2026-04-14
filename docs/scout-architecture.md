@@ -55,7 +55,7 @@ Generate 8-12 search vectors across three types:
 
 **Direct vectors** — straight from the project description:
 - Key technologies mentioned ("MCP servers," "BLE protocol")
-- The core problem being solved ("MTG game simulation," "measurement platform")
+- The core problem being solved ("game simulation engine," "data platform")
 - Named systems or tools the project builds on
 
 **Adjacent vectors** — neighboring fields or approaches:

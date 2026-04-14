@@ -79,8 +79,8 @@ Explore the design space with the user. This is a conversation, not a form.
 - **Technology choices** — language, framework, key libraries. Justify each with research.
 - **What's deferred** — what are we explicitly NOT building yet, and why?
 
-**Ground every decision in research.** Don't say "we'll use BigQuery" — say "we'll use BigQuery
-because the domain brief on the data warehouse confirmed it's the existing platform (see `data-model.md`)."
+**Ground every decision in research.** Don't say "we'll use X" — say "we'll use X
+because the domain brief confirmed it fits our constraints (see `relevant-brief.md`)."
 
 **Challenge your own assumptions.** For every design decision, ask: "Do we know this is the right
 approach, or are we assuming?" If assuming, flag it as a research need or an open question.

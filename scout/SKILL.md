@@ -68,7 +68,7 @@ quality of the entire scout — spend real effort here.
 
 **Direct vectors** — straight from the project description:
 - Key technologies mentioned ("MCP servers," "BLE protocol")
-- The core problem being solved ("MTG game simulation," "measurement platform")
+- The core problem being solved ("game simulation engine," "data platform")
 - Named systems or tools the project builds on
 
 **Adjacent vectors** — neighboring fields or approaches:

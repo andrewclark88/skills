@@ -51,22 +51,22 @@ Every page has these fields. Each is filterable, indexable, lint-checkable.
 
 `content_type` declares additional type-specific frontmatter. The universal schema is the floor; types extend it.
 
-Examples from the reference implementations:
+Examples showing how different projects extend the universal schema:
 
-| Project | content_type | Adds |
-|---------|--------------|------|
-| grimoire | `brief` | (universal only) |
-| grimoire | `history` | `parent_slug`, `change_log[]` |
-| grimoire | `technique` | `inputs[]`, `outputs[]`, `assumptions[]` |
-| edh-engine | `archetype` | `macro`, `payoff_state`, `combo_lines[]`, dimensional profile |
-| edh-engine | `combo` | `cards[]`, `total_mana`, `speed`, `pieces`, `vulnerabilities[]` |
-| edh-engine | `commander` | `color_identity`, `partner`, `archetypes[]`, `dimensions{}` |
+| content_type | Adds |
+|--------------|------|
+| `brief` | (universal only) |
+| `history` | `parent_slug`, `change_log[]` |
+| `technique` | `inputs[]`, `outputs[]`, `assumptions[]` |
+| `entity-profile` | `strategy`, `goal_state`, `recipe_lines[]`, dimensional profile |
+| `recipe` | `components[]`, `total_cost`, `speed`, `pieces`, `risks[]` |
+| `character` | `traits[]`, `role`, `profiles[]`, `dimensions{}` |
 
 **Validation:** sync pipeline rejects pages declaring a `content_type` but missing required type-specific fields. Add new content types by extending the schema doc + a small validator.
 
 **When to add a content_type:**
-- A new entity has a fundamentally different shape (combo vs card)
-- Type-specific queries matter (filter all combos by speed)
+- A new entity has a fundamentally different shape (recipe vs component)
+- Type-specific queries matter (filter all recipes by speed)
 - Different validation rules apply
 
 **When NOT to:**
@@ -81,14 +81,14 @@ Freeform tags drift. **Every tag has a namespace.**
 
 ### Namespace pattern: `<namespace>:<value>`
 
-| Project | Namespace | Examples |
-|---------|-----------|----------|
-| grimoire | `domain:` | `domain:competitive-intel`, `domain:product` |
-| grimoire | `topic:` | `topic:pricing`, `topic:roadmap` |
-| grimoire | `entity:` | `entity:acme-corp`, `entity:salesforce` |
-| edh-engine | `category:` | `category:library-exile`, `category:infinite-mana` |
-| edh-engine | `macro:` | `macro:turbo`, `macro:stax` |
-| edh-engine | `vulnerability:` | `vulnerability:counterspell`, `vulnerability:graveyard-hate` |
+| Namespace | Examples |
+|-----------|----------|
+| `domain:` | `domain:competitive-intel`, `domain:product` |
+| `topic:` | `topic:pricing`, `topic:roadmap` |
+| `entity:` | `entity:acme-corp`, `entity:widget-co` |
+| `category:` | `category:data-pipeline`, `category:batch-job` |
+| `type:` | `type:batch`, `type:streaming` |
+| `risk:` | `risk:timeout`, `risk:data-loss` |
 
 ### Rules
 
@@ -164,10 +164,10 @@ Tags answer "all pages about X" (filter). The graph answers:
 
 The frontmatter format is stable across all stages — only the query layer changes.
 
-### Reference Implementations
+### Scale Examples
 
-- **edh-engine:** v1 in-memory NetworkX, rebuilt from markdown frontmatter on startup. Local, no infra.
-- **grimoire:** v2 BigQuery edges table + recursive CTE. Optional graphology cache for sub-ms traversal. Cloud-native, server stateless.
+- **Local project (<1K pages):** v1 in-memory NetworkX, rebuilt from markdown frontmatter on startup. No infra needed.
+- **Cloud-native server (1K–50K pages):** v2 relational edges table + recursive CTE. Optional graphology cache for sub-ms traversal. Server stays stateless.
 
 Same conceptual graph, different backends.
 
@@ -266,9 +266,9 @@ If a knowledge layer might serve modules that ship independently:
 
 ---
 
-## Reference Implementations
+## Reference Configurations by Scale
 
-| Project | File | Storage choice |
-|---------|------|----------------|
-| **grimoire** | `docs/architecture/knowledge-store.md` (Part 1) | GCS + BigQuery (edges table + recursive CTE) |
-| **edh-engine** | `docs/briefs/knowledge-layer-schema.md` | Filesystem + JSON index + in-memory NetworkX |
+| Scale | Storage choice |
+|-------|----------------|
+| **Cloud-native server** (1K–50K pages) | Object storage (GCS/S3) + columnar DB (BigQuery/Snowflake) with edges table + recursive CTE |
+| **Local tool** (<1K pages) | Filesystem + JSON index + in-memory graph (NetworkX/graphology) |

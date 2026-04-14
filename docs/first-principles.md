@@ -37,7 +37,7 @@ Separate verified knowledge from assumption. What survives skepticism?
 
 **Why:** The most dangerous assumptions are the ones nobody thinks to question — "everyone knows" claims, training data, past experience applied to new contexts. Unquestioned assumptions become invisible constraints.
 **How:** For each thing you believe about a domain, ask: what's the source? Has the source been wrong before? Am I applying experience from a different context? Would this still be true if the context changed? Only verified, sourced claims count as foundations.
-**Example:** "BigQuery handles joins efficiently" — is that always true? For what data volumes? With what table structures? What does the documentation actually say about join performance at our scale? Verify before designing around the assumption.
+**Example:** "This database handles joins efficiently" — is that always true? For what data volumes? With what table structures? What does the documentation actually say about join performance at your scale? Verify before designing around the assumption.
 
 ---
 

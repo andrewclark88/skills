@@ -100,7 +100,7 @@ researching than to discover mid-build that the domain works differently than as
 
 Common signals that research is needed:
 - Complex protocols (BLE, MCP, game rules, financial regulations)
-- External APIs the project integrates with (Moxfield, Scryfall, BigQuery)
+- External APIs the project integrates with
 - Hardware or physical systems (sensors, boards, actuators)
 - Analytical domains (statistics, causal inference, ML techniques)
 - Regulatory or compliance requirements

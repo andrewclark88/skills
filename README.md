@@ -157,7 +157,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 
 ### Knowledge Patterns
 
-Cross-project patterns for building knowledge systems. Used by grimoire, edh-engine, and any project with a knowledge layer.
+Cross-project patterns for building knowledge systems. Used by any project with a knowledge layer.
 
 | Doc | What it covers |
 |-----|---------------|

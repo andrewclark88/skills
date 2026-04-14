@@ -293,9 +293,9 @@ def lint():
 
 ---
 
-## Reference Implementations
+## Reference Implementations by Scale
 
-| Project | File | Generation choice |
-|---------|------|-------------------|
-| **grimoire** | `docs/architecture/knowledge-store.md` (Part 3) | Cloud Scheduler + Cloud Run Job; brief/refresh tool; full lint suite (Phase 9b); LLM enrichment via tool-maintained briefs |
-| **edh-engine** | `docs/briefs/knowledge-layer-schema.md` | Pipeline-generated from data sources (TopDeck, Moxfield, Spellbook); LLM enrichment for archetype/commander pages; local cron for refresh |
+| Scale | Typical setup | Generation choice |
+|-------|---------------|-------------------|
+| **Cloud-native project** (deployed service, multiple data sources) | Cloud Scheduler + containerized job (Cloud Run Job, Lambda, ECS task) | Scheduled refresh via cloud job; dedicated brief/refresh tooling; full lint suite; LLM enrichment via tool-maintained briefs |
+| **Local simulation engine** (single-user, external data sources) | Local cron / launchd / systemd timer | Pipeline-generated from external data sources (APIs, scraped datasets); LLM enrichment for entity pages; local cron for refresh |

@@ -204,7 +204,7 @@ Two consumer-facing tools cover most needs.
 }
 ```
 
-**Output:** Metadata + descriptions only. Consumer reads full content via separate page-fetch (e.g., `brief/{slug}` in grimoire).
+**Output:** Metadata + descriptions only. Consumer reads full content via a separate page-fetch endpoint (e.g., `knowledge/{slug}`).
 
 ### `knowledge/graph`
 
@@ -287,9 +287,11 @@ graph(from_slug, direction, hops, relationship_filter=None) -> Subgraph:
 
 ---
 
-## Reference Implementations
+## Scaling Reference
 
-| Project | File | Backend | Stage |
-|---------|------|---------|-------|
-| **grimoire** | `docs/architecture/knowledge-store.md` (Part 2) | BigQuery SEARCH() + recursive CTE; vector via VECTOR_SEARCH at v2 | v1 (BQ keyword) |
-| **edh-engine** | `docs/briefs/knowledge-layer-schema.md` | In-memory Python; sentence-transformers at v2; cross-encoder at v3 | v1 (in-memory + JSON index) |
+| Scale | Typical Backend | Search Ladder Stage |
+|-------|-----------------|---------------------|
+| **Small** (<100 pages) | In-memory index (Python/TS), JSON file on disk | v1 — metadata + keyword |
+| **Medium** (100-500 pages) | Database with full-text search (e.g., BigQuery SEARCH(), Postgres tsvector) | v1 — metadata + keyword |
+| **Large** (500-5000 pages) | DB-native vector search (e.g., pgvector, BQ VECTOR_SEARCH) + BM25, merged via RRF | v2 — + vector embeddings |
+| **Very large** (5000+ pages, high-stakes) | v2 stack + cross-encoder reranker on top-N candidates | v3 — + cross-encoder reranking |

@@ -43,7 +43,7 @@ Gaps found → stubs created → research fills stubs → new briefs shift the b
 Embeddings from the retrieval pattern's v2. Graph from typed cross-references. Lint schedule for periodic runs. The edge creator analyzes existing infrastructure rather than building parallel systems.
 
 ### 6. Portable across knowledge-bearing projects
-Built for grimoire initially, but the mechanism (embed, cluster, compare to taxonomy, find gaps) works for any project with a knowledge layer.
+The mechanism (embed, cluster, compare to taxonomy, find gaps) works for any project with a knowledge layer.
 
 ## Domain Model
 

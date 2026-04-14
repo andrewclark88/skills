@@ -1,6 +1,6 @@
 # Knowledge Layer: Overview
 
-> **Cross-project pattern for building a knowledge layer.** Storage-agnostic, language-agnostic, deployment-agnostic. Reference implementations: grimoire (`docs/architecture/knowledge-store.md`), edh-engine (`docs/briefs/knowledge-layer-schema.md`).
+> **Cross-project pattern for building a knowledge layer.** Storage-agnostic, language-agnostic, deployment-agnostic.
 
 ---
 
@@ -130,12 +130,12 @@ The knowledge layer should work with multiple storage backends (filesystem, BQ, 
 
 ## Reference Implementations
 
-| Project | Doc | Backend | Scale |
-|---------|-----|---------|-------|
-| **grimoire** | `docs/architecture/knowledge-store.md` | GCS (content) + BigQuery (index + edges) | Tens to hundreds, growing |
-| **edh-engine** | `docs/briefs/knowledge-layer-schema.md` | Filesystem (markdown + JSON) + in-memory NetworkX | 800-1700 pages, mostly pipeline-generated |
+| Scale | Backend | Example Use Case |
+|-------|---------|-----------------|
+| Small (tens to hundreds) | GCS (content) + BigQuery (index + edges) | MCP knowledge server — cloud-native, multi-user |
+| Medium (hundreds to thousands) | Filesystem (markdown + JSON) + in-memory NetworkX | Local simulation engine — pipeline-generated entity pages |
 
-These are the same pattern, applied at different scales with different storage choices. They cross-pollinated as they evolved — the typed-relationships and namespaced-tags ideas came from edh-engine; the search ladder formalization came from grimoire. Use both as case studies.
+The same pattern applies at different scales with different storage choices. Typed-relationships and namespaced-tags work at any scale; the search ladder formalizes how retrieval evolves as the corpus grows.
 
 ---
 

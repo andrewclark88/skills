@@ -78,7 +78,7 @@ blocks_phase: "5b"           # if this brief gates a specific roadmap phase
 `north-star`, `architecture`, `roadmap`, `brief`, `primer`, `features`, `ideate`, `workon`, `module-rules`
 
 **Extended types** (project-specific — valid when a project's domain warrants them):
-- `commander-brief` — auto-generated per-entity dossiers (edh-engine uses these for commander profiles)
+- `entity-brief` — auto-generated per-entity dossiers (e.g., entity profiles, product pages)
 - `pattern` — documented code patterns (produced by `/extract-patterns`)
 - `refactor-plan` — refactoring proposals (produced by `/refactor-design`)
 - `feature` — feature briefs (produced by `/feature`)
@@ -101,20 +101,17 @@ Planning Docs:
   • knowledge-store.md — Knowledge store architecture
 
 Briefs (domain knowledge):
-  • turn-structure.md — MTG turn phases/steps, priority loop, state machine (411 lines)
-  • edh-tournament-rules.md — London mulligan, commander tax, win/loss conditions
-  • meta-card-interactions.md — Trigger layering, APNAP, storm, LED timing, win cons
-  • meta-seed-pipeline.md — TopDeck.gg → Moxfield → Scryfall pipeline
+  • domain-rules.md — Core domain rules, state machine, interaction patterns (411 lines)
+  • api-integration.md — External API access patterns and rate limits
   • data-ingestion.md — All data source access patterns
   • knowledge-retrieval-patterns.md — LLM Wiki, MemPalace, MCP ecosystem research
 
-Commander Briefs (auto-generated):
-  • 32 briefs in docs/briefs/commanders/ — tournament stats + cEDH DDB data
+Entity Briefs (auto-generated):
+  • 32 briefs in docs/briefs/entities/ — auto-generated entity profiles from data pipeline
 
 Module-Specific Briefs:
-  • docs/ds-engine/briefs/technique-inventory-eda.md — 12 EDA techniques
-  • docs/ds-engine/briefs/technique-inventory-causal.md — 10 causal techniques
-  • docs/ds-engine/briefs/decision-dag-design.md — DAG routing patterns
+  • docs/module-a/briefs/technique-inventory.md — 12 analysis techniques
+  • docs/module-a/briefs/decision-dag-design.md — DAG routing patterns
 ```
 
 ### Step 4: Recommend What to Read
@@ -123,9 +120,9 @@ Based on the current conversation context (what the user is about to work on), r
 which documents to load:
 
 ```
-For Phase 2a (game state models), I recommend reading:
-  1. edh-tournament-rules.md — commander zone, mulligan, life total rules
-  2. meta-card-interactions.md — card complexity the models must handle
+For Phase 2a (core models), I recommend reading:
+  1. domain-rules.md — core rules the models must handle
+  2. api-integration.md — external data the models will consume
   3. roadmap.md Phase 2a — exact scope and acceptance criteria
 ```
 
@@ -139,22 +136,22 @@ When the index is generated, write it to `docs/knowledge-index.yaml`:
 
 documents:
   - path: docs/architecture/north-star.md
-    title: "North Star: EDH Engine"
+    title: "North Star: My Project"
     type: north-star
-    description: "Vision, principles, domain model for the EDH simulation engine"
+    description: "Vision, principles, domain model for the project"
     updated: 2026-04-08
 
-  - path: docs/briefs/turn-structure.md
-    title: "Brief: MTG Turn Structure"
+  - path: docs/briefs/domain-rules.md
+    title: "Brief: Domain Rules"
     type: brief
-    description: "Turn phases/steps, priority loop, state machine diagram, multiplayer specifics"
+    description: "Core domain rules, state machine, interaction patterns"
     updated: 2026-04-08
     blocks_phase: "2b"
 
-  - path: docs/briefs/commanders/kraum-ludevics-opus_tymna-the-weaver.md
-    title: "Commander Brief: Kraum/Tymna"
-    type: commander-brief
-    description: "Kraum Tymna Breach archetype — 131 entries, 57.1% WR, strategy + card breakdown"
+  - path: docs/briefs/entities/example-entity.md
+    title: "Entity Brief: Example Entity"
+    type: entity-brief
+    description: "Auto-generated entity profile — stats, strategy, breakdown"
     updated: 2026-04-08
 ```
 

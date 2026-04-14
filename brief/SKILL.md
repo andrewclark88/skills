@@ -184,7 +184,7 @@ For external systems the project integrates with.
 - Endpoint documentation with request/response examples
 - Authentication and rate limiting
 - Error handling patterns
-- Examples: `moxfield-api.md`, `scryfall-api.md`, `data-ingestion.md`
+- Examples: `external-api.md`, `data-ingestion.md`
 
 ### Domain Knowledge Briefs
 For analytical or technical domains the project operates in.

@@ -44,7 +44,7 @@ Top finds get mini-assessments: tech stack, project health, what worked, what fa
 ## Domain Model
 
 ### Search Vector
-A specific direction to search in, derived from the north star, project context, or user input. Examples: "MTG simulation engines," "BLE climbing board projects," "MCP server implementations." Scout generates multiple vectors to ensure breadth.
+A specific direction to search in, derived from the north star, project context, or user input. Examples: "game simulation engines," "IoT sensor projects," "MCP server implementations." Scout generates multiple vectors to ensure breadth.
 
 ### Finding
 A single piece of prior art discovered during scouting. Could be a GitHub repo, blog post, paper, HN discussion, or entry in a knowledge base. Each finding has a source type, a relevance assessment, and a brief description.
