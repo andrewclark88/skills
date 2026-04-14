@@ -9,8 +9,8 @@ This document is the source of truth. It's enforced through three layers:
 | File | Scope | Purpose |
 |------|-------|---------|
 | `~/.claude/CLAUDE.md` | Global — always loaded in every conversation | Hard guardrails. Cannot be dropped even in long sessions. |
-| `/dev/CLAUDE.md` | Loaded when working in any project under `/dev/` | Points to this document. |
-| `/dev/skills/docs/build-process.md` | This file | Full methodology, reference, and checklists. Human-readable and portable. |
+| Project-level `CLAUDE.md` | Loaded when working in a project | Points to this document. |
+| `skills/docs/build-process.md` | This file | Full methodology, reference, and checklists. Human-readable and portable. |
 
 If the rules here conflict with a project-level doc, this document wins.
 
@@ -112,7 +112,7 @@ KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
   the first one on a project. This is non-negotiable — agents that skip
   it duplicate prior work and miss available context.
 
-  Doc-producing skills (/ideate, /research, /architecture, /brief,
+  Doc-producing skills (/ideate, /scout, /research, /architecture, /brief,
   /roadmap, /refactor-design, /feature, /extract-patterns, /expand)
   update docs/knowledge-index.yaml after writing.
   Doc-maintaining skills (/update-documentation, /doc-review) update
@@ -132,7 +132,7 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 **How it works:**
 - `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
-- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
+- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
 - Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
 - The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
 
@@ -169,9 +169,9 @@ If you're unsure, start with `/brief` — domain knowledge never hurts, and `/fe
 
 ### 1. Define the Project (`/ideate`)
 
-Interactive workshop. Explore the idea, refine it, produce a north star. Also identify what domains need research before architecture can be designed.
+Interactive workshop. Explore the idea, refine it, produce a north star. Also identify what domains need research before architecture can be designed. Auto-calls `/scout` for breadth-first prior art discovery — finding adjacent projects, approaches, and lessons learned before committing to a direction.
 
-**Produces:** `north-star.md` (vision, principles, domain model) + a research plan.
+**Produces:** `north-star.md` (vision, principles, domain model, research plan) + `scout-landscape.md` (prior art).
 
 **Does NOT produce architecture.** Architecture requires domain research first. Don't design how to build something until you understand the domain it operates in.
 
@@ -212,7 +212,8 @@ When content belongs in two places, put it in one and reference the other.
 - **Problem** — what's broken today
 - **Principles** — 5-7 rules that guide every decision
 - **Domain Model** — core concepts and their relationships
-- **Related Documents** — links to architecture + roadmap
+- **Research Plan** — domains that need `/research` before `/architecture`, with status
+- **Related Documents** — links to scout landscape, architecture, roadmap
 
 #### Architecture (`type: architecture`)
 
@@ -373,6 +374,21 @@ Before any production deployment:
 - **Repeatable processes.** Pipelines should re-run (new data, new releases, meta shifts). One-off scripts become recurring commands.
 - **Auto-generate, then enrich.** Generate what you can from existing data, layer in external sources, leave TODOs only for things requiring human judgment.
 - **Don't hand-write what can be researched.** Use `/research`, web search, API exploration, and data analysis before asking for manual input.
+
+---
+
+## Thinking Layer
+
+The pipeline's thinking-heavy skills (`/research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:
+
+1. **Open** — decompose the problem, question deeply, doubt what you know
+2. **Challenge** — invert the problem, seek falsification, trace consequences
+3. **Synthesize** — find leverage points, apply multiple lenses
+4. **Verify** — test your understanding, check your thinking mode
+
+**The Asymmetry Principle:** The cost of not going deep enough is much higher than the cost of going too deep. When in doubt, go deeper.
+
+See [`docs/first-principles.md`](first-principles.md) for the full primer.
 
 ---
 
