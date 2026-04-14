@@ -97,6 +97,12 @@ PROJECT START (truly new project — no existing docs)
 │  ├─ /cruft-cleaner         → remove dead code, AI bloat      │
 │  ├─ /bold-refactor         → find architectural              │
 │  │                           simplifications                  │
+│  ├─ /feature               → quick extension outside roadmap  │
+│  ├─ /expand                → scope expansion for subsystems   │
+│  ├─ /repo-eval             → multi-dimensional codebase       │
+│  │                           scoring                          │
+│  ├─ /e2e-test-design       → end-to-end test suite design     │
+│  ├─ /release               → changelog + release              │
 │  └───────────────────────────────────────────────────────────┘
 
 KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
@@ -105,7 +111,8 @@ KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
   it duplicate prior work and miss available context.
 
   Doc-producing skills (/ideate, /research, /architecture, /brief,
-  /roadmap) update docs/knowledge-index.yaml after writing.
+  /roadmap, /refactor-design, /feature, /extract-patterns, /expand)
+  update docs/knowledge-index.yaml after writing.
   Doc-maintaining skills (/update-documentation, /doc-review) update
   the index when they create, modify, or fix docs.
   Skills that consume context (/design, /implement, /brief, etc.)
@@ -123,7 +130,7 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 **How it works:**
 - `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
-- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) appends an entry to the index after writing.
+- Every skill that writes a doc (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
 - Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
 - The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
 
@@ -524,4 +531,8 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/security-review` | Pre-deploy | Scored security report |
 | `/cruft-cleaner` | As needed | Cleanup report + fixes |
 | `/bold-refactor` | As needed | Architectural simplification plan |
+| `/feature` | As needed | Feature brief for quick extensions outside roadmap |
+| `/expand` | As needed | Scope expansion doc for subsystems |
 | `/repo-eval` | As needed | Multi-dimensional codebase scoring |
+| `/e2e-test-design` | As needed | End-to-end test suite design |
+| `/release` | As needed | Changelog + release notes |

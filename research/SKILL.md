@@ -5,7 +5,7 @@ description: >
   Investigates deeply, evaluates options, and produces a domain brief + auto-loading reference skill.
   Use before designing features that depend on unfamiliar technology, when domain knowledge is
   needed for architecture decisions, or when assumptions need verification.
-  Based on nklisch/skills research skill, extended for domain research and knowledge indexing.
+  Extended for domain research and knowledge indexing.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, WebSearch, WebFetch, Agent, AskUserQuestion
 model: opus
@@ -18,8 +18,7 @@ findings and an auto-loading reference skill. You also update the project's know
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
-**Based on the research skill from [nklisch/skills](https://github.com/nklisch/skills), extended
-for domain research (protocols, game rules, analytical methods) and knowledge index integration.**
+**Extended for domain research (protocols, game rules, analytical methods) and knowledge index integration.**
 
 ## What This Covers
 
