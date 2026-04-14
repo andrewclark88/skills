@@ -72,6 +72,20 @@ blocks_phase: "5b"           # if this brief gates a specific roadmap phase
 
 `description` and `type` and `updated` are required for clean indexing. The other fields enrich the index entry. If a doc lacks this frontmatter, the scan falls back to inference — but inferred values are lower-quality, so authoring tools should always emit the frontmatter.
 
+### Standard vs Extended Types
+
+**Standard types** (used across all projects):
+`north-star`, `architecture`, `roadmap`, `brief`, `primer`, `features`, `ideate`, `workon`, `module-rules`
+
+**Extended types** (project-specific — valid when a project's domain warrants them):
+- `commander-brief` — auto-generated per-entity dossiers (edh-engine uses these for commander profiles)
+- `pattern` — documented code patterns (produced by `/extract-patterns`)
+- `refactor-plan` — refactoring proposals (produced by `/refactor-design`)
+- `feature` — feature briefs (produced by `/feature`)
+- `expansion` — scope expansion docs (produced by `/expand`)
+
+Projects may add their own types as needed. Document new types in the project's knowledge-index.yaml header comment so future sessions know they're intentional, not typos. The skill accepts any string for `type` — lint validates against a known list but treats unknowns as warnings, not errors.
+
 ### Step 3: Present the Index
 
 Organize by type and present:
