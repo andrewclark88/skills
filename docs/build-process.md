@@ -32,8 +32,10 @@ SESSION START (every session that isn't truly the first one on a project)
 PROJECT START (truly new project — no existing docs)
 │
 ├─ 1. Define the Project       /ideate
-│     └─ produces: north-star.md (vision, principles, domain model)
-│     └─ produces: research plan (domains needing briefs)
+│     └─ produces: north-star.md (vision, principles, domain model, research plan)
+│     └─ auto-calls /scout during ideation (breadth-first prior art discovery)
+│     └─ produces: scout-landscape.md (adjacent projects, patterns, lessons)
+│     └─ scout's research recommendations merge into the north star's research plan
 │
 ├─ 2. Research the Domain      /research (for each domain identified)
 │     └─ produces: domain briefs + auto-loading reference skills
@@ -535,6 +537,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 |-------|------|-----------------|
 | `/knowledge-index` | Start of every session | Shows all available project knowledge (briefs, docs) |
 | `/ideate` | Step 1 (project start) | North star + research plan |
+| `/scout` | Auto-called during /ideate + standalone + optionally from /expand | Landscape brief + research recommendations |
 | `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Domain brief + auto-loading reference skill |
 | `/architecture` | Step 3 (after north star + domain briefs) | Architecture doc: modules, data flow, conventions |
 | `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |

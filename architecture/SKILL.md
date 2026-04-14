@@ -18,6 +18,8 @@ defines how the system is built.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Challenge and Synthesize — to stress-test design decisions and build from verified foundations.
+
 **Prerequisites:** The north star and relevant domain briefs MUST exist. If they don't, tell the
 user to run `/ideate` and `/research` first. Architecture decisions made without domain research
 are assumptions, and assumptions cause rewrites.

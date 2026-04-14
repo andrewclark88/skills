@@ -54,6 +54,10 @@ Explore through natural conversation:
   (rethinking data flow, new infrastructure, changing core abstractions)?
 - **Dependencies** — does this require new libraries, services, or APIs? Run **research**
   first if the technology is unfamiliar.
+- **Prior art** — does this expansion touch unfamiliar domains or approaches? If so,
+  consider running `/scout` to map the landscape before committing to a direction.
+  Scout is especially valuable when the expansion introduces new technology, integration
+  points, or problem domains the project hasn't dealt with before.
 - **Constraints** — backward compatibility? Migration path for existing users/data?
   Performance implications?
 

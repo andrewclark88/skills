@@ -18,6 +18,8 @@ findings and an auto-loading reference skill. You also update the project's know
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Open and Challenge — to decompose domains deeply and stress-test assumptions during research.
+
 **Extended for domain research (protocols, game rules, analytical methods) and knowledge index integration.**
 
 ## What This Covers

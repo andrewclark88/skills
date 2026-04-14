@@ -1,0 +1,36 @@
+documents:
+  - path: docs/first-principles-north-star.md
+    title: "North Star: First-Principles Thinking Primer"
+    type: north-star
+    description: "Vision and principles for a thinking methodology primer that teaches deep, first-principles reasoning for use in research, ideation, and architecture phases"
+    updated: 2026-04-14
+  - path: docs/brief-first-principles-frameworks.md
+    title: "Brief: First-Principles Thinking Frameworks"
+    type: brief
+    description: "Survey of 14 established thinking frameworks distilled into 10 actionable thinking moves, with failure modes and implementation notes"
+    updated: 2026-04-14
+  - path: docs/first-principles-architecture.md
+    title: "Architecture: First-Principles Thinking Primer"
+    type: architecture
+    description: "Document structure (4 sections), move format (Why/How/Example), Open→Challenge→Synthesize→Verify rhythm, consumer skill integration"
+    updated: 2026-04-14
+  - path: docs/first-principles.md
+    title: "First-Principles Thinking Primer"
+    type: primer
+    description: "10 thinking moves in 4 phases (Open/Challenge/Synthesize/Verify), workflow with per-skill emphasis, guardrails. Referenced by /research, /ideate, /architecture, /brief, /roadmap"
+    updated: 2026-04-14
+  - path: docs/scout-north-star.md
+    title: "North Star: Scout"
+    type: north-star
+    description: "Vision for breadth-first prior art discovery skill — maps landscape of adjacent work, feeds research planning, auto-called during /ideate"
+    updated: 2026-04-14
+  - path: docs/scout-architecture.md
+    title: "Architecture: Scout"
+    type: architecture
+    description: "6-phase workflow, 3 search vector types (direct/adjacent/analogous), assessment format, landscape brief structure, integration with /ideate and /expand"
+    updated: 2026-04-14
+  - path: docs/knowledge-edge-north-star.md
+    title: "North Star: Knowledge-Edge Creator"
+    type: north-star
+    description: "Proactive gap discovery in knowledge bases — embeddings, clustering, external taxonomy, stubs as canonical gaps, self-expanding flywheel"
+    updated: 2026-04-14

@@ -16,6 +16,11 @@ PROJECT START (truly new project)
 │
 /ideate           → Define the project. North star (vision, principles, domain model).
                     Identify domains that need research.
+                    Auto-calls /scout for prior art discovery.
+
+/scout            → Breadth-first prior art discovery. Adjacent projects, approaches,
+                    patterns, lessons learned. Produces landscape brief + research
+                    recommendations. Also callable standalone.
 
 /research         → Research each domain deeply. Primers + auto-loading reference skills.
                     Repeat for every domain. Don't rush — assumptions cause rewrites.
@@ -92,7 +97,8 @@ All skills are first-party. Install/run from the top-level skill directories.
 | Skill | Step | What it produces |
 |-------|------|-----------------|
 | `/knowledge-index` | Session start | Loads all available project knowledge |
-| `/ideate` | 1. Define | North star + research plan |
+| `/ideate` | 1. Define | North star + research plan. Auto-calls `/scout`. |
+| `/scout` | 1.5 Scout | Landscape brief + research recommendations |
 | `/research` | 2. Research | Brief + auto-loading reference skill. Updates knowledge index. |
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
@@ -133,6 +139,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 | `/expand` | Scope expansion for a subsystem | Expansion doc |
 | `/repo-eval` | Want a multi-dimensional view | Codebase scorecard |
 | `/e2e-test-design` | Building test coverage | E2E test design |
+| `/scout` | Need to know what exists before deciding | Landscape brief + research recommendations |
 | `/release` | Cutting a release | Changelog + release notes |
 
 ### Auto-Loading Principles
@@ -141,6 +148,23 @@ All skills are first-party. Install/run from the top-level skill directories.
 |-----------|----------|
 | `build-process` | The methodology. Always loaded. |
 | `engineering-principles` | Ports & Adapters, Single Source of Truth, Generated Contracts, Fail Fast. Design-time and implementation-time in one skill. |
+
+### Thinking Layer
+
+| Doc | What it does |
+|-----|-------------|
+| [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves for deep reasoning. Loaded by `/research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`. |
+
+### Knowledge Patterns
+
+Cross-project patterns for building knowledge systems. Used by grimoire, edh-engine, and any project with a knowledge layer.
+
+| Doc | What it covers |
+|-----|---------------|
+| [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) | Overview — storage, retrieval, generation as three concerns |
+| [`docs/knowledge-storage-pattern.md`](docs/knowledge-storage-pattern.md) | Frontmatter schema, typed cross-references, knowledge graph, backends |
+| [`docs/knowledge-retrieval-pattern.md`](docs/knowledge-retrieval-pattern.md) | Tiered retrieval (L0-L3), metadata-first filtering, search ladder (v1-v3) |
+| [`docs/knowledge-generation-pattern.md`](docs/knowledge-generation-pattern.md) | Ingest, refresh, lint, LLM enrichment, provenance, lifecycle |
 
 ## Key Rules
 
@@ -157,7 +181,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 
 ```bash
 # Copy all skills to your personal skills folder
-for d in knowledge-index ideate research architecture roadmap brief doc-review \
+for d in knowledge-index ideate scout research architecture roadmap brief doc-review \
          update-roadmap design implement implement-orchestrator \
          update-documentation refactor-design extract-patterns test-quality \
          security-review cruft-cleaner bold-refactor feature expand \

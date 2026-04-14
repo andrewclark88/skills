@@ -19,6 +19,8 @@ happen before architecture can be designed.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Open and Synthesize — to deeply explore the problem space before converging on a definition.
+
 **You produce ONE document: `north-star.md`.** You also produce a research plan — a list of
 domains that need briefs before the next step (`/architecture`).
 
@@ -64,6 +66,26 @@ through it rather than skipping it.
 
 Iterate until confirmed.
 
+### Phase 1.5: Scout for Prior Art
+
+**Run `/scout` with the discovery summary.** Scout maps the landscape of adjacent projects,
+approaches, patterns, and lessons learned. It produces a landscape brief and research
+recommendations.
+
+This step is **not optional** — knowing what exists before defining a project is never wasted
+effort. Even finding nothing confirms you're in uncharted territory.
+
+Scout will:
+1. Generate search vectors (direct, adjacent, analogous) from the discovery summary
+2. Search broadly across GitHub, blogs, HN, papers, and knowledge bases
+3. Assess the top 5-7 findings
+4. Produce a standalone landscape brief
+5. Produce research recommendations
+
+**After scout completes:** Review its landscape and research recommendations. Carry them into
+Phase 2, where you'll merge them with your own domain identification to produce the final
+research plan.
+
 ### Phase 2: Domain Identification
 
 **Goal:** Identify every domain that needs research before architecture can be designed.
@@ -84,11 +106,17 @@ Common signals that research is needed:
 - Regulatory or compliance requirements
 - Unfamiliar tech stack components
 
+**Merge scout's findings.** Review the landscape brief and research recommendations from
+Phase 1.5. Incorporate scout-identified domains into your domain identification. Some of
+scout's recommendations may overlap with domains you'd identify independently — that's
+confirmation. Others may surface domains you'd have missed — that's scout earning its value.
+
 **AskUserQuestion checkpoint:** Present the research plan:
 - List of domains identified, each with:
   - What we need to learn
   - Why it matters for the architecture
   - Suggested research approach (web search, API exploration, data analysis, etc.)
+  - Whether this was identified by scout, by domain analysis, or both
 - Which domains are most critical (should be researched first)
 - Which might be deferred (not needed until later phases)
 
@@ -146,14 +174,21 @@ Write `north-star.md`. Structure:
 {Description, relationships, rules}
 ...
 
+## Research Plan
+Domains that need `/research` before `/architecture`.
+
+- [ ] {Domain} — {what we need to learn and why} *(source: scout / domain analysis / both)*
+- [ ] {Domain} — {what we need to learn and why}
+
 ## Related Documents
 | Document | Purpose |
 |----------|---------|
+| [Scout Landscape](scout-landscape.md) | Prior art, adjacent approaches, lessons learned |
 | [Architecture](architecture.md) | Technical design — modules, data flow, conventions (after research) |
 | [Roadmap](roadmap.md) | Phased build plan (after architecture) |
 ```
 
-**Contains:** Vision, problem, principles (5-7), domain model with all core concepts.
+**Contains:** Vision, problem, principles (5-7), domain model with all core concepts, research plan with status.
 **Does NOT contain:** Implementation details, file paths, phase status, module structure.
 
 Ask the user where docs go before writing (usually `docs/architecture/`).

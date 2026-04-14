@@ -20,6 +20,8 @@ a builder from making wrong assumptions.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Open and Verify — to decompose domains deeply and confirm you truly understand what you're curating.
+
 ## Arguments
 
 - `<topic>` — what the brief covers (e.g., "turn-structure", "mana-system", "technique-inventory")

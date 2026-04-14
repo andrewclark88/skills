@@ -19,6 +19,8 @@ with only the roadmap, relevant briefs, and codebase as context.
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Challenge and Synthesize — to question phase ordering assumptions and find high-leverage sequencing.
+
 ## Arguments
 
 - No arguments: create a roadmap for the entire project
