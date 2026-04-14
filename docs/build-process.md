@@ -318,6 +318,8 @@ All code goes through a PR. The phase is done when:
 
 After each phase, sync all docs to the code changes just made. Catches drift between what was planned and what was built.
 
+**If planning docs were modified** (architecture, roadmap, north star, cross-cutting designs), `/update-documentation` triggers `/doc-review` to check cross-doc consistency. Changes to one planning doc can contradict another — doc-review catches that.
+
 ### Quality Checkpoints (every 2-4 phases)
 
 After 2-4 implementation phases, pause and run a quality pass:

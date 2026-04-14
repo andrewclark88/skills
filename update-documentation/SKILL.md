@@ -106,6 +106,22 @@ After agents complete:
 3. Verify no stale references remain: grep for the changed feature's name/flag/function
    across all doc roots
 
+## Phase 6: Trigger Doc Review (if planning docs changed)
+
+If this run modified any **planning docs** — north-star, architecture, roadmap, or cross-cutting
+design docs (knowledge-store, tool-use-map, etc.) — trigger `/doc-review` to check cross-doc
+consistency. Changes to planning docs can introduce contradictions with other planning docs
+that this skill wouldn't catch on its own.
+
+**Do NOT trigger doc-review if only non-planning docs changed** (guides, changelogs, READMEs,
+feature docs, memory). Those don't create cross-doc drift risk.
+
+**How to decide:**
+- Updated architecture.md? → trigger `/doc-review`
+- Updated roadmap phase status? → trigger `/doc-review`
+- Updated north star scope? → trigger `/doc-review`
+- Updated only a README or changelog? → skip
+
 ## Completion Criteria
 
 - All doc files that own the changed area have been updated
@@ -113,4 +129,5 @@ After agents complete:
 - Generated files have been regenerated if source docs changed
 - Memory updated if a new stable pattern or gotcha was introduced
 - Repo-specific derived skills updated if the change affects anything they reference
+- If planning docs were modified, `/doc-review` has been triggered
 - All changes committed

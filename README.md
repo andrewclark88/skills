@@ -112,7 +112,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 | `/design` | 6. | Implementation spec (interfaces, types, acceptance criteria) |
 | `/implement` | 7. | Code + tests (<20 files) |
 | `/implement-orchestrator` | 7. | Code + tests (parallel agents, 20+ files) |
-| `/update-documentation` | 9. | Docs synced to code changes; frontmatter verified |
+| `/update-documentation` | 9. | Docs synced to code changes; frontmatter verified. Triggers `/doc-review` if planning docs changed. |
 
 ### Quality Checkpoints
 
