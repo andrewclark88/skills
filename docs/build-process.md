@@ -45,9 +45,11 @@ PROJECT START (truly new project — no existing docs)
 ├─ 3. Design the Architecture  /architecture
 │     └─ produces: architecture.md (modules, data flow, conventions)
 │     └─ grounded in north star + domain briefs — no unresearched assumptions
+│     └─ run /doc-review — verify architecture matches north star + briefs
 │
 ├─ 4. Plan the Build           /roadmap
 │     └─ produces: roadmap.md (blocking briefs, Input/Output/Tests per phase)
+│     └─ run /doc-review — verify roadmap matches architecture + north star
 │
 │  ┌── PER PHASE ──────────────────────────────────────────────┐
 │  │                                                           │
@@ -195,6 +197,8 @@ Technical design, informed by the north star AND domain briefs. Now you know eno
 
 **Ground every decision in research.** Not "we'll use X" but "we'll use X because the domain brief confirmed it fits our constraints."
 
+**After writing architecture.md, run `/doc-review`.** Architecture is the first doc that must be consistent with both the north star and domain briefs. Catch contradictions before building a roadmap on top of them.
+
 ### Document Types & Ownership
 
 Three planning doc types + one knowledge type. Each has one job. No duplication across types.
@@ -264,6 +268,8 @@ All architecture-type docs live in `docs/architecture/`. There can be multiple f
 
 Produces a roadmap where each phase is a self-contained build spec, completable in one session.
 
+**After writing roadmap.md, run `/doc-review`.** The roadmap references everything — architecture, briefs, phase numbers, blocking dependencies. Verify it all agrees before building starts. This is the last consistency gate before implementation.
+
 **Every phase has:**
 - **Blocking briefs** — domain knowledge that must be written before the phase begins
 - **Read before building** — docs and code to load into context
@@ -330,6 +336,12 @@ After 2-4 implementation phases, pause and run a quality pass:
 - **`/test-quality`** — spec-driven test gap analysis. Writes missing tests.
 
 **Also run `/doc-review` after major design changes**, not just at quality checkpoints. If you changed the architecture, added a module, or resolved an open question — check that all docs agree.
+
+**`/doc-review` runs at three points in the pipeline:**
+1. **After `/architecture`** — verify architecture matches north star + domain briefs
+2. **After `/roadmap`** — verify roadmap matches architecture + north star + briefs
+3. **Every 2-4 implementation phases** — catch drift introduced during building
+4. **When triggered by `/update-documentation`** — if planning docs were modified
 
 ### Doc Review: Cascading Passes (`/doc-review`)
 

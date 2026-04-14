@@ -118,7 +118,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 
 | Skill | When | What it produces |
 |-------|------|-----------------|
-| `/doc-review` | Every 2-4 phases + after design changes | Planning doc consistency report (cascading: system → modules) |
+| `/doc-review` | After `/architecture`, after `/roadmap`, every 2-4 phases, after design changes, when triggered by `/update-documentation` | Planning doc consistency report (cascading: system → modules) |
 | `/refactor-design` | Every 2-4 phases | Refactor plan |
 | `/extract-patterns` | Every 2-4 phases | Pattern documentation |
 | `/test-quality` | Every 2-4 phases | Spec-driven tests |

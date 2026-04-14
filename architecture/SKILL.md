@@ -176,10 +176,17 @@ After writing the architecture doc, update `docs/knowledge-index.yaml`:
     updated: <today's date>
 ```
 
-### Phase 6: Summary + Next Steps
+### Phase 6: Run Doc Review
+
+**Run `/doc-review` after writing the architecture doc.** Architecture is the first doc that
+must be consistent with both the north star and domain briefs. Catch contradictions now —
+before a roadmap is built on top of them.
+
+### Phase 7: Summary + Next Steps
 
 Present:
 - The architecture document (written to disk)
+- Doc review results (any issues found and fixed)
 - Any open questions that need resolution before roadmapping
 - Any new research needs discovered during architecture design
 

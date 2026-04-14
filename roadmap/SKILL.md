@@ -214,6 +214,12 @@ After writing the roadmap, update the project's `docs/knowledge-index.yaml`:
     updated: <today's date>
 ```
 
+### Phase 8: Run Doc Review
+
+**Run `/doc-review` after writing the roadmap.** The roadmap references everything —
+architecture decisions, blocking briefs, phase dependencies, north star concepts. This is
+the last consistency gate before implementation begins. Verify it all agrees.
+
 ---
 
 ## Anti-Patterns
