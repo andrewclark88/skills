@@ -1,16 +1,32 @@
 # skills
 
-A complete software development workflow suite for Claude Code.
+**A complete, opinionated software development workflow suite for Claude Code — 25 skills covering the full lifecycle, two auto-loading principle packs, a thinking layer, a model-selection framework, and cross-project knowledge patterns.**
+
+Use this when you want agents that ship real projects: ideation → research → architecture → roadmap → per-phase build, with doc-review, refactor, security, and release baked in. Every step is a skill. Every skill is opinionated about what it produces. Every doc is indexed so future sessions never start blind.
 
 Full methodology: [`docs/build-process.md`](docs/build-process.md)
+
+---
+
+## What's In Here
+
+| Layer | What it is | Where to look |
+|-------|-----------|---------------|
+| **25 skills** | Full software lifecycle — 17 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
+| **Model selection** | Four-archetype framework for picking Opus/Sonnet/Haiku + effort per role | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) |
+| **Knowledge patterns** | Cross-project architectural patterns for building knowledge layers | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) and three pattern docs |
+| **Build process** | The full methodology that ties skills, gates, and infrastructure safety together | [`docs/build-process.md`](docs/build-process.md) |
+
+---
 
 ## The Pipeline
 
 ```
 SESSION START (every non-fresh session)
 │
-└─ /knowledge-index → Load existing project knowledge before doing anything else.
-                      Essential infrastructure — skip only on truly brand-new projects.
+└─ /knowledge-index → Load existing project knowledge before anything else.
+                      Essential infrastructure. Skip only on truly brand-new projects.
 
 PROJECT START (truly new project)
 │
@@ -19,16 +35,17 @@ PROJECT START (truly new project)
                     Auto-calls /scout for prior art discovery.
 
 /scout            → Breadth-first prior art discovery. Adjacent projects, approaches,
-                    patterns, lessons learned. Produces landscape brief + research
-                    recommendations. Also callable standalone.
+                    patterns, lessons. Produces landscape brief + research recommendations.
+                    Auto-called from /ideate; also callable standalone.
 
 /research         → Research each domain deeply. Primers + auto-loading reference skills.
                     Repeat for every domain. Don't rush — assumptions cause rewrites.
 
 /deep-research    → Parallel-agent campaign for complex topics. Decomposes a seed into
-                    orthogonal facets, dispatches specialists in parallel, synthesizes
-                    cross-referenced briefs. Use when a topic is too broad for /research.
-                    Also callable from /research, /ideate, /brief, /expand.
+                    orthogonal facets, dispatches Sonnet specialists in parallel, synthesizes
+                    cross-referenced briefs with a parent summary + quality report.
+                    Use when a topic is too broad for /research. Also callable from
+                    /research, /ideate, /brief, /expand.
 
 /architecture     → Design the system. Modules, data flow, conventions.
                     Grounded in north star + domain briefs. No unresearched assumptions.
@@ -39,20 +56,22 @@ PROJECT START (truly new project)
 ┌── PER PHASE ──────────────────────────────────────────────────────┐
 │                                                                   │
 │  /brief          → Write the blocking brief (if one is listed).   │
-│  /update-roadmap → Revisit phases after building (scope shifts,   │
-│                    new blockers, splits/merges). Run every 2-4     │
-│                    phases or when the plan no longer fits reality.  │
 │  /design         → Detailed implementation spec (interfaces,      │
 │                    types, file paths, acceptance criteria).        │
 │  /implement      → Build it. Code + tests. (Or /implement-        │
-│                    orchestrator for large phases.)                 │
+│                    orchestrator for large phases — Opus           │
+│                    orchestrator + parallel Sonnet workers.)        │
 │  PR + CI         → Branch → PR → CI green → merge.               │
 │  /update-documentation → Sync docs to what was built.             │
+│  /update-roadmap → Revisit phases after building (scope shifts,   │
+│                    new blockers, splits/merges). Every 2-4 phases │
+│                    or when the plan no longer fits reality.       │
 │                                                                   │
 └───────────────────────────────────────────────────────────────────┘
 
-┌── EVERY 2-4 PHASES ──────────────────────────────────────────────┐
-│  /doc-review        → Audit planning docs for consistency.        │
+┌── EVERY 2-4 PHASES (quality checkpoint) ─────────────────────────┐
+│  /doc-review        → Audit planning docs for consistency         │
+│                        (cascading: system → modules).              │
 │  /refactor-design   → Find duplication, missing abstractions.     │
 │  /extract-patterns  → Document reusable code patterns.            │
 │  /test-quality      → Spec-driven test gap analysis.              │
@@ -63,138 +82,201 @@ PROJECT START (truly new project)
 └───────────────────────────────────────────────────────────────────┘
 
 ┌── AS NEEDED ─────────────────────────────────────────────────────┐
-│  /cruft-cleaner     → Remove dead code, AI bloat.                 │
+│  /cruft-cleaner     → Remove dead code, AI-accumulated bloat.    │
 │  /bold-refactor     → Find architectural simplifications.         │
 │  /feature           → Quick extension outside core roadmap.       │
 │  /expand            → Scope expansion for subsystems.             │
 │  /repo-eval         → Multi-dimensional codebase scoring.         │
 │  /e2e-test-design   → End-to-end test suite design.               │
-│  /release           → Changelog + release.                        │
+│  /release           → Changelog + release notes.                  │
 └───────────────────────────────────────────────────────────────────┘
 ```
 
-## Knowledge Index
+---
 
-The knowledge index (`docs/knowledge-index.yaml` per project) is **essential infrastructure, not optional polish**. It tracks every brief, architecture doc, roadmap, and research finding so future sessions never start blind.
+## What's Special
 
-- **`/knowledge-index`** — runs at the start of every non-fresh session. Skip only on truly brand-new projects.
-- All doc-producing skills (`/ideate`, `/research`, `/architecture`, `/roadmap`, `/brief`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) update the index after writing.
-- All doc-consuming skills (`/design`, `/implement`, `/implement-orchestrator`, `/update-documentation`, `/doc-review`) check the index FIRST before doing work.
-- All audit/review skills (`/security-review`, `/repo-eval`, `/bold-refactor`, `/test-quality`, `/cruft-cleaner`, `/e2e-test-design`) load the index for architectural context.
+### 1. The knowledge index ties everything together
 
-**Doc frontmatter convention:** Every indexable planning doc declares `description`, `type`, `updated` in YAML frontmatter at the top. See `knowledge-index/SKILL.md` → "Indexable Doc Frontmatter Convention" for the spec.
+Every project has a `docs/knowledge-index.yaml` that catalogs every brief, architecture doc, roadmap, and research finding. Every session starts by loading it. No session ever flies blind.
+
+**Doc-producing skills** update the index automatically. **Doc-consuming skills** check it first. The indexed frontmatter convention (`description`, `type`, `updated`) is standardized across all skills. See [`docs/build-process.md#knowledge-index`](docs/build-process.md).
+
+### 2. First-principles thinking layer
+
+Thinking-heavy skills load a concrete thinking primer before starting: 10 moves organized as **Open → Challenge → Synthesize → Verify**. Each skill declares which moves to emphasize.
+
+Loaded by: `/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`.
+
+See [`docs/first-principles.md`](docs/first-principles.md).
+
+### 3. Model-selection framework
+
+Claude has two levers — **model** (Opus/Sonnet/Haiku) and **effort** (thinking budget). Used well, they save 3-5× cost with no quality loss. Used poorly, they waste money on easy tasks and shortchange hard ones.
+
+The pattern doc defines four archetypes — every role inside every skill maps to one:
+
+| Archetype | Model + Effort | Typical role |
+|-----------|---------------|-------------|
+| **Orchestration** | Opus high | Few calls, cascading consequences (`/architecture`, `/design`, deep-research Lead) |
+| **Parallel worker** | Sonnet medium | Many parallel, scoped (research sub-agents, deep-research specialists) |
+| **Synthesis / judgment** | Opus high | One call, integrates N inputs (synthesis agents, `/brief`) |
+| **Volume / structured extraction** | Haiku low | Many calls, well-defined task (entity extraction, citation verification) |
+
+Every SKILL.md that spawns sub-agents declares its archetype mapping in a **Model Assignment** section. See [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md).
+
+### 4. `/deep-research` — parallel-agent campaigns
+
+A sibling of `/research` for topics too broad for one agent. Four-role architecture:
+
+- **Lead Researcher** (Opus) — decomposes via PMEST facets, manages stopping criteria, dispatches specialists
+- **Specialists** (Sonnet, parallel) — one per leaf subdomain, scoped context, cites sources per claim
+- **Synthesis Agent** (Opus) — compiles outputs with typed cross-references; flags contradictions explicitly
+- **Evaluator Agent** (Opus) — scores coverage/coherence/contradictions/groundedness on the produced brief set only
+
+Typical medium campaign: ~5 specialists, depth 3, ~$17 end-to-end (vs ~$50-75 if everything ran on Opus). Grounded in Anthropic's multi-agent research pattern: 90% time reduction, 90.2% quality improvement over single-agent Opus on internal research eval.
+
+See [`docs/deep-research-north-star.md`](docs/deep-research-north-star.md) and [`docs/deep-research-architecture.md`](docs/deep-research-architecture.md).
+
+### 5. Cross-project knowledge patterns
+
+Four pattern docs abstract the knowledge-layer design used by any project with a knowledge base (a cloud-native MCP server, a local simulation engine, whatever). Storage/retrieval/generation are three independent concerns; adopt them in any order.
+
+| Pattern | What it covers |
+|---------|---------------|
+| [Overview](docs/knowledge-layer-overview.md) | The LLM Wiki pattern; three concerns; scale ladder |
+| [Storage](docs/knowledge-storage-pattern.md) | Frontmatter schema, typed cross-references, knowledge graph, backends |
+| [Retrieval](docs/knowledge-retrieval-pattern.md) | Tiered retrieval (L0-L3), metadata-first filtering, search ladder (v1-v3) |
+| [Generation](docs/knowledge-generation-pattern.md) | Ingest, refresh, lint, LLM enrichment, provenance, lifecycle |
+
+### 6. Quality gates, not ceremony
+
+- **`/doc-review`** catches cross-doc drift with cascading passes (system-level → per-module). Triggered after `/architecture`, after `/roadmap`, at quality checkpoints, and when `/update-documentation` changes planning docs.
+- **`/security-review`** produces a scored report before deploy. Address Critical/High first.
+- **Every phase ships tests.** Phase is done when its PR merges with CI green.
+- **Infrastructure safety is non-negotiable.** `terraform apply` runs in CI only. Resources are prefixed. State is remote. `prevent_destroy` on critical resources. See [`docs/build-process.md#infrastructure-safety-practices`](docs/build-process.md).
+
+---
 
 ## How to Use
 
 1. **Start a new conversation.** Describe your idea or task.
 2. **Run `/knowledge-index`** to see what context already exists for this project.
-3. **Type the slash command** for the current step (e.g., `/ideate` for a new project, or whatever the pipeline says is next).
+3. **Type the slash command** for the current step (e.g., `/ideate` for a new project).
 4. **The skill guides you.** It asks questions, researches, produces docs.
 5. **You decide when to advance.** Each skill has checkpoints. Say "this is solid" to move on, or "let's research more" to go deeper.
 6. **Repeat** through the pipeline until the project ships.
 
-## Skills
+---
 
-All skills are first-party. Install/run from the top-level skill directories.
+## Skills Catalog
+
+All skills are first-party. Invocable as slash commands once installed.
 
 ### Pipeline & Planning
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
-| `/knowledge-index` | Session start | Loads all available project knowledge |
-| `/ideate` | 1. Define | North star + research plan. Auto-calls `/scout`. |
-| `/scout` | 1.5 Scout | Landscape brief + research recommendations |
-| `/research` | 2. Research | Brief + auto-loading reference skill. Updates knowledge index. |
-| `/deep-research` | 2. Research (complex topics) | Parallel-agent campaign: N cross-referenced briefs + parent synthesis + quality report. Also callable by other skills. |
-| `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
-| `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
+| [`/knowledge-index`](knowledge-index/SKILL.md) | Session start | Catalog of all available project knowledge |
+| [`/ideate`](ideate/SKILL.md) | 1. Define | North star + research plan. Auto-calls `/scout`. Classifies domains as `/research` vs `/deep-research`. |
+| [`/scout`](scout/SKILL.md) | 1.5 Scout | Landscape brief + research recommendations (Opus orchestrator + Sonnet workers) |
+| [`/research`](research/SKILL.md) | 2. Research | Domain brief + auto-loading reference skill. Updates knowledge index. |
+| [`/deep-research`](deep-research/SKILL.md) | 2. Research (complex topics) | N cross-referenced briefs + parent synthesis + quality report. Parallel-agent campaign (Lead + Specialists + Synthesis + Evaluator). |
+| [`/architecture`](architecture/SKILL.md) | 3. Design | Architecture doc (modules, data flow, conventions) |
+| [`/roadmap`](roadmap/SKILL.md) | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 
 ### Per Phase
 
 | Skill | Step | What it produces |
 |-------|------|-----------------|
-| `/brief` | 5. | Curated domain brief for the builder |
-| `/update-roadmap` | After building phases | Revised roadmap reflecting what was learned |
-| `/design` | 6. | Implementation spec (interfaces, types, acceptance criteria) |
-| `/implement` | 7. | Code + tests (<20 files) |
-| `/implement-orchestrator` | 7. | Code + tests (parallel agents, 20+ files) |
-| `/update-documentation` | 9. | Docs synced to code changes; frontmatter verified. Triggers `/doc-review` if planning docs changed. |
+| [`/brief`](brief/SKILL.md) | 5. | Curated domain brief for the builder |
+| [`/design`](design/SKILL.md) | 6. | Implementation spec (interfaces, types, acceptance criteria) |
+| [`/implement`](implement/SKILL.md) | 7. | Code + tests (<20 files) |
+| [`/implement-orchestrator`](implement-orchestrator/SKILL.md) | 7. | Code + tests (Opus orchestrator + parallel Sonnet workers, 20+ files) |
+| [`/update-documentation`](update-documentation/SKILL.md) | 9. | Docs synced to code changes; frontmatter verified. Triggers `/doc-review` if planning docs changed. |
+| [`/update-roadmap`](update-roadmap/SKILL.md) | After phases | Revised roadmap reflecting what was learned |
 
-### Quality Checkpoints
+### Quality Checkpoints (every 2-4 phases)
 
-| Skill | When | What it produces |
-|-------|------|-----------------|
-| `/doc-review` | After `/architecture`, after `/roadmap`, every 2-4 phases, after design changes, when triggered by `/update-documentation` | Planning doc consistency report (cascading: system → modules) |
-| `/refactor-design` | Every 2-4 phases | Refactor plan |
-| `/extract-patterns` | Every 2-4 phases | Pattern documentation |
-| `/test-quality` | Every 2-4 phases | Spec-driven tests |
+| Skill | What it produces |
+|-------|-----------------|
+| [`/doc-review`](doc-review/SKILL.md) | Planning doc consistency report (cascading: system → modules) |
+| [`/refactor-design`](refactor-design/SKILL.md) | Refactor plan |
+| [`/extract-patterns`](extract-patterns/SKILL.md) | Reusable code pattern documentation |
+| [`/test-quality`](test-quality/SKILL.md) | Spec-driven tests (gap analysis) |
 
 ### Pre-Deploy
 
 | Skill | What it produces |
 |-------|-----------------|
-| `/security-review` | Scored security report — address Critical/High before deploying |
+| [`/security-review`](security-review/SKILL.md) | Scored security report — address Critical/High before deploying |
 
 ### As-Needed
 
 | Skill | When | What it produces |
 |-------|------|-----------------|
-| `/cruft-cleaner` | Codebase has accumulated AI bloat | Dead-code/comment removal |
-| `/bold-refactor` | Architectural simplification opportunity | Refactor proposal |
-| `/feature` | Quick extension outside the roadmap | Feature brief |
-| `/expand` | Scope expansion for a subsystem | Expansion doc |
-| `/repo-eval` | Want a multi-dimensional view | Codebase scorecard |
-| `/e2e-test-design` | Building test coverage | E2E test design |
-| `/scout` | Need to know what exists before deciding | Landscape brief + research recommendations |
-| `/release` | Cutting a release | Changelog + release notes |
+| [`/cruft-cleaner`](cruft-cleaner/SKILL.md) | Codebase has accumulated AI bloat | Dead-code / stale-comment removal with parallel cleanup agents |
+| [`/bold-refactor`](bold-refactor/SKILL.md) | Architectural simplification opportunity | Refactor proposal |
+| [`/feature`](feature/SKILL.md) | Quick extension outside the roadmap | Feature brief |
+| [`/expand`](expand/SKILL.md) | Scope expansion for a subsystem | Expansion doc |
+| [`/repo-eval`](repo-eval/SKILL.md) | Want a multi-dimensional codebase view | Scorecard across 9 dimensions |
+| [`/e2e-test-design`](e2e-test-design/SKILL.md) | Designing E2E test coverage | Golden-path + adversarial test design |
+| [`/release`](release/SKILL.md) | Cutting a release | Changelog + release notes |
 
-### Auto-Loading Principles
+### Auto-Loading Principles (not slash-invocable)
 
-| Principle | Enforces |
-|-----------|----------|
-| `build-process` | The methodology. Always loaded. |
-| `engineering-principles` | Ports & Adapters, Single Source of Truth, Generated Contracts, Fail Fast. Design-time and implementation-time in one skill. |
+| Principle | What it enforces | When loaded |
+|-----------|-----------------|-------------|
+| [`build-process`](principles/build-process/) | The full methodology | Always loaded |
+| [`engineering-principles`](engineering-principles/) | Ports & Adapters, Single Source of Truth, Generated Contracts, Fail Fast | Loaded by `/architecture`, `/design`, `/implement`, `/refactor-design` |
 
-### Thinking Layer
+---
 
-| Doc | What it does |
-|-----|-------------|
-| [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves for deep reasoning. Loaded by `/research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`. |
+## Cross-Cutting Docs
 
-### Cross-Cutting Patterns
+These are not skills — they're patterns and primers that skills reference.
 
-| Doc | What it covers |
-|-----|---------------|
-| [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) | Four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with model (Opus/Sonnet/Haiku) and effort recommendations. Referenced by all skills that spawn sub-agents. |
+| Doc | What it covers | Who uses it |
+|-----|---------------|-------------|
+| [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves (Open / Challenge / Synthesize / Verify) + per-skill emphasis table | `/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap` |
+| [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) | Four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with model + effort recommendations | Every skill that spawns sub-agents |
+| [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) + 3 pattern docs | Cross-project knowledge-layer architecture (storage, retrieval, generation) | Any project building a knowledge layer |
+| [`docs/build-process.md`](docs/build-process.md) | Full methodology: pipeline, doc ownership, PR/CI gates, infrastructure safety | Always loaded |
 
-### Knowledge Patterns
+### Skill-level architecture docs
 
-Cross-project patterns for building knowledge systems. Used by any project with a knowledge layer.
+Some skills have their own north-star + architecture docs for deeper reference:
 
-| Doc | What it covers |
-|-----|---------------|
-| [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) | Overview — storage, retrieval, generation as three concerns |
-| [`docs/knowledge-storage-pattern.md`](docs/knowledge-storage-pattern.md) | Frontmatter schema, typed cross-references, knowledge graph, backends |
-| [`docs/knowledge-retrieval-pattern.md`](docs/knowledge-retrieval-pattern.md) | Tiered retrieval (L0-L3), metadata-first filtering, search ladder (v1-v3) |
-| [`docs/knowledge-generation-pattern.md`](docs/knowledge-generation-pattern.md) | Ingest, refresh, lint, LLM enrichment, provenance, lifecycle |
+| Skill | Docs |
+|-------|------|
+| `/scout` | [north-star](docs/scout-north-star.md) + [architecture](docs/scout-architecture.md) |
+| `/deep-research` | [north-star](docs/deep-research-north-star.md) + [architecture](docs/deep-research-architecture.md) |
+| first-principles primer | [north-star](docs/first-principles-north-star.md) + [architecture](docs/first-principles-architecture.md) + [research brief](docs/brief-first-principles-frameworks.md) |
+| knowledge-edge creator (planned) | [north-star](docs/knowledge-edge-north-star.md) |
+
+---
 
 ## Key Rules
 
 1. **Load the knowledge index first.** Every non-fresh session starts with `/knowledge-index`.
 2. **Research before design.** Don't make architecture decisions based on assumptions.
-3. **Each doc has one job.** North star = vision. Architecture = how. Roadmap = phases. No duplication.
+3. **Each planning doc has one job.** North star = vision. Architecture = how. Roadmap = phases. No duplication.
 4. **Every phase ships with tests.** A phase is done when its PR merges with CI green.
-5. **Never `terraform apply` locally.** CI only.
+5. **Never `terraform apply` locally.** CI only, on merge to main.
 6. **Never commit secrets.**
-7. **Quality checkpoint every 2-4 phases.** Refactor + patterns + test gaps.
+7. **Quality checkpoint every 2-4 phases.** Refactor + patterns + test gaps + doc-review.
 8. **Security review before deploy.** No Critical/High findings.
+9. **Every SKILL.md declares its Model Assignment.** Explicit model choice per role — don't default to Opus everywhere.
+10. **Thinking-heavy skills load `first-principles.md` before starting.** Shallow thinking propagates downstream.
+
+---
 
 ## Installation
 
 ```bash
-# Copy all skills to your personal skills folder
-for d in knowledge-index ideate scout research deep-research architecture roadmap brief doc-review \
-         update-roadmap design implement implement-orchestrator \
+# Copy all skills + auto-loading principles to your personal skills folder
+for d in knowledge-index ideate scout research deep-research architecture roadmap \
+         brief doc-review update-roadmap design implement implement-orchestrator \
          update-documentation refactor-design extract-patterns test-quality \
          security-review cruft-cleaner bold-refactor feature expand \
          repo-eval e2e-test-design release engineering-principles; do
@@ -203,6 +285,71 @@ done
 cp -r principles/build-process ~/.claude/skills/
 ```
 
+The cross-cutting docs under `docs/` are referenced by absolute path from SKILL.md files (e.g., `/dev/skills/docs/first-principles.md`). Keep this repo checked out at a stable path so those references resolve.
+
+---
+
+## Repo Layout
+
+```
+skills/
+├── README.md                     ← you are here
+├── docs/                         ← cross-cutting patterns + primers
+│   ├── build-process.md          ← the methodology (source of truth)
+│   ├── first-principles.md       ← thinking layer primer
+│   ├── model-selection-pattern.md
+│   ├── knowledge-layer-overview.md
+│   ├── knowledge-storage-pattern.md
+│   ├── knowledge-retrieval-pattern.md
+│   ├── knowledge-generation-pattern.md
+│   ├── scout-north-star.md + scout-architecture.md
+│   ├── deep-research-north-star.md + deep-research-architecture.md
+│   ├── first-principles-north-star.md + first-principles-architecture.md
+│   ├── brief-first-principles-frameworks.md
+│   └── knowledge-edge-north-star.md
+├── knowledge-index/              ← skills (each has SKILL.md)
+├── ideate/
+├── scout/
+├── research/
+├── deep-research/                ← new: parallel-agent campaigns
+├── architecture/
+├── roadmap/
+├── brief/
+├── update-roadmap/
+├── design/
+├── implement/
+├── implement-orchestrator/
+├── update-documentation/
+├── doc-review/
+├── refactor-design/
+├── extract-patterns/
+├── test-quality/
+├── security-review/
+├── cruft-cleaner/
+├── bold-refactor/
+├── feature/
+├── expand/
+├── repo-eval/
+├── e2e-test-design/
+├── release/
+├── engineering-principles/       ← auto-loaded design + code principles
+└── principles/
+    └── build-process/            ← auto-loaded methodology skill
+```
+
+---
+
+## Design Philosophy
+
+- **Opinionated over flexible.** Each skill has a single job and strong defaults. Less configuration, more convergence.
+- **Ship through PRs.** Nothing merges without CI. Every phase done when the PR merges, not when it "works locally."
+- **Deep knowledge over shallow retrieval.** Briefs are compiled knowledge, not chunked raw docs. The knowledge layer uses the LLM Wiki pattern.
+- **Good results over token savings.** Defaults favor quality; fences exist but start generous. Model selection saves cost where quality isn't impacted, not where it is.
+- **Data-driven over hand-curated.** When there's a data source, build a pipeline.
+- **Explicit over implicit.** Every sub-agent dispatch names its model. Every doc has frontmatter. Every phase has acceptance criteria.
+
+---
+
 ## Acknowledgments
 
-A handful of these skills were originally inspired by the open suite from [nklisch/skills](https://github.com/nklisch/skills). Our versions have evolved independently — most notably with knowledge-index integration baked in across the suite — and we maintain them as our own. To compare against upstream, clone fresh from the source repo and diff against our top-level skills.
+A handful of the pipeline skills were originally inspired by the open suite from [nklisch/skills](https://github.com/nklisch/skills). This suite has evolved substantially since then — knowledge-index integration across all skills, the thinking layer, the model-selection framework, `/deep-research`, `/scout`, the cross-project knowledge patterns, cascading `/doc-review`, and the full infrastructure-safety methodology are first-party additions. To compare against upstream, clone fresh from the source repo and diff.
