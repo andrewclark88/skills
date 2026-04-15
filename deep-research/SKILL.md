@@ -24,9 +24,22 @@ a cross-referenced brief set that goes wider and deeper than a single-agent `/re
 **You follow the model selection pattern at `/dev/skills/docs/model-selection-pattern.md`.**
 Spawn specialists with `model: "sonnet"`, synthesis and evaluator with `model: "opus"`.
 
-**Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves —
-especially Open (decompose deeply and don't settle for the first decomposition) and Synthesize
-(find leverage in facet selection).
+**Read `/dev/skills/docs/first-principles.md` BEFORE starting the campaign.** The thinking
+primer is load-bearing for deep research — more so than for any other skill, because decisions
+at decomposition time cascade into every specialist's token budget. Apply these moves at specific
+phases:
+
+- **Decomposition (Phase 2)** — Open (moves 1-3): decompose to fundamentals, question what "this
+  seed really means," doubt the first decomposition you produce. Synthesize (moves 7-8): find the
+  leverage in facet selection — which cut produces the most orthogonal coverage?
+- **Stopping decisions (Phase 3)** — Challenge (moves 4-6): invert — "what would make this
+  decomposition useless?" Falsify your confidence that each leaf is truly terminal. Verify
+  (move 9): can you explain why this is a leaf simply? If not, decompose further.
+- **Synthesis handoff (Phase 7)** — remind the Synthesis Agent to apply Challenge: flag
+  contradictions explicitly rather than smoothing them over.
+
+The Asymmetry Principle applies hard here: a shallow decomposition wastes 5× the token budget
+of a deep one. When in doubt on facet selection, go deeper.
 
 **Full architecture:** `/dev/skills/docs/deep-research-architecture.md`. Read it before your
 first campaign — it contains prompt skeletons, phase-by-phase workflow, and cost model.

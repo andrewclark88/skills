@@ -115,9 +115,9 @@ KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
   the first one on a project. This is non-negotiable — agents that skip
   it duplicate prior work and miss available context.
 
-  Doc-producing skills (/ideate, /scout, /research, /architecture, /brief,
-  /roadmap, /refactor-design, /feature, /extract-patterns, /expand)
-  update docs/knowledge-index.yaml after writing.
+  Doc-producing skills (/ideate, /scout, /research, /deep-research,
+  /architecture, /brief, /roadmap, /refactor-design, /feature,
+  /extract-patterns, /expand) update docs/knowledge-index.yaml after writing.
   Doc-maintaining skills (/update-documentation, /doc-review) update
   the index when they create, modify, or fix docs.
   Skills that consume context (/design, /implement, /brief, etc.)
@@ -135,7 +135,7 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 **How it works:**
 - `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
-- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
+- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/deep-research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
 - Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
 - The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
 
@@ -421,7 +421,7 @@ Before any production deployment:
 
 ## Thinking Layer
 
-The pipeline's thinking-heavy skills (`/research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:
+The pipeline's thinking-heavy skills (`/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:
 
 1. **Open** — decompose the problem, question deeply, doubt what you know
 2. **Challenge** — invert the problem, seek falsification, trace consequences
@@ -430,7 +430,12 @@ The pipeline's thinking-heavy skills (`/research`, `/ideate`, `/architecture`, `
 
 **The Asymmetry Principle:** The cost of not going deep enough is much higher than the cost of going too deep. When in doubt, go deeper.
 
-See [`docs/first-principles.md`](first-principles.md) for the full primer.
+**For `/deep-research` specifically**, the thinking layer is load-bearing across three phases:
+- **Decomposition** (Open + Synthesize) — faceted decomposition is the highest-leverage decision in a campaign; a bad tree wastes specialists × token budget on wrong questions
+- **Stopping decisions** (Challenge + Verify) — falsify your confidence that each leaf is truly a leaf; test the decomposition by trying to find what's missing
+- **Synthesis** (Challenge + Synthesize) — invert the campaign ("what would make these briefs useless?"), find leverage in cross-references, check for contradictions rather than smoothing them over
+
+See [`docs/first-principles.md`](first-principles.md) for the full primer and per-skill emphasis table.
 
 ---
 

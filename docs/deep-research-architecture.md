@@ -10,6 +10,18 @@ updated: 2026-04-15
 
 > How the skill is structured. For *what* and *why*, see [North Star](deep-research-north-star.md).
 
+## Thinking Layer
+
+Deep research is the most thinking-intensive skill in the suite. Three phases are load-bearing, and each maps to specific [first-principles](first-principles.md) moves:
+
+| Phase | Emphasis | Why |
+|-------|----------|-----|
+| **Decomposition** (Phase 2) | Open + Synthesize | The domain tree bounds campaign quality. Open (decompose to fundamentals, doubt the first cut) + Synthesize (find facet selection with the most orthogonal leverage). |
+| **Stopping decisions** (Phase 3) | Challenge + Verify | Falsify "is this truly a leaf?" Invert the stopping criteria — "what would make this decomposition useless?" Verify each leaf is self-explainable. |
+| **Synthesis** (Phase 7) | Challenge + Synthesize | Invert: "what would make these briefs useless together?" Find leverage in cross-references. Challenge contradictions rather than smooth them over. |
+
+**The Asymmetry Principle governs this skill.** A bad decomposition wastes N specialists × token budget on wrong questions. The cost of going deep during Phases 2-3 is always less than the cost of a shallow campaign. When in doubt, decompose further; when uncertain a leaf is truly terminal, split it.
+
 ## System Overview
 
 Deep research is a standalone skill (`/deep-research`) that can also be called from `/ideate`, `/brief`, `/research`, and `/expand` when a topic warrants deeper multi-agent treatment. It produces a directory of N draft briefs + a parent brief + a campaign quality report.

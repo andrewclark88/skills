@@ -67,6 +67,10 @@ Deep research integrates as an additional option in the existing pipeline, not a
 
 Specialists cite sources per claim. Synthesis preserves claim-level provenance. The evaluator verifies that claims trace to sources. When `knowledge/create` and the Anthropic Citations API are available, deep research produces briefs with full attribution chains. In v1 (before those exist), it produces briefs with structured `sources[]` frontmatter entries that downstream tooling can verify later.
 
+### 9. First-principles thinking at every phase
+
+Decomposition, stopping, and synthesis are thinking-intensive — more than any other skill in the suite. The Lead loads the [first-principles primer](first-principles.md) before starting and applies specific moves at specific phases: Open + Synthesize during decomposition, Challenge + Verify during stopping decisions, Challenge + Synthesize during compilation. The Asymmetry Principle governs: a shallow decomposition wastes the entire campaign's specialist budget. Going deep at Phase 2 is always cheaper than discovering a wrong decomposition after Phase 7.
+
 ## Domain Model
 
 ### Research Campaign
