@@ -58,6 +58,11 @@ Explore through natural conversation:
   consider running `/scout` to map the landscape before committing to a direction.
   Scout is especially valuable when the expansion introduces new technology, integration
   points, or problem domains the project hasn't dealt with before.
+- **Deep domain research** — if the expansion introduces a genuinely new subsystem (not just
+  an extension of existing work) that spans multiple orthogonal domains, suggest running
+  `/deep-research` on the new subsystem before design. It produces a cross-referenced brief
+  set that feeds the architecture update. See
+  [build-process.md § When to Use /research vs /deep-research](/dev/skills/docs/build-process.md).
 - **Constraints** — backward compatibility? Migration path for existing users/data?
   Performance implications?
 

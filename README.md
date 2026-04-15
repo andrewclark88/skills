@@ -25,6 +25,11 @@ PROJECT START (truly new project)
 /research         → Research each domain deeply. Primers + auto-loading reference skills.
                     Repeat for every domain. Don't rush — assumptions cause rewrites.
 
+/deep-research    → Parallel-agent campaign for complex topics. Decomposes a seed into
+                    orthogonal facets, dispatches specialists in parallel, synthesizes
+                    cross-referenced briefs. Use when a topic is too broad for /research.
+                    Also callable from /research, /ideate, /brief, /expand.
+
 /architecture     → Design the system. Modules, data flow, conventions.
                     Grounded in north star + domain briefs. No unresearched assumptions.
 
@@ -100,6 +105,7 @@ All skills are first-party. Install/run from the top-level skill directories.
 | `/ideate` | 1. Define | North star + research plan. Auto-calls `/scout`. |
 | `/scout` | 1.5 Scout | Landscape brief + research recommendations |
 | `/research` | 2. Research | Brief + auto-loading reference skill. Updates knowledge index. |
+| `/deep-research` | 2. Research (complex topics) | Parallel-agent campaign: N cross-referenced briefs + parent synthesis + quality report. Also callable by other skills. |
 | `/architecture` | 3. Design | Architecture doc (modules, data flow, conventions) |
 | `/roadmap` | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 
@@ -155,6 +161,12 @@ All skills are first-party. Install/run from the top-level skill directories.
 |-----|-------------|
 | [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves for deep reasoning. Loaded by `/research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`. |
 
+### Cross-Cutting Patterns
+
+| Doc | What it covers |
+|-----|---------------|
+| [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) | Four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with model (Opus/Sonnet/Haiku) and effort recommendations. Referenced by all skills that spawn sub-agents. |
+
 ### Knowledge Patterns
 
 Cross-project patterns for building knowledge systems. Used by any project with a knowledge layer.
@@ -181,7 +193,7 @@ Cross-project patterns for building knowledge systems. Used by any project with 
 
 ```bash
 # Copy all skills to your personal skills folder
-for d in knowledge-index ideate scout research architecture roadmap brief doc-review \
+for d in knowledge-index ideate scout research deep-research architecture roadmap brief doc-review \
          update-roadmap design implement implement-orchestrator \
          update-documentation refactor-design extract-patterns test-quality \
          security-review cruft-cleaner bold-refactor feature expand \

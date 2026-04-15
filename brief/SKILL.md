@@ -71,6 +71,8 @@ Investigate the domain deeply. Use every tool available:
 - **Existing code** — if the project has related code, read it to understand what patterns are established
 - **Existing data** — if the project has data (card pools, technique inventories, etc.), analyze it to ground the brief in reality
 
+**For broad blocking briefs, consider `/deep-research` instead.** If the phase's blocking brief spans 5+ orthogonal aspects (a whole subsystem's worth of domain knowledge, not just one topic), escalate to `/deep-research`. It produces a cross-referenced brief set with a parent summary — better coverage for broad topics than a single agent. Most blocking briefs are focused enough for `/brief` alone; only escalate when the breadth genuinely warrants it. See [build-process.md § When to Use /research vs /deep-research](/dev/skills/docs/build-process.md).
+
 **Research with the consumer in mind.** Don't research everything about the topic — research
 what the builder needs. If the phase is "implement the mana system," you don't need the history
 of Magic mana rules. You need the current rules, the edge cases, and the cards the engine will

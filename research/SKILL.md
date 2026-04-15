@@ -54,7 +54,8 @@ This skill handles two types of research:
 
 1. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
 2. Explore the codebase — find how the project currently handles the area being researched
-3. Define research questions:
+3. **Assess breadth.** Is this a focused single-domain topic, or does it span 5+ orthogonal aspects? If the topic is genuinely broad (multiple perspectives, requires decomposition, multi-angle synthesis matters), suggest `/deep-research` instead and let the user decide. `/deep-research` is a parallel-agent campaign that handles breadth better than single-agent research. See [build-process.md § When to Use /research vs /deep-research](/dev/skills/docs/build-process.md).
+4. Define research questions:
    - What specific problem does this knowledge solve for the project?
    - What assumptions are we making that need verification?
    - What could we get wrong that would force a redesign?

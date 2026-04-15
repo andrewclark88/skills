@@ -41,6 +41,7 @@ PROJECT START (truly new project — no existing docs)
 │     └─ produces: domain briefs + auto-loading reference skills
 │     └─ repeat until all critical domains are understood
 │     └─ don't rush this — assumptions here cause rewrites later
+│     └─ for complex topics, use /deep-research instead (parallel-agent campaign)
 │
 ├─ 3. Design the Architecture  /architecture
 │     └─ produces: architecture.md (modules, data flow, conventions)
@@ -164,6 +165,33 @@ These three skills all produce scoping documents but serve different purposes:
 - Is this a self-contained software addition within existing architecture? → `/feature`
 
 If you're unsure, start with `/brief` — domain knowledge never hurts, and `/feature` can consume a brief's output.
+
+---
+
+## When to Use `/research` vs `/deep-research`
+
+Both produce briefs the build process consumes. They differ in breadth and cost.
+
+| Situation | Skill | Why |
+|-----------|-------|-----|
+| Focused topic, one domain, clear question | `/research` | Single-agent, fast, cheaper. Sufficient for most research needs. |
+| Topic spans 5+ orthogonal aspects, or is unfamiliar enough that decomposition itself is part of the work, or multi-angle synthesis matters | `/deep-research` | Parallel-agent campaign: decomposes into facets, dispatches specialists, synthesizes cross-referenced briefs with a parent summary. ~$15-20 per campaign vs ~$2-3 for `/research`. |
+
+`/research` can escalate to `/deep-research` when it detects the topic is broad. `/ideate`, `/brief`, and `/expand` can also call `/deep-research` directly for complex subsystems or broad phase briefs.
+
+---
+
+## Model Selection
+
+Skills that spawn sub-agents follow the [Model Selection Pattern](model-selection-pattern.md) — four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with explicit model (Opus/Sonnet/Haiku) and effort recommendations. Each skill's SKILL.md declares its archetype mapping.
+
+**The short version:**
+- **Orchestration** (few calls, high stakes — e.g. `/architecture`, `/design`, `/deep-research` Lead) → Opus high
+- **Parallel workers** (many parallel, scoped — e.g. research sub-agents, deep-research specialists) → Sonnet medium
+- **Synthesis / judgment** (one call, integrates N inputs) → Opus high
+- **Volume / structured extraction** (many calls, well-defined task) → Haiku low
+
+Cost impact: a typical deep-research campaign costs ~$17 using the mix vs ~$50-75 if everything ran on Opus.
 
 ---
 
@@ -569,6 +597,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/ideate` | Step 1 (project start) | North star + research plan |
 | `/scout` | Auto-called during /ideate + standalone + optionally from /expand | Landscape brief + research recommendations |
 | `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Domain brief + auto-loading reference skill |
+| `/deep-research` | Step 2 alternative for complex topics — parallel-agent campaign. Also callable from `/research`, `/ideate`, `/brief`, `/expand`. | N cross-referenced briefs + parent synthesis + quality report |
 | `/architecture` | Step 3 (after north star + domain briefs) | Architecture doc: modules, data flow, conventions |
 | `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |
 | `/brief` | Step 5 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
