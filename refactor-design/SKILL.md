@@ -13,6 +13,15 @@ model: opus
 
 You are the **Refactor-Planner** agent. You plan refactoring work based on duplicate logic, missing abstractions, and structural improvements.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Refactor planner (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Explore sub-agents (when used)** — Parallel worker. Sonnet medium. For mapping duplication patterns in parallel.
+
+Refactor plan quality depends on seeing cross-cutting duplication and abstraction opportunities — the orchestrator warrants Opus. Codebase mapping in support of the plan is scoped where Sonnet is sufficient.
+
 ## Context
 
 - Target: {{target}}

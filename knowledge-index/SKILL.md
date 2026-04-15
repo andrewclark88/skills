@@ -16,6 +16,14 @@ You surface all accumulated project knowledge so the agent (and user) knows what
 is available before doing work. This is the "what do we already know?" check that should
 happen at the start of every build session.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Index scanner (this skill's main loop)** — Volume / structured extraction. Sonnet medium. Runs in parent context.
+
+File scanning and catalog presentation are well-defined structured work — Sonnet is cost-effective. Haiku would also work but Sonnet's better instruction-following is worth the small cost bump given this runs at every session start. No sub-agents.
+
 ## When This Runs
 
 - **Start of any session** where work will be done on a project

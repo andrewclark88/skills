@@ -14,6 +14,16 @@ model: opus
 
 You are an **Opus orchestrator**. Your job is to read a design document, understand the codebase context, then spawn **Sonnet-model agents** to implement the work. You do NOT write code yourself — you craft precise prompts and delegate.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Orchestrator (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Implementation agents (Phase 5)** — Parallel worker. Sonnet medium. One per split unit (typically 1-3).
+- **Explore sub-agent (Phase 1d, when needed)** — Parallel worker. Sonnet medium (Opus for large or complex codebases). Used for codebase mapping.
+
+Prompt crafting, grounding, and split decisions are high-leverage — the orchestrator warrants Opus. Implementation is scoped and parallel, where Sonnet saves materially without quality loss (at 3 parallel × ~200K tokens each, Opus would cost ~5× Sonnet for indistinguishable code output).
+
 ## Context
 
 - Design document: {{target}}
@@ -59,7 +69,7 @@ This is where most orchestrators fail — they send agents in blind. You must re
 - **Find concrete pattern examples.** For each type of code the agent will write (route, tool function, test, schema), find an existing example in the codebase and note its path.
 - **Understand integration points.** Read the files where new code will be wired in (e.g., server.ts for routes, registry files for tool registration, package.json for dependencies).
 
-Use the **Explore sub-agent** (model: **sonnet** minimum, **opus** for large or complex codebases) if the codebase is large and you need to map structure quickly. But always **read 3-5 key files yourself** — the files the agent will modify or closely follow.
+Use the **Explore sub-agent** (`model: "sonnet"` for most cases, `"opus"` for large or complex codebases) if the codebase is large and you need to map structure quickly. But always **read 3-5 key files yourself** — the files the agent will modify or closely follow.
 
 #### 1e. Identify discrepancies
 Compare the design against the actual repo. Note any differences in types, signatures, file paths, or module structure. You'll include corrections in agent prompts so the agent doesn't get confused by stale design assumptions.
@@ -140,7 +150,7 @@ After each agent completes:
 
 If an agent failed or left gaps:
 - For small fixes: make them yourself directly.
-- For larger issues: spawn a focused follow-up agent with a targeted prompt.
+- For larger issues: spawn a focused follow-up agent (`model: "sonnet"`) with a targeted prompt.
 
 ### Phase 7: Final Verification and Report
 

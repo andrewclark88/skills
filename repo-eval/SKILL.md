@@ -22,6 +22,15 @@ scorecard with verified findings and actionable recommendations.
 - Path argument (e.g. `src/`): scope evaluation to that subtree
 - Dimension list (e.g. `testing,architecture`): evaluate only named dimensions
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Evaluator (this skill's main loop)** — Orchestration + Synthesis. Opus high effort. Runs in parent context for scoring and synthesis.
+- **Explore agents (Phase 1)** — Parallel worker. Sonnet medium. 4 parallel dimension-scoped agents.
+
+Score calibration and cross-dimension synthesis require Opus — severity judgments propagate to recommendations. Per-dimension exploration is scoped investigation where Sonnet is sufficient (at 4 parallel × ~150K tokens each, Sonnet saves meaningful cost vs Opus).
+
 ## Dimensions
 
 Score all 9 by default. User may opt out via arguments.
@@ -44,8 +53,7 @@ Score all 9 by default. User may opt out via arguments.
 
 ## Phase 1: Parallel Exploration
 
-Launch 4 explore agents in parallel. Use `model: "opus"` for all agents (minimum
-`"sonnet"` — never use haiku for evaluation). Each agent is a `general-purpose` type.
+Launch 4 explore agents in parallel with `model: "sonnet"` (upgrade to `"opus"` only for very large or unusually complex codebases). Never use haiku for evaluation. Each agent is a `general-purpose` type.
 
 Give each agent a **complete, standalone brief** — they have no conversation context.
 Include the repo path and any scope restrictions from the user's arguments.

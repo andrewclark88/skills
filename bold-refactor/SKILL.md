@@ -76,6 +76,15 @@ for deep examples.
 | **Declarative** | What DSL is trying to emerge from this procedural logic? |
 | **Domain Crystallization** | What domain concept is screaming to be named? |
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Refactor architect (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Explore sub-agents** — Parallel worker. Sonnet medium. Spawned in Phase 1 to gather codebase context in parallel (typically 3-4).
+
+Architectural simplification requires holding the whole system in mind — the orchestrator warrants Opus. Explore sub-agents do scoped context gathering where Sonnet is sufficient.
+
 ## Workflow
 
 ### Phase 0: Load Architectural Context
@@ -87,7 +96,7 @@ for deep examples.
 If the user provided a target path, focus there. Otherwise, sweep the codebase for the areas with
 the highest complexity-to-value ratio.
 
-Use Explore sub-agents in parallel to gather context:
+Use Explore sub-agents (`model: "sonnet"`) in parallel to gather context:
 1. **Architecture map** — module structure, dependency graph, entry points, data flow
 2. **Complexity hotspots** — large files, deep nesting, high cyclomatic complexity, god objects
 3. **Hidden assumptions** — what implicit conventions exist? What coupling is invisible?

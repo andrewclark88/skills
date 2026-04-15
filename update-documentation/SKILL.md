@@ -18,6 +18,15 @@ precise instructions. You do NOT edit docs yourself — you craft targeted promp
 If you're running in the same session that made the code changes, you already have deep
 context. Use it — but still verify your assumptions in the prompts you craft.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Doc orchestrator (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Edit sub-agents (Phase 4)** — Parallel worker. Sonnet medium. One per doc-update unit.
+
+Identifying which docs own which changes and crafting edit prompts requires judgment — the orchestrator warrants Opus. Actual edits are scoped mechanical work where Sonnet is sufficient.
+
 ## Phase 1: Discover the Doc Structure
 
 Before updating anything, map what documentation exists in this project.
@@ -67,7 +76,7 @@ e.g., one for spec + architecture, one for guide pages, one for skills.
 
 ## Phase 4: Spawn Edit Agents
 
-For each task, spawn a **Sonnet agent** with a self-contained prompt including:
+For each task, spawn a **Sonnet agent** (`model: "sonnet"`) with a self-contained prompt including:
 
 1. **Goal** — one sentence: what docs to update and why
 2. **What changed** — describe the code change that triggered the update. Be specific:

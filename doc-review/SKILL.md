@@ -32,6 +32,15 @@ skill catches all of that.
 - Module name (e.g. `brief`): system-level + that module only
 - `--system-only`: system-level docs only, skip module passes
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Reviewer (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Cascading review passes** — Parallel worker. Sonnet medium. Spawned one per pass (system-level + one per module) in Phase 2.
+
+Cross-doc consistency judgment sits in the orchestrator — Opus catches subtle contradictions. Each pass is scoped to one doc set and parallelizable, where Sonnet is sufficient.
+
 ---
 
 ## Phase 1: Discover Documents
@@ -98,7 +107,7 @@ These findings go in the report (Phase 3) and get fixed in Phase 4 (along with t
 
 ## Phase 2: Cascading Review Passes
 
-Launch each pass as a parallel Agent subagent.
+Launch each pass as a parallel Agent subagent (`model: "sonnet"`).
 
 ### Pass 1: System-Level Consistency
 

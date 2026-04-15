@@ -22,6 +22,15 @@ it through and update the foundation docs so the next design phase can build on 
 This is NOT for small additions (use **feature** for those) or starting from scratch
 (use **ideate** for that).
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Expansion partner (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Explore sub-agent (Phase 1)** — Parallel worker. Sonnet medium (Opus for large or complex codebases). One instance for codebase mapping.
+
+Scope decisions touch foundation docs — the orchestrator warrants Opus. Codebase exploration is scoped where Sonnet is sufficient; escalate to Opus for large/complex codebases.
+
 ## Phase 0: Load Existing Knowledge
 
 **Load existing knowledge.** Read `docs/knowledge-index.yaml` to understand the current scope and what's been decided.
@@ -32,7 +41,7 @@ Before discussing the expansion, deeply understand the current project.
 
 1. Read all foundation docs: **VISION.md**, **SPEC.md**, **ARCHITECTURE.md**, roadmap,
    and any domain-specific docs (UX.md, CONTRACT.md, etc.)
-2. Use the Explore agent (model: **sonnet** minimum, **opus** for large or complex codebases) to map the current codebase: directory structure,
+2. Use the Explore agent (`model: "sonnet"` for most cases, `"opus"` for large or complex codebases) to map the current codebase: directory structure,
    modules, key abstractions, what's been built so far
 3. Read **patterns** if they exist — understand established conventions
 4. Read **CLAUDE.md** — project guidelines and conventions

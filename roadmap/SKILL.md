@@ -26,6 +26,14 @@ with only the roadmap, relevant briefs, and codebase as context.
 - No arguments: create a roadmap for the entire project
 - Module name (e.g. `ds-engine`): create a roadmap for a specific module
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Roadmap architect (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+
+Phase ordering and dependency decisions drive every downstream build phase — the orchestrator warrants Opus. This skill does not spawn sub-agents; all reasoning happens in the parent context.
+
 ---
 
 ## Workflow

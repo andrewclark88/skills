@@ -38,6 +38,15 @@ The sequence is: `/ideate` → `/research` (one or more) → `/architecture` →
 - No arguments: start a new project from scratch
 - Module name (e.g. `ds-engine`): define a new module within an existing project
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Project definition partner (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **`/scout` (auto-called in Phase 1.5)** — See scout's own model assignment (Opus orchestrator, Sonnet workers).
+
+Ideation shapes every downstream decision — the orchestrator warrants Opus. Scout's model choices are defined in its own SKILL.md.
+
 ---
 
 ## Workflow

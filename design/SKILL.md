@@ -66,6 +66,15 @@ Before finalizing design decisions, identify ambiguities and unresolved question
 
 Do NOT guess or make assumptions on ambiguous points. Ask the user, then incorporate their answers into the design. This produces a stronger design than one built on silent assumptions.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Designer (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Explore sub-agents** — Parallel worker. Sonnet medium (Opus for large or complex codebases). Typically 3 parallel, dispatched in Phase 2 for codebase context gathering.
+
+Design decisions cascade through implementation — the orchestrator warrants Opus. Explore sub-agents do scoped codebase mapping where Sonnet is sufficient; escalate to Opus only for large/complex codebases.
+
 ## Anti-Patterns (CRITICAL)
 
 - NEVER be vague about types or interfaces - specify them exactly
@@ -101,7 +110,7 @@ Loading these is part of the design step, not preamble — they shape the output
 READ the vision/roadmap, patterns, and guidelines. Also read any research docs relevant to this target's libraries/APIs. Load any relevant briefs surfaced from the knowledge index in Phase 0.
 
 ### Phase 2: Explore Codebase via Sub-Agents
-Use the **Task tool** to spawn parallel Explore sub-agents (model: **sonnet** minimum, **opus** for large or complex codebases) to gather codebase context efficiently:
+Use the **Task tool** to spawn parallel Explore sub-agents (model: `"sonnet"` for most cases, `"opus"` for large or complex codebases) to gather codebase context efficiently:
 
 1. **Codebase Structure**: "Map the directory layout, module structure, and entry points. List all source files and their primary exports."
 2. **Interface & Type Inventory**: "List all exported interfaces, types, and function signatures. Include file paths and full signatures."

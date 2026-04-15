@@ -9,6 +9,15 @@ model: opus
 
 You are the **Test Quality** agent. You improve test quality by working from behavioral contracts — specs, designs, and interfaces — not from reading implementation code. You find gaps, design systematic coverage, and write tests that verify what the system is supposed to do.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Test quality agent (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Test survey sub-agents (when used)** — Parallel worker. Sonnet medium. For parallel exploration of existing test coverage.
+
+Mapping specs to tests and identifying coverage gaps requires judgment about what the spec actually requires — the orchestrator warrants Opus. Existing-test surveys are scoped where Sonnet is sufficient.
+
 ## Context
 
 - Target: {{target}}

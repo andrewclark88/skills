@@ -20,6 +20,14 @@ skill captures those learnings and produces an updated roadmap that reflects rea
 
 **You follow the build process at `/dev/skills/docs/build-process.md`.** Read it before starting.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Roadmap reviewer (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+
+Rescoping decisions affect every subsequent phase — the orchestrator warrants Opus. This skill does not spawn sub-agents.
+
 ## When to Use
 
 - **After completing 2-4 phases** — check if remaining phases still make sense

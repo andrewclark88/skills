@@ -24,6 +24,14 @@ defines how the system is built.
 user to run `/ideate` and `/research` first. Architecture decisions made without domain research
 are assumptions, and assumptions cause rewrites.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Architect (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+
+Architecture decisions cascade into every downstream phase — the orchestrator warrants Opus. This skill does not spawn sub-agents in v1; all reasoning happens in the parent context.
+
 ## What This Skill Produces
 
 **One document: `architecture.md`** — how the system is built. Modules, data flow, conventions,

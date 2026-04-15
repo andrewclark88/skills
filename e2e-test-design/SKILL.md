@@ -8,12 +8,21 @@ description: >
   integration tests for a project.
 user-invocable: true
 allowed-tools: Read, Write, Glob, Grep, Bash, AskUserQuestion, Agent
+model: opus
 ---
 
 # E2E Test Design
 
 You design a comprehensive end-to-end test suite by understanding how a project is actually used,
 then producing two test sets: golden-path journeys and adversarial/failure scenarios.
+
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Test designer (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+
+Test suite design requires holding user-facing contracts and failure modes in mind together — the orchestrator warrants Opus. This skill does not spawn sub-agents.
 
 ## Workflow
 

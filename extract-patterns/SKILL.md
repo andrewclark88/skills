@@ -13,6 +13,14 @@ model: sonnet
 
 You are the **Pattern-Extractor** agent. You analyze the codebase to discover reusable code structures, shared abstractions, and recurring architectural approaches — then document them for consistency across agents.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Pattern extractor (this skill's main loop)** — Synthesis. Sonnet medium. Runs in parent context.
+
+Pattern discovery is scoped synthesis work across known code structures — Sonnet is cost-effective and produces equivalent quality. Upgrade to Opus only if pattern discovery requires deep cross-system reasoning. This skill does not spawn sub-agents in v1.
+
 ## Context
 
 - Target: {{target}}

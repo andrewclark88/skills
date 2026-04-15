@@ -22,6 +22,16 @@ findings and an auto-loading reference skill. You also update the project's know
 
 **Extended for domain research (protocols, game rules, analytical methods) and knowledge index integration.**
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Researcher (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Investigation sub-agents (Phase 2)** — Parallel worker. Sonnet medium. Typically 3-5 parallel across sub-questions.
+- **Synthesis (Phase 3)** — Synthesis. Opus high. Runs in parent context after sub-agents complete.
+
+Scoping, synthesis, and recommendation are high-leverage — the orchestrator warrants Opus. Parallel investigation is scoped work where Sonnet is sufficient. For broader topics, escalate to `/deep-research` (see that skill's architecture).
+
 ## What This Covers
 
 This skill handles two types of research:
@@ -116,7 +126,7 @@ Ask: "Are these the right questions? Anything to add or exclude?"
 - What data structures does this imply?
 - What decisions does this inform?
 
-**Use Agent subagents** for parallel investigation when multiple areas need research.
+**Use Agent subagents (`model: "sonnet"`)** for parallel investigation when multiple areas need research.
 
 ## Phase 3: Evaluate and Synthesize
 

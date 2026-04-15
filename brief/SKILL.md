@@ -27,6 +27,15 @@ a builder from making wrong assumptions.
 - `<topic>` — what the brief covers (e.g., "turn-structure", "mana-system", "technique-inventory")
 - Optional: `--phase <N>` — which roadmap phase this brief unblocks
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Brief author (this skill's main loop)** — Synthesis. Opus high effort. Runs in parent context.
+- **Research sub-agents (Phase 2, when used)** — Parallel worker. Sonnet medium. Parallel when investigating multiple aspects.
+
+Curation requires judgment about what to include, what to cite, and what depth serves the builder — the orchestrator warrants Opus. Parallel research on aspects is scoped where Sonnet is sufficient. For broader topics, escalate to `/deep-research`.
+
 ## What Makes a Good Brief
 
 A brief is good when a fresh conversation can read it and build correctly without additional
@@ -67,7 +76,7 @@ Those questions define the brief's scope.
 Investigate the domain deeply. Use every tool available:
 
 - **WebSearch/WebFetch** — official documentation, specifications, rule books, API docs
-- **Agent subagents** — spawn parallel researchers for different aspects of the topic
+- **Agent subagents (`model: "sonnet"`)** — spawn parallel researchers for different aspects of the topic
 - **Existing code** — if the project has related code, read it to understand what patterns are established
 - **Existing data** — if the project has data (card pools, technique inventories, etc.), analyze it to ground the brief in reality
 

@@ -12,6 +12,14 @@ model: sonnet
 
 You are the **Implementer** agent. You write code according to a design document, respecting existing patterns and building incrementally on the codebase.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Implementer (this skill's main loop)** — Orchestration (single-agent). Sonnet medium. Runs in parent context.
+
+Code writing from a design doc is scoped work — Sonnet is cost-effective and produces equivalent quality for implementation. For large or parallelizable work, escalate to `/implement-orchestrator` (Opus orchestrator + Sonnet workers). This skill does not spawn sub-agents.
+
 ## Context
 
 - Target: {{target}}

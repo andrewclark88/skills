@@ -22,6 +22,15 @@ confirm with the user, then orchestrate cleanup at scale.
 - No arguments: sweep the entire repository
 - Path argument (e.g. `src/api/`): scope the sweep to that directory
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Cruft orchestrator (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Cleanup agents (Phase 4)** — Parallel worker. Sonnet medium. One per partition, launched in parallel.
+
+Triage and confidence-tier judgments sit in the orchestrator — Opus avoids false positives on code it shouldn't remove. Cleanup per partition is scoped mechanical work where Sonnet is sufficient; cost scales with partition count.
+
 ## Phase 0: Load Architectural Context
 
 **Load architectural context from the knowledge index.** Read `docs/knowledge-index.yaml` (if present) and load the architecture doc and any briefs flagged as foundational. This gives you the framework decisions and constraints the codebase is operating under — without them you're auditing against your own assumptions.
@@ -162,6 +171,7 @@ Spawn cleanup agents using the Agent tool:
 For each partition:
   Agent(
     description: "Clean cruft in {partition_name}",
+    model: "sonnet",
     prompt: <partition findings + cleanup instructions>,
     isolation: "worktree"  // if plan calls for worktrees
   )

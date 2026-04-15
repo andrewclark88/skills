@@ -43,6 +43,15 @@ When called from `/ideate`: receives the discovery summary (idea description, pr
 - **Does NOT define the project.** That's `/ideate`. Scout informs ideation, doesn't replace it.
 - **Does NOT evaluate or pick technologies.** Scout surfaces what exists. The user and `/architecture` decide what to use.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Scout (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Search sub-agents (Phase 3)** — Parallel worker. Sonnet medium. Typically 3-5 parallel across search vectors.
+
+Vector selection and assessment are high-leverage decisions — the orchestrator warrants Opus. Parallel search across vectors is scoped work where Sonnet is sufficient.
+
 ---
 
 ## Workflow
@@ -92,7 +101,7 @@ Iterate until confirmed.
 
 ### Phase 3: Discover
 
-Execute broad search across multiple source types. **Use Agent subagents for parallel search** —
+Execute broad search across multiple source types. **Use Agent subagents (`model: "sonnet"`) for parallel search** —
 fan out across vectors or source types, then reconverge for filtering.
 
 **Source types and what each reveals:**

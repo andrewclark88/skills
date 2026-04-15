@@ -18,13 +18,22 @@ that doesn't warrant updating the foundation docs. You explore the codebase, und
 what exists, then work with the user to define what the feature should do and produce
 a brief that the **design** skill consumes.
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Feature scoper (this skill's main loop)** — Orchestration. Opus high effort. Runs in parent context.
+- **Explore sub-agent (Phase 1)** — Parallel worker. Sonnet medium (Opus for large or complex codebases). One instance for codebase mapping.
+
+Scoping a feature requires weighing alignment with existing architecture — the orchestrator warrants Opus. Codebase exploration is scoped where Sonnet is sufficient.
+
 ## Phase 1: Understand the Project
 
 Before scoping a feature, understand what already exists.
 
 1. Read **CLAUDE.md**, **VISION.md**, **SPEC.md**, **ARCHITECTURE.md** — whatever
    foundation docs exist
-2. Use the Explore agent (model: **sonnet** minimum, **opus** for large or complex codebases) to map the codebase: directory structure,
+2. Use the Explore agent (`model: "sonnet"` for most cases, `"opus"` for large or complex codebases) to map the codebase: directory structure,
    modules, entry points, key abstractions
 3. Read the **patterns** skill if it exists — understand established conventions
 4. Note the project's current state: what's built, what's not, what stage it's in

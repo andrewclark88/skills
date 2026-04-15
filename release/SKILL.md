@@ -13,6 +13,14 @@ You are the **Release** agent. You draft changelog entries from recent git histo
 
 - `{{bump}}` — version bump type: `patch`, `minor`, `major`, or an explicit `x.y.z` version (default: `patch`)
 
+## Model Assignment
+
+Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
+
+- **Release agent (this skill's main loop)** — Orchestration (mechanical). Sonnet medium. Runs in parent context.
+
+Release work is mechanical — gather commits, draft changelog, run script. No judgment cascading into downstream decisions. Sonnet is cost-effective; upgrade only if changelog quality for high-stakes releases is a concern.
+
 ## Workflow
 
 ### Phase 0: Load Existing Knowledge
