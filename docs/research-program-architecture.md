@@ -97,7 +97,11 @@ Each role has its own prompt, context window, and model assignment. This is the 
 
 **Model:** Each campaign's Lead is Opus, spawned via Agent with `model: "opus"`. Each Lead then spawns its own Sonnet specialists, Synthesis Agent (Opus), and Evaluator Agent (Opus) per the `/deep-research` architecture.
 
-**Spawn mechanism.** The Program Planner invokes each campaign by spawning an Opus Agent whose prompt tells it to follow the `/deep-research` workflow for its assigned seed. This spawned Lead is functionally identical to a user-invoked `/deep-research` Lead, except:
+**Spawn mechanism.** The Program Planner invokes each campaign by spawning an Opus Agent whose prompt tells it to follow the `/deep-research` workflow for its assigned seed.
+
+**Known limitation (discovered in first program run, 2026-04-16):** Spawned campaign Leads cannot access the Agent tool — nested agent spawning is not supported in the current Claude Code infrastructure. This means each campaign runs as **single-agent research** (the Lead does all investigation, synthesis, and evaluation itself) rather than the designed four-role tree (Lead → Sonnet specialists → Opus synthesis → Opus evaluation). Quality remains high (program-1 achieved 0.86 coverage, 4.2/5 coherence) but the cost model and parallelism benefits of the four-role tree do not apply. When nested spawning becomes available, campaign Leads should revert to the full `/deep-research` workflow.
+
+This spawned Lead is functionally identical to a user-invoked `/deep-research` Lead, except:
 
 - Its seed is passed in (not prompted)
 - It receives scope notes from the program plan (what to focus on, what to exclude)
@@ -845,6 +849,7 @@ No external infrastructure. No code. Pure skill orchestration.
 - **Program-level campaign history in BigQuery** — v1 logs to filesystem. BQ-backed program history supports cross-program learning and analytics. Defer to the same phase that moves campaign history to BQ.
 - **Auto-escalation from `/deep-research`** — silent escalation when megatopic is detected. v1 always asks the user. Auto-escalation considered only after trust in detection heuristics is proven.
 - **Budget-aware dispatch ordering** — dispatching cheap campaigns first to fail fast on budget issues. v1 dispatches per declared DAG.
+- **Nested agent spawning** — campaign Leads spawning their own Sonnet specialists. Currently blocked by infrastructure (Agent tool unavailable inside spawned agents). When this unblocks, campaigns should use the full four-role `/deep-research` tree. Until then, single-agent campaign execution produces strong results (0.86 coverage at program scale in first run).
 
 ## Open Questions
 
