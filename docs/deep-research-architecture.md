@@ -517,7 +517,7 @@ Using the [Model Selection Pattern](model-selection-pattern.md) math:
 | 5 Specialists | Sonnet | 5 × 150K tokens | ~$7.50 |
 | Synthesis Agent | Opus | 1 × 200K tokens | ~$4.00 |
 | Evaluator Agent | Opus | 1 × 150K tokens | ~$3.00 |
-| **Total (default campaign)** | | | **~$17** |
+| **Total (default campaign)** | | | **~$12-15 (calibrated; see below)** |
 
 Large campaign (7 specialists, depth 4, higher per-specialist budget): ~$35-40.
 
@@ -833,6 +833,8 @@ No external infrastructure. No code. Pure skill orchestration.
 
 | Document | Purpose |
 |----------|---------|
+| [Research Skills Overview](research-skills-overview.md) | Family view — how /research, /deep-research, /research-program compose |
+| [Research Program Architecture](research-program-architecture.md) | The tier above — megatopic-scale programs that dispatch /deep-research as campaigns |
 | [Deep Research North Star](deep-research-north-star.md) | Vision, principles, domain model |
 | [Model Selection Pattern](model-selection-pattern.md) | Archetype-based model+effort assignments |
 | [Build Process](build-process.md) | Pipeline deep research integrates into |
