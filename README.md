@@ -157,7 +157,7 @@ The research tools (`/research`, `/deep-research`, `/research-program`) are a si
 
 **Composition:** `/research` escalates to `/deep-research` when topic is broad; `/deep-research` escalates to `/research-program` when seed is megatopic. `/deep-research --continue-from` extends a leaf of a prior campaign via chain mode. All three share reuse checks — existing briefs and campaigns are cited rather than re-run.
 
-**Demo-validated (2026-04-15):** 4 real campaigns produced coverage 0.83-0.92 (avg 0.895), coherence 4.0-4.5/5, groundedness 0.80-0.88. Key demo findings: severity reassessment happens in ~50% of campaigns (it's standard, not exceptional); child synthesis mis-reports resolution status ~50% of the time in the direction of optimism (hence "Evaluator verifies, doesn't trust" as a core principle).
+**Demo-validated (2026-04-15/16):** 4 `/deep-research` campaigns (coverage 0.83-0.92, coherence 4.0-4.5/5) + 1 `/research-program` (5 campaigns, coverage 0.86, coherence 4.2/5). Key findings: severity reassessment happens in ~50% of campaigns; child synthesis mis-reports resolution status ~50% of the time in the direction of optimism (hence "Evaluator verifies, doesn't trust" as a core principle). **Known limitation:** nested agent spawning is blocked — `/research-program` campaign Leads run as single-agent research rather than the designed four-role tree. Quality is unaffected; parallelism benefits don't apply.
 
 Grounded in Anthropic's multi-agent research pattern: 90% time reduction, 90.2% quality improvement over single-agent Opus on internal research eval.
 
