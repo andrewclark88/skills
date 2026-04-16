@@ -38,9 +38,11 @@ The pattern is recursive-by-scale, not recursive-by-dispatch: we don't nest work
 |-------|-------|-------------|---------|---------------|------|
 | **Question** | `/research` | Researcher (Opus, parent) | Sub-agents (Sonnet) × 3-5 | One domain brief + reference skill | ~$3-5 |
 | **Domain** | `/deep-research` | Lead (Opus, parent) | Specialists (Sonnet) × 5-7 | Campaign directory (parent + N briefs + quality report) | ~$6-15 |
-| **Megatopic** | `/research-program` | Planner (Opus, parent) | Campaigns (full `/deep-research` runs) × 3-7 | Program directory (program plan + super-parent + N campaigns + program evaluation) | ~$35-75 |
+| **Megatopic** | `/research-program` | Planner (Opus, parent) | Campaigns (single-agent Opus research*) × 3-7 | Program directory (program plan + super-parent + N campaigns + program evaluation) | ~$35-75 |
 
 Each scale's workers are the scale below's full output. That's the fractal: campaigns contain specialists, specialists contain sub-questions, sub-questions contain claims.
+
+*\*Known limitation: nested agent spawning is currently blocked — campaign Leads cannot spawn their own Sonnet specialists. Campaigns execute as single-agent Opus research. Quality is strong (first program: 0.86 coverage, 4.2/5 coherence) but the four-role tree doesn't execute inside spawned agents. See [research-program-architecture.md §Campaigns](research-program-architecture.md) for details.*
 
 ## Scale Signals — When To Use Which
 

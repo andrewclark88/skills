@@ -119,8 +119,9 @@ KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
   it duplicate prior work and miss available context.
 
   Doc-producing skills (/ideate, /scout, /research, /deep-research,
-  /architecture, /brief, /roadmap, /refactor-design, /feature,
-  /extract-patterns, /expand) update docs/knowledge-index.yaml after writing.
+  /research-program, /architecture, /brief, /roadmap, /refactor-design,
+  /feature, /extract-patterns, /expand) update docs/knowledge-index.yaml
+  after writing.
   Doc-maintaining skills (/update-documentation, /doc-review) update
   the index when they create, modify, or fix docs.
   Skills that consume context (/design, /implement, /brief, etc.)
@@ -431,7 +432,7 @@ Before any production deployment:
 
 ## Thinking Layer
 
-The pipeline's thinking-heavy skills (`/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:
+The pipeline's thinking-heavy skills (`/research`, `/deep-research`, `/research-program`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:
 
 1. **Open** — decompose the problem, question deeply, doubt what you know
 2. **Challenge** — invert the problem, seek falsification, trace consequences
