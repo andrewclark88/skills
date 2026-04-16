@@ -120,12 +120,19 @@ Phase 1.5. Incorporate scout-identified domains into your domain identification.
 scout's recommendations may overlap with domains you'd identify independently — that's
 confirmation. Others may surface domains you'd have missed — that's scout earning its value.
 
-**Classify each domain as `/research` or `/deep-research`.** Most domains fit `/research` — focused single-topic investigation. But some warrant `/deep-research` — parallel-agent campaigns that decompose the topic into facets and synthesize cross-referenced briefs. Classify a domain as `/deep-research` when:
+**Classify each domain as `/research`, `/deep-research`, or `/research-program`.** Most domains fit `/research` — focused single-topic investigation. Some warrant `/deep-research` — parallel-agent campaigns that decompose a topic into facets. A few initiatives are genuinely megatopic-scale and warrant `/research-program` — multiple campaigns coordinated under one meta-plan with cross-campaign synthesis.
+
+Classify a domain as `/deep-research` when:
 - It spans 5+ orthogonal aspects that each deserve real investigation
 - It's unfamiliar enough that finding the right decomposition is part of the work
 - Multi-angle synthesis matters (themes across perspectives, not just answers to a question)
 
-Most projects have 0-2 `/deep-research` domains. Don't over-classify — the default should be `/research`. See [build-process.md § When to Use /research vs /deep-research](/dev/skills/docs/build-process.md).
+Classify an initiative as `/research-program` when:
+- It spans 3+ distinct domains, each big enough to warrant its own campaign (not just facets)
+- The whole initiative is a megatopic — one `/deep-research` would exceed 7 specialists
+- Cross-domain themes and contradictions matter (not just within-domain)
+
+Most projects have 0-2 `/deep-research` domains and 0-1 `/research-program` initiatives. Don't over-classify — the default should be `/research`. See [build-process.md § When to Use /research vs /deep-research vs /research-program](/dev/skills/docs/build-process.md) and [research-skills-overview.md](/dev/skills/docs/research-skills-overview.md).
 
 **AskUserQuestion checkpoint:** Present the research plan:
 - List of domains identified, each with:
@@ -133,11 +140,11 @@ Most projects have 0-2 `/deep-research` domains. Don't over-classify — the def
   - Why it matters for the architecture
   - Suggested research approach (web search, API exploration, data analysis, etc.)
   - Whether this was identified by scout, by domain analysis, or both
-  - Skill to use: `/research` (default) or `/deep-research` (complex topics)
+  - Skill to use: `/research` (default), `/deep-research` (complex topics), or `/research-program` (megatopic multi-domain initiatives)
 - Which domains are most critical (should be researched first)
 - Which might be deferred (not needed until later phases)
 
-The user approves, modifies, or adds to the list. This list becomes the input for `/research` and `/deep-research` runs.
+The user approves, modifies, or adds to the list. This list becomes the input for `/research`, `/deep-research`, and `/research-program` runs.
 
 ### Phase 3: Refinement
 

@@ -1,6 +1,6 @@
 # skills
 
-**A complete, opinionated software development workflow suite for Claude Code — 25 skills covering the full lifecycle, two auto-loading principle packs, a thinking layer, a model-selection framework, and cross-project knowledge patterns.**
+**A complete, opinionated software development workflow suite for Claude Code — 26 skills covering the full lifecycle, two auto-loading principle packs, a thinking layer, a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
 
 Use this when you want agents that ship real projects: ideation → research → architecture → roadmap → per-phase build, with doc-review, refactor, security, and release baked in. Every step is a skill. Every skill is opinionated about what it produces. Every doc is indexed so future sessions never start blind.
 
@@ -12,7 +12,8 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 | Layer | What it is | Where to look |
 |-------|-----------|---------------|
-| **25 skills** | Full software lifecycle — 17 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **26 skills** | Full software lifecycle — 18 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **Research skills family** | Three scales of the same fractal pattern: `/research` (question) → `/deep-research` (domain) → `/research-program` (megatopic) | [`docs/research-skills-overview.md`](docs/research-skills-overview.md) |
 | **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
 | **Model selection** | Four-archetype framework for picking Opus/Sonnet/Haiku + effort per role | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) |
 | **Knowledge patterns** | Cross-project architectural patterns for building knowledge layers | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) and three pattern docs |
@@ -38,14 +39,31 @@ PROJECT START (truly new project)
                     patterns, lessons. Produces landscape brief + research recommendations.
                     Auto-called from /ideate; also callable standalone.
 
-/research         → Research each domain deeply. Primers + auto-loading reference skills.
-                    Repeat for every domain. Don't rush — assumptions cause rewrites.
-
-/deep-research    → Parallel-agent campaign for complex topics. Decomposes a seed into
-                    orthogonal facets, dispatches Sonnet specialists in parallel, synthesizes
-                    cross-referenced briefs with a parent summary + quality report.
-                    Use when a topic is too broad for /research. Also callable from
-                    /research, /ideate, /brief, /expand.
+┌── RESEARCH FAMILY (three scales, same fractal pattern) ──────────┐
+│                                                                   │
+│  /research         → Question scale. Single-agent with 3-5 Sonnet │
+│                      sub-agents. One domain, clear questions.     │
+│                      Cost ~$3-5.                                  │
+│                                                                   │
+│  /deep-research    → Domain scale. Lead + 3-7 Sonnet specialists  │
+│                      (parallel, isolated) + spawned Opus Synthesis│
+│                      + spawned Opus Evaluator. Topic spans 5+     │
+│                      orthogonal facets. Cost ~$6-15.              │
+│                      `--continue-from` for chain mode (extending  │
+│                      a leaf of a prior campaign).                 │
+│                                                                   │
+│  /research-program → Megatopic scale. Planner + 3-7 Campaigns     │
+│                      (each a full /deep-research tree) +          │
+│                      Cross-Campaign Synthesizer + Program         │
+│                      Evaluator. Topic spans multiple distinct     │
+│                      domains. Cost ~$35-75.                       │
+│                                                                   │
+│  Escalation (user-gated): /research → /deep-research →            │
+│  /research-program. All three produce briefs the rest of the      │
+│  pipeline consumes. Reuse check cites existing work; isolation    │
+│  prevents framing bias at every scale.                            │
+│                                                                   │
+└───────────────────────────────────────────────────────────────────┘
 
 /architecture     → Design the system. Modules, data flow, conventions.
                     Grounded in north star + domain briefs. No unresearched assumptions.
@@ -106,7 +124,7 @@ Every project has a `docs/knowledge-index.yaml` that catalogs every brief, archi
 
 Thinking-heavy skills load a concrete thinking primer before starting: 10 moves organized as **Open → Challenge → Synthesize → Verify**. Each skill declares which moves to emphasize.
 
-Loaded by: `/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap`.
+Loaded by: `/research`, `/deep-research`, `/research-program`, `/ideate`, `/architecture`, `/brief`, `/roadmap`.
 
 See [`docs/first-principles.md`](docs/first-principles.md).
 
@@ -118,25 +136,32 @@ The pattern doc defines four archetypes — every role inside every skill maps t
 
 | Archetype | Model + Effort | Typical role |
 |-----------|---------------|-------------|
-| **Orchestration** | Opus high | Few calls, cascading consequences (`/architecture`, `/design`, deep-research Lead) |
-| **Parallel worker** | Sonnet medium | Many parallel, scoped (research sub-agents, deep-research specialists) |
-| **Synthesis / judgment** | Opus high | One call, integrates N inputs (synthesis agents, `/brief`) |
+| **Orchestration** | Opus high | Few calls, cascading consequences (`/architecture`, `/design`, `/deep-research` Lead, `/research-program` Planner) |
+| **Parallel worker** | Sonnet medium | Many parallel, scoped (research sub-agents, deep-research specialists). At program scale, campaigns themselves are the workers — each a full Opus+Sonnet tree. |
+| **Synthesis / judgment** | Opus high | One call, integrates N inputs (synthesis agents, `/brief`, cross-campaign synthesizers + evaluators) |
 | **Volume / structured extraction** | Haiku low | Many calls, well-defined task (entity extraction, citation verification) |
 
 Every SKILL.md that spawns sub-agents declares its archetype mapping in a **Model Assignment** section. See [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md).
 
-### 4. `/deep-research` — parallel-agent campaigns
+### 4. The Research Skills Family — three scales of the same fractal pattern
 
-A sibling of `/research` for topics too broad for one agent. Four-role architecture:
+The research tools (`/research`, `/deep-research`, `/research-program`) are a single architectural pattern applied at three scales. Every scale has the same four roles: an **Orchestrator** that decomposes and dispatches, **Workers** that investigate in parallel with isolated contexts, a **Synthesizer** that reconciles their outputs, and an **Evaluator** that judges quality independently. What changes across scales is what each role orchestrates and how much is delegated.
 
-- **Lead Researcher** (Opus) — decomposes via PMEST facets, manages stopping criteria, dispatches specialists
-- **Specialists** (Sonnet, parallel) — one per leaf subdomain, scoped context, cites sources per claim
-- **Synthesis Agent** (Opus) — compiles outputs with typed cross-references; flags contradictions explicitly
-- **Evaluator Agent** (Opus) — scores coverage/coherence/contradictions/groundedness on the produced brief set only
+| Scale | Skill | Orchestrator | Workers | Unit of output | Cost (calibrated) |
+|-------|-------|-------------|---------|---------------|-------------------|
+| Question | `/research` | Researcher (Opus) | 3-5 Sonnet sub-agents | One domain brief + reference skill | ~$3-5 |
+| Domain | `/deep-research` | Lead (Opus) | 5-7 Sonnet specialists | Campaign dir (parent + N briefs + quality report) | ~$6 scoped, ~$12-15 default |
+| Megatopic | `/research-program` | Planner (Opus) | 3-7 Campaigns (full `/deep-research` runs) | Program dir (plan + super-parent + N campaigns + program evaluation) | ~$35-75 |
 
-Typical medium campaign: ~5 specialists, depth 3, ~$17 end-to-end (vs ~$50-75 if everything ran on Opus). Grounded in Anthropic's multi-agent research pattern: 90% time reduction, 90.2% quality improvement over single-agent Opus on internal research eval.
+**Isolation is the load-bearing principle.** Workers never see each other's full output (only sibling titles). Synthesizer sees everything. Evaluator sees only the produced briefs + seed — not the orchestrator's reasoning, not the decomposition tree. This prevents framing-bias inheritance: the Evaluator judges *what was produced*, not *what was intended*. The same rule applies at every scale.
 
-See [`docs/deep-research-north-star.md`](docs/deep-research-north-star.md) and [`docs/deep-research-architecture.md`](docs/deep-research-architecture.md).
+**Composition:** `/research` escalates to `/deep-research` when topic is broad; `/deep-research` escalates to `/research-program` when seed is megatopic. `/deep-research --continue-from` extends a leaf of a prior campaign via chain mode. All three share reuse checks — existing briefs and campaigns are cited rather than re-run.
+
+**Demo-validated (2026-04-15):** 4 real campaigns produced coverage 0.83-0.92 (avg 0.895), coherence 4.0-4.5/5, groundedness 0.80-0.88. Key demo findings: severity reassessment happens in ~50% of campaigns (it's standard, not exceptional); child synthesis mis-reports resolution status ~50% of the time in the direction of optimism (hence "Evaluator verifies, doesn't trust" as a core principle).
+
+Grounded in Anthropic's multi-agent research pattern: 90% time reduction, 90.2% quality improvement over single-agent Opus on internal research eval.
+
+See [`docs/research-skills-overview.md`](docs/research-skills-overview.md) (family view) · [`docs/deep-research-north-star.md`](docs/deep-research-north-star.md) + [`docs/deep-research-architecture.md`](docs/deep-research-architecture.md) · [`docs/research-program-architecture.md`](docs/research-program-architecture.md).
 
 ### 5. Cross-project knowledge patterns
 
@@ -180,8 +205,9 @@ All skills are first-party. Invocable as slash commands once installed.
 | [`/knowledge-index`](knowledge-index/SKILL.md) | Session start | Catalog of all available project knowledge |
 | [`/ideate`](ideate/SKILL.md) | 1. Define | North star + research plan. Auto-calls `/scout`. Classifies domains as `/research` vs `/deep-research`. |
 | [`/scout`](scout/SKILL.md) | 1.5 Scout | Landscape brief + research recommendations (Opus orchestrator + Sonnet workers) |
-| [`/research`](research/SKILL.md) | 2. Research | Domain brief + auto-loading reference skill. Updates knowledge index. |
-| [`/deep-research`](deep-research/SKILL.md) | 2. Research (complex topics) | N cross-referenced briefs + parent synthesis + quality report. Parallel-agent campaign (Lead + Specialists + Synthesis + Evaluator). |
+| [`/research`](research/SKILL.md) | 2. Research (question scale) | Domain brief + auto-loading reference skill. Updates knowledge index. |
+| [`/deep-research`](deep-research/SKILL.md) | 2. Research (domain scale) | N cross-referenced briefs + parent synthesis + quality report. Parallel-agent campaign (Lead + Specialists + Synthesis + Evaluator). `--continue-from` for chain mode. |
+| [`/research-program`](research-program/SKILL.md) | 2. Research (megatopic scale) | Program directory: plan + super-parent + N campaigns (each a full `/deep-research` tree) + program evaluation. For initiatives spanning multiple distinct domains. |
 | [`/architecture`](architecture/SKILL.md) | 3. Design | Architecture doc (modules, data flow, conventions) |
 | [`/roadmap`](roadmap/SKILL.md) | 4. Plan | Phased roadmap (blocking briefs, I/O/Tests) |
 
@@ -250,7 +276,9 @@ Some skills have their own north-star + architecture docs for deeper reference:
 | Skill | Docs |
 |-------|------|
 | `/scout` | [north-star](docs/scout-north-star.md) + [architecture](docs/scout-architecture.md) |
+| Research family (overview) | [overview](docs/research-skills-overview.md) — unifying view of `/research` + `/deep-research` + `/research-program` |
 | `/deep-research` | [north-star](docs/deep-research-north-star.md) + [architecture](docs/deep-research-architecture.md) |
+| `/research-program` | [architecture](docs/research-program-architecture.md) |
 | first-principles primer | [north-star](docs/first-principles-north-star.md) + [architecture](docs/first-principles-architecture.md) + [research brief](docs/brief-first-principles-frameworks.md) |
 | knowledge-edge creator (planned) | [north-star](docs/knowledge-edge-north-star.md) |
 
@@ -275,11 +303,12 @@ Some skills have their own north-star + architecture docs for deeper reference:
 
 ```bash
 # Copy all skills + auto-loading principles to your personal skills folder
-for d in knowledge-index ideate scout research deep-research architecture roadmap \
-         brief doc-review update-roadmap design implement implement-orchestrator \
-         update-documentation refactor-design extract-patterns test-quality \
-         security-review cruft-cleaner bold-refactor feature expand \
-         repo-eval e2e-test-design release engineering-principles; do
+for d in knowledge-index ideate scout research deep-research research-program \
+         architecture roadmap brief doc-review update-roadmap design implement \
+         implement-orchestrator update-documentation refactor-design \
+         extract-patterns test-quality security-review cruft-cleaner \
+         bold-refactor feature expand repo-eval e2e-test-design release \
+         engineering-principles; do
   cp -r "$d" ~/.claude/skills/
 done
 cp -r principles/build-process ~/.claude/skills/
@@ -302,8 +331,10 @@ skills/
 │   ├── knowledge-storage-pattern.md
 │   ├── knowledge-retrieval-pattern.md
 │   ├── knowledge-generation-pattern.md
+│   ├── research-skills-overview.md        ← three-scale research family
 │   ├── scout-north-star.md + scout-architecture.md
 │   ├── deep-research-north-star.md + deep-research-architecture.md
+│   ├── research-program-architecture.md   ← megatopic-scale research
 │   ├── first-principles-north-star.md + first-principles-architecture.md
 │   ├── brief-first-principles-frameworks.md
 │   └── knowledge-edge-north-star.md
@@ -311,7 +342,8 @@ skills/
 ├── ideate/
 ├── scout/
 ├── research/
-├── deep-research/                ← new: parallel-agent campaigns
+├── deep-research/                ← parallel-agent campaigns (+ chain mode)
+├── research-program/             ← multi-campaign megatopic research
 ├── architecture/
 ├── roadmap/
 ├── brief/
@@ -352,4 +384,4 @@ skills/
 
 ## Acknowledgments
 
-A handful of the pipeline skills were originally inspired by the open suite from [nklisch/skills](https://github.com/nklisch/skills). This suite has evolved substantially since then — knowledge-index integration across all skills, the thinking layer, the model-selection framework, `/deep-research`, `/scout`, the cross-project knowledge patterns, cascading `/doc-review`, and the full infrastructure-safety methodology are first-party additions. To compare against upstream, clone fresh from the source repo and diff.
+A handful of the pipeline skills were originally inspired by the open suite from [nklisch/skills](https://github.com/nklisch/skills). This suite has evolved substantially since then — knowledge-index integration across all skills, the thinking layer, the model-selection framework, the three-scale research family (`/research`, `/deep-research`, `/research-program`), `/scout`, the cross-project knowledge patterns, cascading `/doc-review`, and the full infrastructure-safety methodology are first-party additions. To compare against upstream, clone fresh from the source repo and diff.

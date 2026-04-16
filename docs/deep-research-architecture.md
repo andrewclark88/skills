@@ -140,6 +140,7 @@ Each role has its own prompt, context window, and model assignment.
 - Assess coverage (via LLM-generated expected outline vs. actual briefs)
 - Assess coherence (G-Eval style scoring)
 - Detect contradictions (across briefs, complementing synthesis's flags)
+- **Reassess severity** — for each contradiction synthesis flagged, independently judge its severity and provide rationale. When your judgment differs from synthesis's, report the delta explicitly. Demo data (2026-04-15) shows severity reassessment happens in 50% of campaigns — it is not exceptional; it's a standard output.
 - Check groundedness (claims traceable to sources; `confidence` fields match groundedness scores)
 - Produce structured quality report
 
@@ -169,7 +170,7 @@ Per [model-selection-pattern.md](model-selection-pattern.md):
 | Evaluator Agent | Synthesis/judgment | Opus | high | 1 |
 | (Future) CitationAgent | Volume extraction | Haiku | low | N (one per specialist) |
 
-**Rough cost for a default medium campaign:** ~$15-20. See cost model section.
+**Rough cost for a default medium campaign:** ~$12-15 calibrated (originally estimated $15-20). See cost model section for breakdown and calibration notes.
 
 ## Skill Workflow
 
@@ -339,8 +340,12 @@ coherence:
   g_eval_score: 4.1 / 5
   embedding_variance: 0.22
 contradictions:
-  flagged_pairs: [{brief_a, brief_b, conflict}]
-  severity: low
+  flagged_pairs: [{brief_a, brief_b, conflict, severity}]
+  severity_reassessments:
+    - id: C2
+      synthesis_severity: low
+      your_severity: medium
+      rationale: "Would cause a runtime error if implemented as-is — functional impact broader than naming confusion"
 groundedness:
   per_brief_scores: [{slug, score}]
   unsupported_claims: [...]
@@ -374,8 +379,51 @@ Flags:
   --output-dir <path>                 # Where to write briefs (default: docs/briefs/<slug>/)
   --no-review                         # Skip human review checkpoint (use with caution)
   --tiered-review                     # Approve decomposition AND each specialist assignment
+  --continue-from <path>              # Chain mode: extend a leaf of a prior campaign.
+                                      # See Chain Mode section below.
   --seed-with-knowledge               # (v2) accept gap stubs as seed input
 ```
+
+### Chain Mode (`--continue-from`)
+
+When invoked with `--continue-from <parent-campaign-dir>`, the skill runs as a *child campaign* extending a leaf of a prior campaign. The `<topic>` argument is interpreted as the leaf scope.
+
+**Behavior deltas from a standalone run:**
+
+| Phase | Chain-mode addition |
+|-------|--------------------|
+| 1. Load Context | Parent campaign's `parent.md` + specialist briefs loaded as priors; anchor brief identified |
+| 2. Decomposition | Scoped to the leaf; explicitly avoid sibling scopes already covered in the parent campaign |
+| 7. Synthesis | Writes `related: [{slug: <parent>/<leaf>, relationship: extends}]` on the child brief set |
+| 9. Write Output | Appends `## Extended by child campaigns` section to the parent campaign's `parent.md`; parent's specialist briefs are read-only |
+
+**Linkage model.** Child campaigns live as peers to parents (`docs/briefs/<child-slug>/`), not nested. Parent-child relationship is expressed via typed cross-references, not directory structure. The user can request nested layout with `--output-dir`.
+
+**Chain depth.** Each invocation adds one link. A chain of N runs is N sequential invocations, each passing the most recent parent via `--continue-from`. There is no formal chain-depth ceiling — but chains longer than 2-3 links typically signal that the topic should have been a `/research-program` from the start.
+
+**Chain-mode Evaluator (Phase 8).** In addition to the five standard dimensions (coverage, coherence, contradictions, groundedness, recommendations), chain-mode campaigns require four extra dimensions, rolled up into a `chain_mode:` YAML block in `campaign.md`:
+
+```yaml
+chain_mode:
+  extension_validity: valid | partial | drift
+  parent_contradictions:
+    - id: C1
+      status: resolved | partial | unresolved
+      rationale: "Brief explanation — what runtime behavior still breaks, if any"
+  upstream_linkage_quality: 0.XX
+  parent_integrity_preserved: true | false
+```
+
+Rationale: chain mode has its own failure modes that aren't caught by the standard dimensions. *Drift* (child covers something other than the flagged gap), *claimed-but-unreal resolution* (synthesis claims to resolve parent contradictions without actually doing so), *decorative upstream edges* (wrong relationship types or missing edges), and *parent corruption* (append overwrote or mangled parent content) all need dedicated signals. Demo 1 step 2 (2026-04-15) validated the dimensions; demo 2 step 2 (2026-04-15) surfaced the critical refinement that `parent_contradictions` needs per-contradiction status with required rationale (a boolean or two-list split loses the load-bearing "partial resolution" case).
+
+**Key principle: Evaluator verifies resolution claims, does not trust them.** Child synthesis will often claim to resolve parent contradictions; the Evaluator's job is to independently walk the specific failure mode the parent evaluator described and check whether the child actually closes it. Demo 2 step 2 showed synthesis claiming "resolved" where Evaluator correctly judged "partial" — this divergence is load-bearing signal, not noise.
+
+**Relationship to `/research-program`.** Informal chains of `/deep-research --continue-from` runs and formal `/research-program` invocations produce structurally similar output (a coordinated multi-campaign research body). The difference:
+
+- Chain mode is *reactive* — the user decides after each campaign whether to extend. No program plan, no cross-campaign synthesis, no program-level evaluation.
+- `/research-program` is *proactive* — megatopic is decomposed up front, campaigns are dispatched per a DAG, cross-campaign synthesis and program-level evaluation always run.
+
+Use chain mode when a single leaf of an already-finished campaign turned out bigger than expected. Use `/research-program` when you know up front that a topic is multi-campaign, or when a chain has reached 3+ links and would benefit from formal synthesis.
 
 **Default philosophy:** generous. The user opted into deep research; don't cheap out on them. Defaults produce good campaigns; flags tighten or loosen.
 
@@ -478,6 +526,27 @@ If everything ran on Sonnet (penny-pinching): ~$12-15 but with worse decompositi
 
 The mix captures most savings while keeping quality where it matters.
 
+### Calibration from Demo 1 (2026-04-15)
+
+Two real campaigns (one fresh, one chain-mode extension), both at `--parallel 3 --budget 15`:
+
+| Campaign | Specialists | Synthesis | Evaluator | Lead (est.) | Total |
+|----------|-------------|-----------|-----------|-------------|-------|
+| Fresh (3 facets, depth 1) | ~$1.10 | ~$1.40 | ~$2.10 | ~$1.00 | **~$5.60** |
+| Chain-mode (3 facets, depth 1) | ~$1.10 | ~$1.85 | ~$2.00 | ~$1.10 | **~$6.05** |
+
+Real cost came in at ~35% of the $17 default estimate. Two reasons:
+- Single-level decomposition (3 facets, no sub-facets) produced strong output without needing depth-3 trees. The $17 estimate assumes a more complex decomposition.
+- Per-specialist token usage was ~80K, not 150K. At ~5-6 min per specialist on scoped subdomains, they hit natural stopping points well before 150K.
+
+**Revised calibration:**
+
+- Small scoped campaign (3 specialists, depth 1): **~$6**
+- Medium campaign (5 specialists, depth 2): **~$12-15** (extrapolated)
+- Large megatopic campaign (7 specialists, depth 3): **~$20-25**
+
+The original $30 budget default still works — it's a cap, not a target. Users with scoped seeds can safely pass `--budget 15`.
+
 ## Integration with Build Process
 
 Deep research plugs into the pipeline at multiple points:
@@ -578,12 +647,18 @@ Your task:
    - Frontmatter: description, slug, tags, audience, confidence: speculative, status: draft
    - Body: structured sections appropriate to the content
    - sources: [{url, accessed_at, excerpt}] with per-claim attribution
-   - Suggested related[] entries to sibling subdomains
+   - A final "Suggested cross-references to sibling subdomains" section listing candidate
+     related[] edges with proposed relationship types (synthesis uses these as input)
 3. Iteratively refine: search → gather → filter → write. Stop when budget runs out.
+4. Return a ~100-word summary of your findings. Your summary MUST include a "Sibling scope
+   avoided" line (1-2 sentences) listing what you noticed you could have covered but
+   explicitly avoided per your boundaries. This signals decomposition quality to the
+   evaluator and surfaces drift early.
 
 Do NOT:
 - Wander into sibling subdomains
-- Write cross-references yourself (suggest them in a separate section)
+- Write final cross-references yourself (suggest them in the "Suggested cross-references"
+  section; synthesis writes the frontmatter edges)
 - Research topics already covered by existing briefs (cite them instead)
 ```
 
@@ -604,6 +679,10 @@ Your task:
 4. Write the parent brief. Structure: Context, Decomposition (tree with links), Key Findings
    (major themes across specialists), Contradictions Flagged, Coverage Assessment, Related,
    Campaign Metadata.
+5. Self-review your cross-references before returning. For each edge you added, confirm (a)
+   the slug target exists, (b) the relationship type matches the closed vocabulary, (c) the
+   semantic match between the two briefs is real (not decorative). If any fail, revise.
+   Demos showed this self-review catches 1-2 weak edges per campaign.
 
 Do NOT:
 - Research additional content
@@ -628,10 +707,14 @@ Your task:
 2. Coherence: score the set of briefs for narrative coherence (1-5 with rationale). Use
    chain-of-thought reasoning.
 3. Contradictions: scan for contradictions across briefs. Report each as
-   (brief_a, brief_b, conflict_description).
-4. Groundedness: for each brief, check that claims are supported by the sources listed in
+   (brief_a, brief_b, conflict_description, severity).
+4. Severity reassessment: for each contradiction that synthesis flagged, independently
+   judge its severity. When your judgment differs, report (id, synthesis_severity,
+   your_severity, rationale). This is a standard output — not exceptional. Do not defer
+   to synthesis on severity.
+5. Groundedness: for each brief, check that claims are supported by the sources listed in
    frontmatter. Flag claims without supporting sources. Score per-brief groundedness.
-5. Recommendations: suggest follow-up campaigns (for uncovered aspects) and briefs needing
+6. Recommendations: suggest follow-up campaigns (for uncovered aspects) and briefs needing
    revision.
 
 Output: structured YAML report + prose summary. The Lead will use this to decide next steps.
