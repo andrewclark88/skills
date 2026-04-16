@@ -118,6 +118,7 @@ Am I in System 1 (fast, automatic) when I should be in System 2 (slow, deliberat
 |-------|----------|-----|
 | `/research` | Open + Challenge | Decomposing and questioning the domain is the core job. Challenge assumptions hard — shallow research propagates downstream. |
 | `/deep-research` | Open + Synthesize + Challenge | Decomposition is the highest-leverage decision (Open); facet selection and cross-referencing win through leverage (Synthesize); stopping decisions and contradiction flags require falsification (Challenge). A bad decomposition wastes every downstream specialist. |
+| `/research-program` | Open + Challenge + Synthesize | Program decomposition chooses which *domains* get campaigns — highest-leverage decision at megatopic scale (Open + Challenge). Cross-campaign synthesis finds themes no single campaign surfaces; flag cross-domain contradictions (Synthesize + Challenge). |
 | `/ideate` | Open + Synthesize | Deep exploration of the problem space, then convergence. Challenge is secondary during early ideation. |
 | `/architecture` | Challenge + Synthesize | Fundamentals should already be researched. Focus on stress-testing decisions and building from verified foundations. |
 | `/brief` | Open + Verify | Curating knowledge requires deep decomposition and confirming you truly understand what you're summarizing. |

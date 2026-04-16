@@ -12,7 +12,7 @@ updated: 2026-04-15
 
 A skill (`/deep-research`) that investigates a topic with more breadth and depth than a single agent can hold. Given a seed topic, it decomposes the domain into orthogonal facets, dispatches specialist agents to research each facet in parallel, then compiles their findings into a set of cross-referenced briefs plus a parent brief that synthesizes the whole.
 
-Deep research is the parallel, multi-agent counterpart to `/research`. Both produce briefs the build process can consume. `/research` is the right tool for focused, single-domain investigation. `/deep-research` is the right tool when a topic is too broad or too complex for one agent to cover — when you need coverage across 5+ orthogonal aspects, when the domain is unfamiliar enough that the decomposition itself is part of the research, or when the quality of multi-angle synthesis matters.
+Deep research is the middle tier of a three-scale research family: `/research` (question scale) → `/deep-research` (domain scale) → `/research-program` (megatopic scale). All three use the same fractal four-role pattern. `/research` is the right tool for focused, single-domain investigation. `/deep-research` is the right tool when a topic spans 5+ orthogonal facets or when decomposition itself is part of the research. `/research-program` is the right tool when a topic spans 3+ distinct domains, each big enough to warrant its own campaign — see [research-skills-overview.md](research-skills-overview.md) for the family view.
 
 ## Problem
 
@@ -120,6 +120,8 @@ These briefs feed the architecture doc.
 
 | Document | Purpose |
 |----------|---------|
+| [Research Skills Overview](research-skills-overview.md) | Three-scale family view (/research → /deep-research → /research-program) |
+| [Research Program Architecture](research-program-architecture.md) | The tier above — megatopic programs that dispatch /deep-research as campaigns |
 | [Architecture](deep-research-architecture.md) | Workflow, roles, prompts, integrations |
 | [Model Selection Pattern](model-selection-pattern.md) | Model + effort assignments per role |
 | [Build Process](build-process.md) | The pipeline this skill integrates into |
