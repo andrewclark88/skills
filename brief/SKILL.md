@@ -34,7 +34,7 @@ Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
 - **Brief author (this skill's main loop)** — Synthesis. Opus high effort. Runs in parent context.
 - **Research sub-agents (Phase 2, when used)** — Parallel worker. Sonnet medium. Parallel when investigating multiple aspects.
 
-Curation requires judgment about what to include, what to cite, and what depth serves the builder — the orchestrator warrants Opus. Parallel research on aspects is scoped where Sonnet is sufficient. For broader topics, escalate to `/deep-research`.
+Curation requires judgment about what to include, what to cite, and what depth serves the builder — the orchestrator warrants Opus. Parallel research on aspects is scoped where Sonnet is sufficient. For broader topics, escalate to `/deep-research`; when a phase has 3+ blocking briefs that form a coherent multi-domain program, escalate further to `/research-program` (its super-parent can serve as the phase-level blocking brief, with campaign-level briefs backing it).
 
 ## What Makes a Good Brief
 

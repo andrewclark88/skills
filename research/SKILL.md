@@ -30,7 +30,7 @@ Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
 - **Investigation sub-agents (Phase 2)** — Parallel worker. Sonnet medium. Typically 3-5 parallel across sub-questions.
 - **Synthesis (Phase 3)** — Synthesis. Opus high. Runs in parent context after sub-agents complete.
 
-Scoping, synthesis, and recommendation are high-leverage — the orchestrator warrants Opus. Parallel investigation is scoped work where Sonnet is sufficient. For broader topics, escalate to `/deep-research` (see that skill's architecture).
+Scoping, synthesis, and recommendation are high-leverage — the orchestrator warrants Opus. Parallel investigation is scoped work where Sonnet is sufficient. For broader topics, escalate to `/deep-research`; for genuine megatopics spanning multiple domains, escalate further to `/research-program`. See [research-skills-overview.md](/dev/skills/docs/research-skills-overview.md) for the three-scale family.
 
 ## What This Covers
 
@@ -64,7 +64,7 @@ This skill handles two types of research:
 
 1. Read **CLAUDE.md** and project docs — understand the stack, constraints, what's known
 2. Explore the codebase — find how the project currently handles the area being researched
-3. **Assess breadth.** Is this a focused single-domain topic, or does it span 5+ orthogonal aspects? If the topic is genuinely broad (multiple perspectives, requires decomposition, multi-angle synthesis matters), suggest `/deep-research` instead and let the user decide. `/deep-research` is a parallel-agent campaign that handles breadth better than single-agent research. See [build-process.md § When to Use /research vs /deep-research](/dev/skills/docs/build-process.md).
+3. **Assess breadth.** Is this a focused single-domain topic, or does it span 5+ orthogonal aspects? If the topic is genuinely broad (multiple perspectives, requires decomposition, multi-angle synthesis matters), suggest `/deep-research` instead. If the topic spans multiple distinct domains each big enough to be its own campaign (3+), suggest `/research-program`. Let the user decide. See [build-process.md § When to Use /research vs /deep-research vs /research-program](/dev/skills/docs/build-process.md).
 4. Define research questions:
    - What specific problem does this knowledge solve for the project?
    - What assumptions are we making that need verification?

@@ -34,3 +34,13 @@ documents:
     type: north-star
     description: "Proactive gap discovery in knowledge bases — embeddings, clustering, external taxonomy, stubs as canonical gaps, self-expanding flywheel"
     updated: 2026-04-14
+  - path: docs/research-skills-overview.md
+    title: "Research Skills Overview"
+    type: architecture
+    description: "Unifying family view of /research, /deep-research, /research-program — same four-role fractal pattern at three scales (question, domain, megatopic). Composition points, scale comparison, when to use which."
+    updated: 2026-04-15
+  - path: docs/research-program-architecture.md
+    title: "Architecture: Research Program"
+    type: architecture
+    description: "Full architecture for /research-program — four-role orchestrator-workers pattern at megatopic scale. Campaigns as /deep-research runs, dispatch DAG, cross-campaign synthesis, isolated program evaluator. Third tier of the research-skills family."
+    updated: 2026-04-15

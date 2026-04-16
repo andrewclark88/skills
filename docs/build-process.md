@@ -37,11 +37,14 @@ PROJECT START (truly new project — no existing docs)
 │     └─ produces: scout-landscape.md (adjacent projects, patterns, lessons)
 │     └─ scout's research recommendations merge into the north star's research plan
 │
-├─ 2. Research the Domain      /research (for each domain identified)
-│     └─ produces: domain briefs + auto-loading reference skills
+├─ 2. Research the Domain      /research  (for a focused topic, one domain)
+│                              /deep-research  (for topics spanning 5+ orthogonal facets)
+│                              /research-program  (for megatopics spanning multiple domains)
+│     └─ produces: domain briefs (+ reference skills for /research; parent + specialist briefs
+│        for /deep-research; program + super-parent + N campaigns for /research-program)
 │     └─ repeat until all critical domains are understood
 │     └─ don't rush this — assumptions here cause rewrites later
-│     └─ for complex topics, use /deep-research instead (parallel-agent campaign)
+│     └─ escalation is user-gated: /research → /deep-research → /research-program
 │
 ├─ 3. Design the Architecture  /architecture
 │     └─ produces: architecture.md (modules, data flow, conventions)
@@ -135,7 +138,7 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 
 **How it works:**
 - `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
-- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/deep-research`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
+- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/deep-research`, `/research-program`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
 - Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
 - The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
 
@@ -168,16 +171,23 @@ If you're unsure, start with `/brief` — domain knowledge never hurts, and `/fe
 
 ---
 
-## When to Use `/research` vs `/deep-research`
+## When to Use `/research` vs `/deep-research` vs `/research-program`
 
-Both produce briefs the build process consumes. They differ in breadth and cost.
+Three scales of the same fractal pattern (same four-role architecture: orchestrator + isolated parallel workers + synthesis + isolated evaluator). All three produce briefs the build process consumes; they differ in breadth, shape, and cost.
 
-| Situation | Skill | Why |
-|-----------|-------|-----|
-| Focused topic, one domain, clear question | `/research` | Single-agent, fast, cheaper. Sufficient for most research needs. |
-| Topic spans 5+ orthogonal aspects, or is unfamiliar enough that decomposition itself is part of the work, or multi-angle synthesis matters | `/deep-research` | Parallel-agent campaign: decomposes into facets, dispatches specialists, synthesizes cross-referenced briefs with a parent summary. ~$15-20 per campaign vs ~$2-3 for `/research`. |
+| Situation | Skill | Shape | Cost (calibrated) |
+|-----------|-------|-------|-------------------|
+| Focused topic, one domain, clear question | `/research` | Orchestrator + 3-5 Sonnet sub-agents, synthesis in parent | ~$3-5 |
+| Topic spans 5+ orthogonal aspects, or decomposition is part of the work, or multi-angle synthesis matters | `/deep-research` | Lead + 3-7 Sonnet specialists (parallel, isolated) + spawned Opus Synthesis + spawned Opus Evaluator | ~$6 scoped, ~$12-15 default |
+| Megatopic spans multiple distinct domains (3+), each big enough to be its own campaign | `/research-program` | Planner + 3-7 Campaigns (each a full `/deep-research` tree) + Cross-Campaign Synthesizer + Program Evaluator | ~$35-75 |
 
-`/research` can escalate to `/deep-research` when it detects the topic is broad. `/ideate`, `/brief`, and `/expand` can also call `/deep-research` directly for complex subsystems or broad phase briefs.
+**Escalation ladder:** `/research` can escalate to `/deep-research` when it detects the topic is broad. `/deep-research` can escalate to `/research-program` when its Lead recognizes the seed is actually a megatopic. `/ideate`, `/brief`, and `/expand` can all call any of the three directly based on the shape of what they need. Escalation is always user-gated.
+
+**Chain mode:** `/deep-research --continue-from <parent-campaign-dir>` extends a leaf of a prior campaign — loads parent context, scopes decomposition to the leaf, writes typed cross-references back, appends a child-pointer section to the parent's `parent.md`. Use when a finished campaign's output reveals one leaf turned out to be its own domain. Chains longer than 2-3 links typically mean the topic should have been `/research-program` from the start.
+
+**Reuse check:** every scale's Phase 1 checks `knowledge-index.yaml` for existing work. Cite existing briefs and campaigns instead of re-running — saves $6-15 per cited campaign at program scale.
+
+See [`research-skills-overview.md`](research-skills-overview.md) for the full family view (fractal pattern, composition points, isolation rules). Full architectures: [`deep-research-architecture.md`](deep-research-architecture.md), [`research-program-architecture.md`](research-program-architecture.md).
 
 ---
 
@@ -191,7 +201,7 @@ Skills that spawn sub-agents follow the [Model Selection Pattern](model-selectio
 - **Synthesis / judgment** (one call, integrates N inputs) → Opus high
 - **Volume / structured extraction** (many calls, well-defined task) → Haiku low
 
-Cost impact: a typical deep-research campaign costs ~$17 using the mix vs ~$50-75 if everything ran on Opus.
+Cost impact (calibrated from demos 2026-04-15): a scoped `/deep-research` campaign costs ~$6 using the mix, a default campaign ~$12-15, vs ~$50-75 if everything ran on Opus. A 4-campaign `/research-program` lands at ~$35-60.
 
 ---
 
@@ -602,7 +612,8 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/ideate` | Step 1 (project start) | North star + research plan |
 | `/scout` | Auto-called during /ideate + standalone + optionally from /expand | Landscape brief + research recommendations |
 | `/research` | Step 2 (domain research) + before any phase using unfamiliar tech | Domain brief + auto-loading reference skill |
-| `/deep-research` | Step 2 alternative for complex topics — parallel-agent campaign. Also callable from `/research`, `/ideate`, `/brief`, `/expand`. | N cross-referenced briefs + parent synthesis + quality report |
+| `/deep-research` | Step 2 alternative for complex topics — parallel-agent campaign. Also callable from `/research`, `/ideate`, `/brief`, `/expand`. Use `--continue-from` for chain mode (extending a leaf of a prior campaign). | N cross-referenced briefs + parent synthesis + quality report |
+| `/research-program` | Step 2 alternative for megatopic-scale initiatives spanning multiple domains (3+ campaigns). Escalation target from `/deep-research` when seed is truly megatopic. Also callable from `/ideate`, `/brief`, `/expand`. | Program directory (program plan + super-parent + N campaigns + program evaluation) |
 | `/architecture` | Step 3 (after north star + domain briefs) | Architecture doc: modules, data flow, conventions |
 | `/roadmap` | Step 4 (after architecture) | Phased roadmap with blocking briefs, I/O/Tests |
 | `/brief` | Step 5 (per phase, when blocking brief listed) | Curated domain brief optimized for the builder |
