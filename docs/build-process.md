@@ -448,6 +448,22 @@ The pipeline's thinking-heavy skills (`/research`, `/deep-research`, `/research-
 
 See [`docs/first-principles.md`](first-principles.md) for the full primer and per-skill emphasis table.
 
+## System Design Layer
+
+The pipeline's design-heavy skills (`/architecture`, `/design`, `/implement`, `/brief`) load a system design primer before starting work. The primer provides 15 concrete design moves organized across five concerns:
+
+1. **Structure** — start monolith, invert at real boundaries, minimize irreversible decisions
+2. **Interfaces** — contracts before implementations, match API to consumer, evolve additively
+3. **Data** — normalize first, per-feature consistency, cache deliberately
+4. **Scale** — idempotent operations, stateless services, scale vertically first
+5. **Reliability** — instrument from day one, design for failure, validate at boundaries
+
+**The Earn-Your-Complexity Principle:** 12 of the 15 moves are design-in (cheap to include from the start, expensive to retrofit). 3 are earn-in (add only with measured evidence). When in doubt, keep it simple.
+
+The system design primer complements the first-principles thinking primer: first-principles teaches *how to think*; system-design teaches *how to design*. Skills that do both (like `/architecture`) load both.
+
+See [`docs/system-design.md`](system-design.md) for the full primer and per-skill emphasis table.
+
 ---
 
 ## Infrastructure Safety Practices
