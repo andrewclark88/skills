@@ -19,6 +19,11 @@ documents:
     type: primer
     description: "10 thinking moves in 4 phases (Open/Challenge/Synthesize/Verify), workflow with per-skill emphasis, guardrails. Referenced by /research, /ideate, /architecture, /brief, /roadmap"
     updated: 2026-04-14
+  - path: docs/system-design.md
+    title: "System Design Primer"
+    type: primer
+    description: "15 design moves across 5 concerns (Structure/Interfaces/Data/Scale/Reliability). 'Earn your complexity' principle — 12 design-in, 3 earn-in. Per-skill emphasis table. Referenced by /architecture, /design, /implement, /brief."
+    updated: 2026-04-16
   - path: docs/scout-north-star.md
     title: "North Star: Scout"
     type: north-star
