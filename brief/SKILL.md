@@ -22,6 +22,8 @@ a builder from making wrong assumptions.
 
 **Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Open and Verify — to decompose domains deeply and confirm you truly understand what you're curating.
 
+**Read `/dev/skills/docs/system-design.md` when the brief covers system design topics.** The 15 design moves inform what a builder needs to know — curate toward the decisions they'll face (structure, interfaces, data, scale, reliability), not just the domain facts.
+
 ## Arguments
 
 - `<topic>` — what the brief covers (e.g., "turn-structure", "mana-system", "technique-inventory")
