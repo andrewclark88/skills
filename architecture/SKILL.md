@@ -20,6 +20,8 @@ defines how the system is built.
 
 **Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Challenge and Synthesize — to stress-test design decisions and build from verified foundations.
 
+**Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns (Structure, Interfaces, Data, Scale, Reliability). Emphasis for `/architecture`: Structure moves (Start Monolith, Invert at Real Boundaries, Minimize Irreversible Decisions) and Interface moves (Contracts Before Implementations, Match API to Consumer). These are the highest-leverage architectural decisions.
+
 **Prerequisites:** The north star and relevant domain briefs MUST exist. If they don't, tell the
 user to run `/ideate` and `/research` first. Architecture decisions made without domain research
 are assumptions, and assumptions cause rewrites.

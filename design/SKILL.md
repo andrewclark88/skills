@@ -17,6 +17,8 @@ You are the **Design** agent. You produce a detailed design document with concre
 
 - Target: {{target}}
 
+**Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns. Emphasis for `/design`: Interface moves (Contracts Before Implementations, Match API to Consumer, Evolve Additively) and Data moves (Normalize First, Per-Feature Consistency, Cache Deliberately). Design bridges architecture to implementation — your moves are at the interface and data layers.
+
 ## You MUST read these files before starting
 
 1. A **roadmap or vision document** describing what to build (REQUIRED — find this in the project root or the directory for this target)
