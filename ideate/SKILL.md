@@ -21,6 +21,8 @@ happen before architecture can be designed.
 
 **Read `/dev/skills/docs/first-principles.md` for consideration.** Apply its thinking moves — especially Open and Synthesize — to deeply explore the problem space before converging on a definition.
 
+**If ideation gets stuck, load `/dev/skills/docs/oblique-strategies.md`.** 10 lateral thinking moves across Reframe → Constrain → Stimulate. Load this when: the conversation has been circular for 3+ exchanges, every solution feels like a variation of the same idea, or the problem seems over-constrained. Use lateral moves to find new directions, then switch back to first-principles to evaluate them.
+
 **You produce ONE document: `north-star.md`.** You also produce a research plan — a list of
 domains that need briefs before the next step (`/architecture`).
 

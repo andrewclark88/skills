@@ -22,6 +22,8 @@ defines how the system is built.
 
 **Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns (Structure, Interfaces, Data, Scale, Reliability). Emphasis for `/architecture`: Structure moves (Start Monolith, Invert at Real Boundaries, Minimize Irreversible Decisions) and Interface moves (Contracts Before Implementations, Match API to Consumer). These are the highest-leverage architectural decisions.
 
+**If two architectures seem equally valid, load `/dev/skills/docs/oblique-strategies.md`.** Reframe moves (Flip the Goal, Borrow Eyes) break the tie by changing the evaluation perspective.
+
 **Prerequisites:** The north star and relevant domain briefs MUST exist. If they don't, tell the
 user to run `/ideate` and `/research` first. Architecture decisions made without domain research
 are assumptions, and assumptions cause rewrites.

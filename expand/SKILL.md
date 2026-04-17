@@ -22,6 +22,8 @@ it through and update the foundation docs so the next design phase can build on 
 This is NOT for small additions (use **feature** for those) or starting from scratch
 (use **ideate** for that).
 
+**If scope expansion feels forced or over-constrained, load `/dev/skills/docs/oblique-strategies.md`.** Constraint moves (Ship Tomorrow, Kill Your Favorite) help find the essential kernel before expanding.
+
 ## Model Assignment
 
 Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
