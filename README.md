@@ -1,6 +1,6 @@
 # skills
 
-**A complete, opinionated software development workflow suite for Claude Code — 26 skills covering the full lifecycle, two auto-loading principle packs, a thinking layer, a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
+**A complete, opinionated software development workflow suite for Claude Code — 26 skills covering the full lifecycle, two auto-loading principle packs, a thinking layer, a system design layer, a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
 
 Use this when you want agents that ship real projects: ideation → research → architecture → roadmap → per-phase build, with doc-review, refactor, security, and release baked in. Every step is a skill. Every skill is opinionated about what it produces. Every doc is indexed so future sessions never start blind.
 
@@ -15,6 +15,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 | **26 skills** | Full software lifecycle — 18 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
 | **Research skills family** | Three scales of the same fractal pattern: `/research` (question) → `/deep-research` (domain) → `/research-program` (megatopic) | [`docs/research-skills-overview.md`](docs/research-skills-overview.md) |
 | **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
+| **System design layer** | 15 design moves loaded by architecture/design/implementation skills | [`docs/system-design.md`](docs/system-design.md) |
 | **Model selection** | Four-archetype framework for picking Opus/Sonnet/Haiku + effort per role | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) |
 | **Knowledge patterns** | Cross-project architectural patterns for building knowledge layers | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) and three pattern docs |
 | **Build process** | The full methodology that ties skills, gates, and infrastructure safety together | [`docs/build-process.md`](docs/build-process.md) |
@@ -128,7 +129,22 @@ Loaded by: `/research`, `/deep-research`, `/research-program`, `/ideate`, `/arch
 
 See [`docs/first-principles.md`](docs/first-principles.md).
 
-### 3. Model-selection framework
+### 3. System design layer
+
+Design-heavy skills load a system design primer before starting: 15 moves organized across **Structure → Interfaces → Data → Scale → Reliability**. The unifying principle is "earn your complexity" — 12 moves are design-in (cheap now, expensive to retrofit), 3 are earn-in (add only with measured evidence). Each skill declares which moves to emphasize.
+
+| Skill | Emphasis | Why |
+|-------|----------|-----|
+| `/architecture` | Structure + Interfaces | Highest-leverage decisions that cascade |
+| `/design` | Interfaces + Data | Bridges architecture to implementation |
+| `/implement` | Data + Scale + Reliability | Where design meets reality |
+| `/brief` | All (when topic is system design) | Curate toward the decisions builders face |
+
+Loaded by: `/architecture`, `/design`, `/implement`, `/brief`.
+
+See [`docs/system-design.md`](docs/system-design.md).
+
+### 4. Model-selection framework
 
 Claude has two levers — **model** (Opus/Sonnet/Haiku) and **effort** (thinking budget). Used well, they save 3-5× cost with no quality loss. Used poorly, they waste money on easy tasks and shortchange hard ones.
 
@@ -143,7 +159,7 @@ The pattern doc defines four archetypes — every role inside every skill maps t
 
 Every SKILL.md that spawns sub-agents declares its archetype mapping in a **Model Assignment** section. See [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md).
 
-### 4. The Research Skills Family — three scales of the same fractal pattern
+### 5. The Research Skills Family — three scales of the same fractal pattern
 
 The research tools (`/research`, `/deep-research`, `/research-program`) are a single architectural pattern applied at three scales. Every scale has the same four roles: an **Orchestrator** that decomposes and dispatches, **Workers** that investigate in parallel with isolated contexts, a **Synthesizer** that reconciles their outputs, and an **Evaluator** that judges quality independently. What changes across scales is what each role orchestrates and how much is delegated.
 
@@ -163,7 +179,7 @@ Grounded in Anthropic's multi-agent research pattern: 90% time reduction, 90.2% 
 
 See [`docs/research-skills-overview.md`](docs/research-skills-overview.md) (family view) · [`docs/deep-research-north-star.md`](docs/deep-research-north-star.md) + [`docs/deep-research-architecture.md`](docs/deep-research-architecture.md) · [`docs/research-program-architecture.md`](docs/research-program-architecture.md).
 
-### 5. Cross-project knowledge patterns
+### 6. Cross-project knowledge patterns
 
 Four pattern docs abstract the knowledge-layer design used by any project with a knowledge base (a cloud-native MCP server, a local simulation engine, whatever). Storage/retrieval/generation are three independent concerns; adopt them in any order.
 
@@ -174,7 +190,7 @@ Four pattern docs abstract the knowledge-layer design used by any project with a
 | [Retrieval](docs/knowledge-retrieval-pattern.md) | Tiered retrieval (L0-L3), metadata-first filtering, search ladder (v1-v3) |
 | [Generation](docs/knowledge-generation-pattern.md) | Ingest, refresh, lint, LLM enrichment, provenance, lifecycle |
 
-### 6. Quality gates, not ceremony
+### 7. Quality gates, not ceremony
 
 - **`/doc-review`** catches cross-doc drift with cascading passes (system-level → per-module). Triggered after `/architecture`, after `/roadmap`, at quality checkpoints, and when `/update-documentation` changes planning docs.
 - **`/security-review`** produces a scored report before deploy. Address Critical/High first.
@@ -264,7 +280,8 @@ These are not skills — they're patterns and primers that skills reference.
 
 | Doc | What it covers | Who uses it |
 |-----|---------------|-------------|
-| [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves (Open / Challenge / Synthesize / Verify) + per-skill emphasis table | `/research`, `/deep-research`, `/ideate`, `/architecture`, `/brief`, `/roadmap` |
+| [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves (Open / Challenge / Synthesize / Verify) + per-skill emphasis table | `/research`, `/deep-research`, `/research-program`, `/ideate`, `/architecture`, `/brief`, `/roadmap` |
+| [`docs/system-design.md`](docs/system-design.md) | 15 design moves across 5 concerns (Structure / Interfaces / Data / Scale / Reliability) + per-skill emphasis table | `/architecture`, `/design`, `/implement`, `/brief` |
 | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) | Four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with model + effort recommendations | Every skill that spawns sub-agents |
 | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) + 3 pattern docs | Cross-project knowledge-layer architecture (storage, retrieval, generation) | Any project building a knowledge layer |
 | [`docs/build-process.md`](docs/build-process.md) | Full methodology: pipeline, doc ownership, PR/CI gates, infrastructure safety | Always loaded |
@@ -296,6 +313,7 @@ Some skills have their own north-star + architecture docs for deeper reference:
 8. **Security review before deploy.** No Critical/High findings.
 9. **Every SKILL.md declares its Model Assignment.** Explicit model choice per role — don't default to Opus everywhere.
 10. **Thinking-heavy skills load `first-principles.md` before starting.** Shallow thinking propagates downstream.
+11. **Design-heavy skills load `system-design.md` before starting.** 15 moves across Structure, Interfaces, Data, Scale, Reliability. Earn your complexity.
 
 ---
 
@@ -325,7 +343,8 @@ skills/
 ├── README.md                     ← you are here
 ├── docs/                         ← cross-cutting patterns + primers
 │   ├── build-process.md          ← the methodology (source of truth)
-│   ├── first-principles.md       ← thinking layer primer
+│   ├── first-principles.md       ← thinking layer primer (10 moves)
+│   ├── system-design.md          ← system design primer (15 moves)
 │   ├── model-selection-pattern.md
 │   ├── knowledge-layer-overview.md
 │   ├── knowledge-storage-pattern.md
