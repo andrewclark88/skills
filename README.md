@@ -15,7 +15,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 | **26 skills** | Full software lifecycle — 18 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
 | **Research skills family** | Three scales of the same fractal pattern: `/research` (question) → `/deep-research` (domain) → `/research-program` (megatopic) | [`docs/research-skills-overview.md`](docs/research-skills-overview.md) |
 | **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
-| **System design layer** | 15 design moves loaded by architecture/design/implementation skills | [`docs/system-design.md`](docs/system-design.md) |
+| **System design layer** | 15 design moves loaded by design-heavy and refactor skills | [`docs/system-design.md`](docs/system-design.md) |
 | **Oblique strategies** | 10 lateral thinking moves loaded when ideation gets stuck | [`docs/oblique-strategies.md`](docs/oblique-strategies.md) |
 | **Model selection** | Four-archetype framework for picking Opus/Sonnet/Haiku + effort per role | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) |
 | **Knowledge patterns** | Cross-project architectural patterns for building knowledge layers | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) and three pattern docs |
@@ -142,7 +142,7 @@ See [`docs/oblique-strategies.md`](docs/oblique-strategies.md).
 
 ### 4. System design layer
 
-Design-heavy skills load a system design primer before starting: 15 moves organized across **Structure → Interfaces → Data → Scale → Reliability**. The unifying principle is "earn your complexity" — 12 moves are design-in (cheap now, expensive to retrofit), 3 are earn-in (add only with measured evidence). Each skill declares which moves to emphasize.
+Design-heavy skills and design-sensitive refactor/expansion skills load a system design primer before starting: 15 moves organized across **Structure → Interfaces → Data → Scale → Reliability**. The unifying principle is "earn your complexity" — 12 moves are design-in (cheap now, expensive to retrofit), 3 are earn-in (add only with measured evidence). Each skill declares which moves to emphasize.
 
 | Skill | Emphasis | Why |
 |-------|----------|-----|
@@ -150,8 +150,12 @@ Design-heavy skills load a system design primer before starting: 15 moves organi
 | `/design` | Interfaces + Data | Bridges architecture to implementation |
 | `/implement` | Data + Scale + Reliability | Where design meets reality |
 | `/brief` | All (when topic is system design) | Curate toward the decisions builders face |
+| `/refactor-design` | Interfaces + Structure | Surfacing the abstractions that *should* exist |
+| `/bold-refactor` | Structure | Collapsing premature boundaries, undoing irreversible decisions |
+| `/feature` | Interfaces + Minimize Irreversible | Extend contracts additively, avoid premature lock-in |
+| `/expand` | Structure + Contracts | Defining new boundaries and their contracts before building |
 
-Loaded by: `/architecture`, `/design`, `/implement`, `/brief`.
+Loaded by: `/architecture`, `/design`, `/implement`, `/brief`, `/refactor-design`, `/bold-refactor`, `/feature`, `/expand`.
 
 See [`docs/system-design.md`](docs/system-design.md).
 
@@ -293,7 +297,7 @@ These are not skills — they're patterns and primers that skills reference.
 |-----|---------------|-------------|
 | [`docs/first-principles.md`](docs/first-principles.md) | 10 thinking moves (Open / Challenge / Synthesize / Verify) + per-skill emphasis table | `/research`, `/deep-research`, `/research-program`, `/ideate`, `/architecture`, `/brief`, `/roadmap` |
 | [`docs/oblique-strategies.md`](docs/oblique-strategies.md) | 10 lateral thinking moves (Reframe / Constrain / Stimulate) for when structured approaches get stuck | `/ideate`, `/architecture`, `/expand` |
-| [`docs/system-design.md`](docs/system-design.md) | 15 design moves across 5 concerns (Structure / Interfaces / Data / Scale / Reliability) + per-skill emphasis table | `/architecture`, `/design`, `/implement`, `/brief` |
+| [`docs/system-design.md`](docs/system-design.md) | 15 design moves across 5 concerns (Structure / Interfaces / Data / Scale / Reliability) + per-skill emphasis table | `/architecture`, `/design`, `/implement`, `/brief`, `/refactor-design`, `/bold-refactor`, `/feature`, `/expand` |
 | [`docs/model-selection-pattern.md`](docs/model-selection-pattern.md) | Four archetypes (orchestration, parallel-worker, synthesis, volume-extraction) with model + effort recommendations | Every skill that spawns sub-agents |
 | [`docs/knowledge-layer-overview.md`](docs/knowledge-layer-overview.md) + 3 pattern docs | Cross-project knowledge-layer architecture (storage, retrieval, generation) | Any project building a knowledge layer |
 | [`docs/build-process.md`](docs/build-process.md) | Full methodology: pipeline, doc ownership, PR/CI gates, infrastructure safety | Always loaded |

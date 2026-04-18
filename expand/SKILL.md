@@ -22,6 +22,8 @@ it through and update the foundation docs so the next design phase can build on 
 This is NOT for small additions (use **feature** for those) or starting from scratch
 (use **ideate** for that).
 
+**Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns. Emphasis for `/expand`: Structure moves (Invert at Real Boundaries, Minimize Irreversible Decisions) and Interface's Contracts Before Implementations. Expansion creates new subsystems and surfaces — decide where the real boundaries sit and define their contracts before building.
+
 **If scope expansion feels forced or over-constrained, load `/dev/skills/docs/oblique-strategies.md`.** Constraint moves (Ship Tomorrow, Kill Your Favorite) help find the essential kernel before expanding.
 
 ## Model Assignment
