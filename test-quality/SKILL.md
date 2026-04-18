@@ -32,7 +32,7 @@ Tests that are written by reading implementation code verify what the code *does
 2. **Interface and type definitions** — the public surface of what you are testing (types, function signatures, API contracts — NOT the implementation bodies)
 3. **Existing tests** for the target — what is already tested, so you can find gaps
 4. **CLAUDE.md** — project guidelines, test conventions, frameworks in use (if it exists)
-5. Use the **design-principles** skill to apply interface and contract thinking
+5. Use the **engineering-principles** skill to apply interface and contract thinking
 
 DO NOT read implementation source code to drive test design. If you find yourself reading a function body to understand what to test, stop — go back to the spec. The only time to read implementation is to understand a test helper or fixture.
 

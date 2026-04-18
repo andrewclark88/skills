@@ -280,7 +280,7 @@ All skills are first-party. Invocable as slash commands once installed.
 
 | Principle | What it enforces | When loaded |
 |-----------|-----------------|-------------|
-| [`build-process`](principles/build-process/) | The full methodology | Always loaded |
+| [`build-process`](build-process/) | The full methodology | Always loaded |
 | [`engineering-principles`](engineering-principles/) | Ports & Adapters, Single Source of Truth, Generated Contracts, Fail Fast | Loaded by `/architecture`, `/design`, `/implement`, `/refactor-design` |
 
 ---
@@ -331,17 +331,23 @@ Some skills have their own north-star + architecture docs for deeper reference:
 
 ## Installation
 
+**Recommended — symlink the repo as your skills folder.** Zero drift, edits visible immediately:
+
 ```bash
-# Copy all skills + auto-loading principles to your personal skills folder
-for d in knowledge-index ideate scout research deep-research research-program \
-         architecture roadmap brief doc-review update-roadmap design implement \
-         implement-orchestrator update-documentation refactor-design \
-         extract-patterns test-quality security-review cruft-cleaner \
-         bold-refactor feature expand repo-eval e2e-test-design release \
-         engineering-principles; do
-  cp -r "$d" ~/.claude/skills/
+git clone https://github.com/andrewclark88/skills.git ~/dev/skills
+ln -s ~/dev/skills ~/.claude/skills
+```
+
+Claude Code discovers every top-level directory with a `SKILL.md` and ignores `README.md`, `docs/`, and other siblings. Pull to update.
+
+**Alternative — copy skills individually.** Use this if you don't want the whole repo under `~/.claude/skills`:
+
+```bash
+git clone https://github.com/andrewclark88/skills.git
+cd skills
+for d in */; do
+  [ -f "$d/SKILL.md" ] && cp -r "$d" ~/.claude/skills/
 done
-cp -r principles/build-process ~/.claude/skills/
 ```
 
 The cross-cutting docs under `docs/` are referenced by absolute path from SKILL.md files (e.g., `/dev/skills/docs/first-principles.md`). Keep this repo checked out at a stable path so those references resolve.
