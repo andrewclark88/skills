@@ -1,6 +1,6 @@
 # skills
 
-**A complete, opinionated software development workflow suite for Claude Code — 26 skills covering the full lifecycle, two auto-loading principle packs, three foundational primers (thinking, design, lateral), a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
+**A complete, opinionated software development workflow suite for Claude Code — 27 skills covering the full lifecycle, two auto-loading principle packs, three foundational primers (thinking, design, lateral), a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
 
 Use this when you want agents that ship real projects: ideation → research → architecture → roadmap → per-phase build, with doc-review, refactor, security, and release baked in. Every step is a skill. Every skill is opinionated about what it produces. Every doc is indexed so future sessions never start blind.
 
@@ -12,7 +12,8 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 | Layer | What it is | Where to look |
 |-------|-----------|---------------|
-| **26 skills** | Full software lifecycle — 18 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **27 skills** | Full software lifecycle — 19 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **Project template** | Canonical scaffold dropped into new projects — `docs/` folders, `knowledge-index.yaml`, lean `CLAUDE.md`, portable `.claude/rules` | [`templates/project/`](templates/project/) (applied by `/init-project`) |
 | **Research skills family** | Three scales of the same fractal pattern: `/research` (question) → `/deep-research` (domain) → `/research-program` (megatopic) | [`docs/research-skills-overview.md`](docs/research-skills-overview.md) |
 | **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
 | **System design layer** | 15 design moves loaded by design-heavy and refactor skills | [`docs/system-design.md`](docs/system-design.md) |
@@ -33,6 +34,11 @@ SESSION START (every non-fresh session)
 
 PROJECT START (truly new project)
 │
+/init-project     → Scaffold the knowledge layer. Drops the canonical template
+                    (docs/ folders, knowledge-index.yaml, lean CLAUDE.md,
+                    portable .claude/rules) into an empty project directory.
+                    Run once per new project, before /ideate.
+
 /ideate           → Define the project. North star (vision, principles, domain model).
                     Identify domains that need research.
                     Auto-calls /scout for prior art discovery.
@@ -234,6 +240,7 @@ All skills are first-party. Invocable as slash commands once installed.
 | Skill | Step | What it produces |
 |-------|------|-----------------|
 | [`/knowledge-index`](knowledge-index/SKILL.md) | Session start | Catalog of all available project knowledge |
+| [`/init-project`](init-project/SKILL.md) | 0. Scaffold | Drops the canonical template (`docs/` folders, `knowledge-index.yaml`, lean `CLAUDE.md`, portable `.claude/rules`) into a new project directory |
 | [`/ideate`](ideate/SKILL.md) | 1. Define | North star + research plan. Auto-calls `/scout`. Classifies domains as `/research` vs `/deep-research`. |
 | [`/scout`](scout/SKILL.md) | 1.5 Scout | Landscape brief + research recommendations (Opus orchestrator + Sonnet workers) |
 | [`/research`](research/SKILL.md) | 2. Research (question scale) | Domain brief + auto-loading reference skill. Updates knowledge index. |

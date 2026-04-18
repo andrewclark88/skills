@@ -1,0 +1,6 @@
+# Auto-generated knowledge index for the {{PROJECT_NAME}} project.
+# Updated by /research, /brief, /architecture, /roadmap, and /knowledge-index.
+# Hand-maintained when introducing new core docs.
+# Last updated: {{DATE}} (project scaffolded via /init-project)
+
+documents: []
