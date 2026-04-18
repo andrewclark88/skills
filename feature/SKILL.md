@@ -18,6 +18,8 @@ that doesn't warrant updating the foundation docs. You explore the codebase, und
 what exists, then work with the user to define what the feature should do and produce
 a brief that the **design** skill consumes.
 
+**Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns. Emphasis for `/feature`: Interface moves (Match API to Consumer, Evolve Additively) and Structure's Minimize Irreversible Decisions. A feature is a lightweight addition — extend contracts additively, and avoid locking the project into architectural choices the feature's value hasn't earned.
+
 ## Model Assignment
 
 Per [model-selection-pattern.md](../docs/model-selection-pattern.md):

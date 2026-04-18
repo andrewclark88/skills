@@ -1,5 +1,5 @@
 ---
-description: "System design primer — 15 design moves organized by concern. Referenced by /architecture, /design, /implement."
+description: "System design primer — 15 design moves organized by concern. Referenced by /architecture, /design, /implement, /brief, /refactor-design, /bold-refactor, /feature, /expand."
 type: primer
 updated: 2026-04-15
 ---
@@ -8,7 +8,7 @@ updated: 2026-04-15
 
 A practical toolkit for making structural decisions. 15 design moves organized by concern — drawn from the 2024-2026 industry consensus on architecture patterns, API design, data modeling, scalability, and reliability. Distilled from practitioners (Fowler, DHH, Hightower, Orosz) and measured outcomes (DORA, CNCF), not textbook definitions.
 
-**How to use this:** Read before beginning design-heavy work (`/architecture`, `/design`, `/implement`). Apply the moves that fit the context. Each move includes "when to use" and "when NOT to use" — respect both.
+**How to use this:** Read before beginning design-heavy work (`/architecture`, `/design`, `/implement`, `/brief`) or design-sensitive changes (`/refactor-design`, `/bold-refactor`, `/feature`, `/expand`). Apply the moves that fit the context. Each move includes "when to use" and "when NOT to use" — respect both.
 
 **The Earn-Your-Complexity Principle:** Every pattern has a cost. Some patterns are **design-in** — cheap to include from the start, expensive to retrofit. Others are **earn-in** — add them only when measured evidence justifies the complexity. The primer marks each move accordingly. **When in doubt, start simpler.**
 
@@ -172,6 +172,10 @@ Don't trust input from any external source. Validate at the system boundary — 
 | `/design` | 4-6 (Interfaces), 7-9 (Data) | 10-11 (Scale) | Design bridges architecture to implementation — contracts, data models, and scaling strategy. |
 | `/implement` | 10-11 (Scale), 13-15 (Reliability) | 7, 9 (Data) | Implementation deals with idempotency, statelessness, observability, failure handling, and caching at the code level. |
 | `/brief` | 1, 3, 8 (Structure, Data) | 4-6 (Interfaces) | Briefs surface which decisions are irreversible and which consistency models apply — context the builder needs. |
+| `/refactor-design` | 4, 6 (Interfaces), 2 (Structure) | 7 (Data) | Refactor plans surface missing contracts and dependency-direction violations — the abstractions that *should* exist but don't. |
+| `/bold-refactor` | 1, 2, 3 (Structure) | 4 (Interfaces) | Bold simplifications usually collapse premature boundaries and undo irreversible decisions. Structure moves are the toolkit. |
+| `/feature` | 5, 6 (Interfaces), 3 (Structure) | — | Features evolve contracts additively and avoid locking the project into choices the feature hasn't earned. |
+| `/expand` | 2, 3 (Structure), 4 (Interfaces) | 1 (Structure) | Expansions create new subsystems — decide where real boundaries sit and define contracts at those new surfaces before building. |
 
 ---
 

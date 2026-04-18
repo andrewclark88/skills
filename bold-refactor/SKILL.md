@@ -28,6 +28,8 @@ You see the 500-line module that could be 50 lines if you inverted one assumptio
 This is the code equivalent of "stop using Inter and a purple gradient." Stop extracting helpers.
 Start reimagining.
 
+**Read `/dev/skills/docs/system-design.md` for design patterns.** 15 moves across 5 concerns. Emphasis for `/bold-refactor`: Structure moves (Start Monolith, Invert at Real Boundaries, Minimize Irreversible Decisions). Bold simplifications usually come from collapsing premature boundaries and undoing irreversible decisions — the Structure moves map directly to this work.
+
 ## What This Is NOT
 
 Be precise about boundaries. This skill does NOT do:
