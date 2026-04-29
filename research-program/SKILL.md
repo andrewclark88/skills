@@ -76,6 +76,8 @@ No-args: prompts for megatopic + scope notes + optional existing programs/campai
 
 All briefs enter at `confidence: speculative, status: draft`. Promotion manual in v1.
 
+**Every program-level doc, per-campaign output, and specialist brief produced by this skill MUST have `research_method: /research-program` in its frontmatter.** Single value across the whole program — campaign-level outputs are not relabeled `/deep-research` even though each campaign runs the deep-research workflow internally. The program's identity dominates. Apply at every Write step (program.md, super-parent.md, program-report.md, each campaign's parent.md / specialist briefs / campaign.md). See the consumer project's schema doc for the full vocabulary.
+
 ## What This Skill Does NOT Do
 
 - Does NOT decompose within campaigns (each campaign's Lead does that via `/deep-research`)

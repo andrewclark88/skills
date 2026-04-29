@@ -99,6 +99,8 @@ Defaults are **generous** — the user opted into deep research; give them a goo
 
 All briefs enter at `confidence: speculative, status: draft`. Promotion is manual in v1.
 
+**Every brief, parent, and campaign report produced by this skill MUST have `research_method: /deep-research` in its frontmatter.** Chain-mode children stay `/deep-research` — chain linkage is captured by `related: [{slug: <parent-leaf>, relationship: extends}]`, not by a separate value. This applies to specialist prompts (require it in the output schema), the synthesis agent (require it on `parent.md`), and the campaign report. See the consumer project's schema doc for the full vocabulary.
+
 ## Chain Mode (`--continue-from`)
 
 When invoked with `--continue-from <parent-campaign-dir>`, the skill runs as a **child campaign** extending a leaf of a prior campaign. The `<topic>` argument is interpreted as the leaf scope (not a fresh megatopic).
