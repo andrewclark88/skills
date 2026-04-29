@@ -172,6 +172,12 @@ Reserved field pattern: `sources: [{url, accessed_at, excerpt}]`. Per-fact citat
 
 **Authoring discipline:** populate `sources` from day one even if tooling doesn't enforce it. The cost of retrofitting provenance to existing pages is high; the cost of populating it during authoring is low.
 
+### Origin Tool: `research_method`
+
+Separate from per-fact `sources` — captures *which tool produced the page*. Stamped at generation time by `/brief`, `/research`, `/deep-research`, and `/research-program`. See [knowledge-storage-pattern.md → Provenance: research_method](knowledge-storage-pattern.md#provenance-research_method) for the value vocabulary.
+
+**Why generation pipelines stamp this:** every level-up of the research toolchain implicitly deprecates pages produced by earlier tools. Stamping at generation costs nothing; retrofitting is a hand-grep across the corpus. `/doc-review` reads the field and surfaces refresh candidates — pages whose origin tool is below the corpus's highest tier and whose `updated` predates the most recent higher-tier run.
+
 ---
 
 ## Lint: Active Health Checks

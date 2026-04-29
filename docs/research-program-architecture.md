@@ -757,7 +757,7 @@ Constraints:
 
 ## Program History
 
-Every program logs to `docs/programs/<program-slug>/program.md` frontmatter + body. Structured fields:
+Every program logs to `docs/programs/<program-slug>/program.md` frontmatter + body. Structured fields (in addition to the universal frontmatter — `description`, `type`, `updated`, and `research_method: /research-program` are required at the top of every program-level doc and per-campaign output):
 
 ```yaml
 program_id: <uuid>

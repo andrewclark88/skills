@@ -126,7 +126,7 @@ PROJECT START (truly new project)
 
 Every project has a `docs/knowledge-index.yaml` that catalogs every brief, architecture doc, roadmap, and research finding. Every session starts by loading it. No session ever flies blind.
 
-**Doc-producing skills** update the index automatically. **Doc-consuming skills** check it first. The indexed frontmatter convention (`description`, `type`, `updated`) is standardized across all skills. See [`docs/build-process.md#knowledge-index`](docs/build-process.md).
+**Doc-producing skills** update the index automatically. **Doc-consuming skills** check it first. The indexed frontmatter convention (`description`, `type`, `updated`, `research_method`) is standardized across all skills — `research_method` is auto-stamped by `/brief`, `/research`, `/deep-research`, and `/research-program`, and `/doc-review` audits the corpus by tool of origin to surface implicitly deprecated briefs. See [`docs/build-process.md#knowledge-index`](docs/build-process.md).
 
 ### 2. First-principles thinking layer
 
