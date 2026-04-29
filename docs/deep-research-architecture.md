@@ -101,7 +101,7 @@ Each role has its own prompt, context window, and model assignment.
 - Parent domain context (the seed)
 - Sibling titles and one-line descriptions (NOT full outputs — causes interference)
 - Relevant existing briefs from the knowledge layer (curated to the subdomain)
-- Output schema (brief frontmatter + body conventions)
+- Output schema (brief frontmatter + body conventions, including the required `research_method: /deep-research` stamp)
 - Token/time budget
 
 **What they do NOT do:**
@@ -125,7 +125,7 @@ Each role has its own prompt, context window, and model assignment.
 - The domain tree (nodes + descriptions)
 - All specialist draft briefs (full content)
 - Cross-reference vocabulary (uses, contextualizes, history-of, etc.)
-- Output schema for parent brief
+- Output schema for parent brief (frontmatter must include `research_method: /deep-research`)
 
 **What it does NOT do:**
 - Re-research claims (that's the evaluator's job, sort of)

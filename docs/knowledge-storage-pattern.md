@@ -21,6 +21,7 @@ Knowledge page
 │   ├── Filtering (namespaced tags, audience, confidence)
 │   ├── Maintenance (source, production, updated, content_hash)
 │   ├── Cross-references (typed `related[]`)
+│   ├── Provenance (research_method)
 │   └── Reserved fields (future-proofing)
 └── Body (markdown)
     ├── Overview
@@ -40,10 +41,28 @@ Every page has these fields. Each is filterable, indexable, lint-checkable.
 | **Filtering** | `tags[]`, `audience[]`, `confidence` | tags (namespaced), confidence |
 | **Maintenance** | `source`, `production`, `updated`, `content_hash` | All four |
 | **Cross-references** | `related[]` (typed) | Optional but encouraged |
+| **Provenance** | `research_method` | Optional but recommended |
 | **Type-specific** | Driven by `content_type` | Per type |
 | **Reserved** | See "Reserved Fields" | Optional |
 
 `content_hash` is auto-computed by the sync pipeline. Everything else is authored.
+
+### Provenance: `research_method`
+
+Records *which tool produced this page*. Distinct from `production` (which captures *how content is generated and refreshed* — hand-written vs. template-generated vs. LLM-enriched). `research_method` captures origin authorship; `production` captures ongoing maintenance shape.
+
+Closed vocabulary:
+
+| Value | Meaning |
+|-------|---------|
+| `/brief` | Produced by the `/brief` skill |
+| `/research` | Produced by the `/research` skill |
+| `/deep-research` | Produced by `/deep-research` (chain-mode children also use this — chain linkage uses `related: extends`) |
+| `/research-program` | Produced by `/research-program` (program-level docs and per-campaign outputs) |
+| `hand-written` | Authored manually, no skill |
+| `migrated` | Origin tool unknown — backfilled retroactively |
+
+The four research skills stamp this field automatically on every output. `/doc-review` flags missing values on knowledge content_types and surfaces refresh candidates — pages produced by a lower-tier tool whose `updated` predates the most recent higher-tier run. Each tooling level-up makes older briefs implicitly deprecated; the field collapses that audit into a single query.
 
 ---
 
