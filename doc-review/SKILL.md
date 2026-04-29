@@ -89,6 +89,7 @@ Every indexable planning doc (north-star, architecture, roadmap, brief, primer, 
 description: One-line summary
 type: north-star | architecture | roadmap | brief | primer | features
 updated: YYYY-MM-DD
+research_method: /brief | /research | /deep-research | /research-program | hand-written | migrated
 ---
 ```
 
@@ -97,6 +98,7 @@ For each discovered doc, check:
 - `description` field present and non-empty? If missing → **Medium**: "Missing `description` field"
 - `type` field present with valid value? If missing → **Medium**: "Missing `type` field"
 - `updated` field present and not absurdly old (>1 year suggests forgotten)? If missing → **Medium**: "Missing `updated` field"
+- `research_method` field present on docs of `type: brief`, `type: campaign-parent`, `type: campaign-report`, `type: program-parent`, or `type: program-report`? If missing → **Low**: "Missing `research_method` — cannot audit which research tool produced this brief". (Backfill with `migrated` if origin truly unknown.) Skip this check for `type: north-star`, `type: architecture`, `type: roadmap`, `type: design`, `type: workon` — those are typically hand-written and the field is informational rather than load-bearing for them.
 
 These findings go in the report (Phase 3) and get fixed in Phase 4 (along with the index update in Phase 5).
 
@@ -165,6 +167,16 @@ Launch each pass as a parallel Agent subagent (`model: "sonnet"`).
   configuration, not stale references
 - Module names in examples — these are illustrative
 - Version numbers that match what's actually deployed
+
+#### 2i. Provenance summary (research_method)
+
+Aggregate `research_method` across all discovered briefs (`type: brief`, `campaign-parent`, `campaign-report`, `program-parent`, `program-report`). For each value, count briefs and report the latest `updated` date in that group.
+
+Then identify the **highest-fidelity tool used in the corpus** (precedence: `/research-program` > `/deep-research` > `/research` > `/brief` > `hand-written`/`migrated`). Briefs produced by a *lower* tool than the highest-used one and `updated` *before* the latest higher-tool brief are **refresh candidates** — surface their count and a few representative slugs.
+
+This is informational, not a finding to fix. Drop a "Refresh candidates" section into the report and list the top N (default 10) most likely candidates by tag-overlap with recent program/deep-research seeds. Topic-overlap detection is left for v2 — for now, recency + tool-tier is enough signal.
+
+If there are zero refresh candidates (e.g. the project is brand-new or has only run one research tier), skip the section entirely.
 
 ### Pass 2+: System + Module (one pass per discovered module)
 
@@ -244,6 +256,24 @@ Collect all pass findings. Deduplicate. Classify by severity:
 | Phase | Status | Expected Output | Files Exist? |
 |-------|--------|----------------|-------------|
 | {phase} | DONE | {files} | Yes/No |
+
+## Provenance Summary
+| research_method | Briefs | Latest updated |
+|-----------------|--------|----------------|
+| /research-program | {n} | {date} |
+| /deep-research | {n} | {date} |
+| /research | {n} | {date} |
+| /brief | {n} | {date} |
+| hand-written | {n} | {date} |
+| migrated | {n} | {date} |
+| (missing) | {n} | — |
+
+### Refresh Candidates
+Briefs produced by a lower-tier tool than the corpus's highest tier, last updated before the most recent higher-tier run. Informational, not a finding.
+
+| Slug | research_method | Updated | Note |
+|------|-----------------|---------|------|
+| {slug} | {value} | {date} | {tag-overlap signal, if any} |
 ```
 
 ---

@@ -106,6 +106,22 @@ Iterate until approved.
 
 Write the brief. Structure it for the consumer:
 
+#### Frontmatter Contract
+
+Every brief produced by `/brief` MUST start with YAML frontmatter that includes — at minimum:
+
+```yaml
+---
+description: {one-line summary}
+type: brief
+research_method: /brief
+updated: {today's date, YYYY-MM-DD}
+blocks_phase: {phase number, optional}
+---
+```
+
+`research_method: /brief` is non-optional — it is how `/doc-review` distinguishes briefs produced by this skill from `/research`, `/deep-research`, or `/research-program` outputs (see project schema doc for the full value vocabulary). Projects that follow grimoire's universal frontmatter schema may extend with `slug`, `module`, `content_type`, `tags`, etc. — defer to the consumer project's schema for the full list.
+
 #### Standard Brief Template
 
 ```markdown

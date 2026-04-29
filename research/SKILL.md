@@ -152,6 +152,7 @@ Write to the project's briefs/research directory. **Required: emit standard fron
 ---
 description: {one-line summary — what was researched and key recommendation}
 type: brief
+research_method: /research
 updated: {today's date, YYYY-MM-DD}
 ---
 
@@ -185,6 +186,7 @@ updated: {today's date, YYYY-MM-DD}
 ---
 description: {one-line summary of what this brief covers}
 type: brief
+research_method: /research
 updated: {today's date, YYYY-MM-DD}
 blocks_phase: {phase number, if this brief gates a specific phase — optional}
 ---
