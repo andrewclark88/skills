@@ -278,18 +278,31 @@ Briefs produced by a lower-tier tool than the corpus's highest tier, last update
 
 ---
 
-## Phase 4: Present & Fix
+## Phase 4: Present & Auto-Fix Loop
 
-Present the report. Highlight:
+Present the initial report. Highlight:
 - Count by severity
 - Top 3 most important fixes
 - Blocking brief status (any NEXT-phase blockers missing?)
 - DONE phase verification (any code gaps?)
 - Which passes found the most issues
 
-**AskUserQuestion:** "Found N issues across M passes. Report written to `doc-review-report.md`. Want me to fix Critical and High items?"
+**No mid-loop confirmation.** Invocation of `/doc-review` is the consent to fix Critical and High findings autonomously. Do not ask between iterations.
 
-If yes: fix them, then re-run the affected passes to verify.
+### Auto-Fix Loop
+
+Iterate, with a hard cap of **5 iterations**:
+
+1. Fix every Critical and High finding from the current report.
+2. **Re-run the full review (Phase 2 in full — all system passes + every module pass).** Do not re-run "affected" passes only — a fix in one pass can introduce findings in another, and partial re-runs miss those.
+3. Compile a fresh report.
+4. **Exit condition:** if the fresh report has 0 Critical and 0 High → loop is done. Continue to Phase 5 with the final report.
+5. **Cap hit:** if iteration count reaches 5 and the report still has Critical or High findings → stop. Emit a clearly-marked message: `"⚠ Hit max iterations (5). N Critical / M High remain — manual investigation needed."` Continue to Phase 5 with the final report regardless.
+6. Otherwise → start another iteration.
+
+**The loop bar is Critical + High only.** Medium / Low / Info findings are listed in every report but never trigger another iteration and are never auto-fixed. Surface them in the final report; the user addresses them manually if they care.
+
+**Why the loop exists.** Findings cluster: fixing one stale phase number often turns up two more once the surrounding doc is re-scanned. A single-pass "fix and re-run affected passes" leaves correlated drift in place. The loop runs until the corpus is genuinely C/H-clean, or signals that it can't get there autonomously.
 
 ## Phase 5: Update Knowledge Index
 

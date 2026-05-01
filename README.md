@@ -264,7 +264,7 @@ All skills are first-party. Invocable as slash commands once installed.
 
 | Skill | What it produces |
 |-------|-----------------|
-| [`/doc-review`](doc-review/SKILL.md) | Planning doc consistency report (cascading: system → modules) |
+| [`/doc-review`](doc-review/SKILL.md) | Planning doc consistency report (cascading: system → modules); auto-fix loop iterates Critical/High until clean (cap: 5 iterations) |
 | [`/refactor-design`](refactor-design/SKILL.md) | Refactor plan |
 | [`/extract-patterns`](extract-patterns/SKILL.md) | Reusable code pattern documentation |
 | [`/test-quality`](test-quality/SKILL.md) | Spec-driven tests (gap analysis) |
