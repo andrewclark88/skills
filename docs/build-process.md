@@ -430,6 +430,48 @@ Before any production deployment:
 
 ---
 
+## Loop Exit Gates: External Verifier Required
+
+**Any loop that converges on a quality criterion — auto-fix loops, evaluator passes, gate verifications — MUST delegate the exit decision to a separately-dispatched verifier in a fresh context. The orchestrator's self-confidence is not an exit gate. This is non-negotiable across all skills.**
+
+This rule applies to (non-exhaustive list):
+
+- `/doc-review`'s auto-fix loop (re-audit dispatched as Sonnet Agent every iteration)
+- `/deep-research`'s evaluator pass (Opus Agent, isolated context)
+- `/research-program`'s program-level evaluator
+- `/security-review`'s severity verification
+- Any future loop skill that converges on quality criteria
+
+### Why this is structural, not stylistic
+
+The orchestrator (the skill's main loop) is the same context that just produced the fixes / findings. It has motivated reasoning to declare the work done — token economy, fatigue, completion bias. **The orchestrator cannot verify itself.**
+
+A separately-dispatched verifier in a fresh context has none of those biases. It reads only the inputs (briefs / docs / fixes) and produces a structured verdict. The exit decision is then mechanical: read the verdict's severity counts, exit if 0/0, otherwise iterate.
+
+### Concrete pattern (applies to all loop skills)
+
+For every iteration of a quality-convergence loop:
+
+1. Apply fixes (orchestrator may do this directly or via dispatched fix agent).
+2. **Dispatch a fresh verifier Agent.** New context, given only the inputs needed to verify. Required — this step is non-negotiable.
+3. Verifier produces a structured report with severity counts (or equivalent quality signal).
+4. **Read the verdict from the report.** Exit decision is mechanical: if severity counts indicate convergence (0 Critical, 0 High; or score ≥ threshold), exit. Otherwise iterate.
+5. The orchestrator does NOT make the exit call from its own assessment, grep, spot-check, or "it looks fine."
+
+### Anti-patterns explicitly forbidden
+
+- Orchestrator manually grepping for the patterns the previous verifier flagged and declaring success
+- Orchestrator spot-checking edited files and declaring "they look right"
+- Orchestrator exiting the loop on its own confidence ("I'm sure that fixed it")
+- Orchestrator skipping the verifier dispatch for token-economy reasons
+- Orchestrator re-using a stale verifier output from a previous iteration
+
+### Why this matters
+
+Skill rules that say "re-run the audit" without enforcing structural separation can be violated by an orchestrator interpreting the rule loosely. Making the verifier-dispatch a required Agent call (visible in the tool-call trace) makes shortcut exits structurally observable. The cost of one extra dispatched audit is far less than the cost of an undetected regression.
+
+---
+
 ## Thinking Layer
 
 The pipeline's thinking-heavy skills (`/research`, `/deep-research`, `/research-program`, `/ideate`, `/architecture`, `/brief`, `/roadmap`) load a first-principles thinking primer before starting work. The primer provides 10 concrete thinking moves organized in four phases:

@@ -213,7 +213,8 @@ Four pattern docs abstract the knowledge-layer design used by any project with a
 
 ### 8. Quality gates, not ceremony
 
-- **`/doc-review`** catches cross-doc drift with cascading passes (system-level → per-module). Triggered after `/architecture`, after `/roadmap`, at quality checkpoints, and when `/update-documentation` changes planning docs.
+- **`/doc-review`** catches cross-doc drift with cascading passes (system-level → per-module). Triggered after `/architecture`, after `/roadmap`, at quality checkpoints, and when `/update-documentation` changes planning docs. **Auto-fix loop has a mandatory re-audit gate** — every iteration's exit gate REQUIRES a freshly-dispatched Sonnet Agent for the audit; orchestrator self-verification (grep, spot-check, intuition) is forbidden (added 2026-05-03). The exit decision is read mechanically from the dispatched verifier's structured severity counts.
+- **Loop exit gates are external-verifier-only across all skills.** Any loop converging on a quality criterion (auto-fix, evaluator pass, gate verification) MUST delegate the exit decision to a separately-dispatched verifier in a fresh context. The orchestrator's self-confidence is not an exit gate. See [`docs/build-process.md`](docs/build-process.md) → "Loop Exit Gates: External Verifier Required" for the full rule and rationale.
 - **`/security-review`** produces a scored report before deploy. Address Critical/High first.
 - **Every phase ships tests.** Phase is done when its PR merges with CI green.
 - **Infrastructure safety is non-negotiable.** `terraform apply` runs in CI only. Resources are prefixed. State is remote. `prevent_destroy` on critical resources. See [`docs/build-process.md#infrastructure-safety-practices`](docs/build-process.md).

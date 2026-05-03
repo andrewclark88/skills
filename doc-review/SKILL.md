@@ -294,15 +294,32 @@ Present the initial report. Highlight:
 Iterate, with a hard cap of **5 iterations**:
 
 1. Fix every Critical and High finding from the current report.
-2. **Re-run the full review (Phase 2 in full — all system passes + every module pass).** Do not re-run "affected" passes only — a fix in one pass can introduce findings in another, and partial re-runs miss those.
-3. Compile a fresh report.
-4. **Exit condition:** if the fresh report has 0 Critical and 0 High → loop is done. Continue to Phase 5 with the final report.
+2. **Dispatch a fresh Sonnet Agent to re-run the full review (Phase 2 in full — all system passes + every module pass).** This is a REQUIRED Agent dispatch step, not an optional re-check. Do not re-run "affected" passes only — a fix in one pass can introduce findings in another, and partial re-runs miss those.
+3. The dispatched audit Agent compiles a fresh structured report with severity counts.
+4. **Exit decision is read from the dispatched audit's structured report.** If the fresh report has 0 Critical and 0 High → loop is done. Continue to Phase 5 with the final report. The orchestrator does NOT make the exit call from its own assessment; the exit gate is mechanical based on the dispatched verifier's output.
 5. **Cap hit:** if iteration count reaches 5 and the report still has Critical or High findings → stop. Emit a clearly-marked message: `"⚠ Hit max iterations (5). N Critical / M High remain — manual investigation needed."` Continue to Phase 5 with the final report regardless.
 6. Otherwise → start another iteration.
 
 **The loop bar is Critical + High only.** Medium / Low / Info findings are listed in every report but never trigger another iteration and are never auto-fixed. Surface them in the final report; the user addresses them manually if they care.
 
 **Why the loop exists.** Findings cluster: fixing one stale phase number often turns up two more once the surrounding doc is re-scanned. A single-pass "fix and re-run affected passes" leaves correlated drift in place. The loop runs until the corpus is genuinely C/H-clean, or signals that it can't get there autonomously.
+
+### Mandatory: re-audit before exit
+
+The exit condition (0 Critical, 0 High) MUST be confirmed by a fresh full audit pass — NOT by manual grep, spot-check, or "verification." A "fresh report" means dispatching the same Phase 2 audit again and receiving a structured report.
+
+**Why this is non-negotiable:** fixing one finding can introduce another in a different file. Manual verification cannot catch what it didn't think to look for. The audit's value is its independent re-scan.
+
+**Concretely, these do NOT count as a re-audit and MUST NOT trigger exit:**
+- Manual grep of the patterns the previous audit flagged
+- Spot-check or sampling of the edited files
+- The orchestrator's own confidence that fixes were complete
+- Reading back changed sections to confirm intent
+- Token-economy or session-budget concerns about running another audit
+
+**The only thing that exits the loop:** a freshly-dispatched audit pass returning 0 Critical and 0 High.
+
+If the prior iteration had any C/H findings, run a fresh audit. Period. The cost of one extra audit pass is far lower than the cost of an undetected regression slipping through.
 
 ## Phase 5: Update Knowledge Index
 
@@ -338,3 +355,5 @@ Skip this phase if no knowledge index exists in the project.
 - **Don't check briefs for structural consistency.** That's `knowledge/lint`'s job.
 - **Don't skip module passes.** Module drift is where the worst issues hide.
 - **Don't forget to write the report file.** The report must persist — it's a project artifact, not just console output.
+- **Don't substitute manual verification for a full audit re-run.** If the prior iteration had Critical or High findings, the only way to exit the auto-fix loop is by dispatching a fresh audit and receiving a structured report showing 0 C/H. Manual grep, spot-checks, and the orchestrator's own confidence DO NOT count. The audit's independent re-scan is its load-bearing value; substituting your own verification reintroduces the blind spots the audit catches.
+- **Don't skip the re-audit for token-economy reasons.** Running an extra audit pass costs tokens; missing a regression costs trust. The user authorized the doc-review process knowing it costs tokens. Honor that.
