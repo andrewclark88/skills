@@ -383,6 +383,34 @@ done
 
 The cross-cutting docs under `docs/` are referenced by absolute path from SKILL.md files (e.g., `/dev/skills/docs/first-principles.md`). Keep this repo checked out at a stable path so those references resolve.
 
+### Configure session auto-load (recommended)
+
+The knowledge-index design assumes the terse layer auto-loads at session start. This is provided by a `SessionStart` hook in your user-level `~/.claude/settings.json`. Without it, you'd have to run `/knowledge-index` manually each session.
+
+Add this to the `hooks` section of `~/.claude/settings.json`:
+
+```json
+"SessionStart": [
+  {
+    "matcher": "*",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "dir=\"$PWD\"; while [ \"$dir\" != \"/\" ]; do if [ -f \"$dir/docs/knowledge-index.yaml\" ]; then echo \"=== Project knowledge index ($dir) ===\"; cat \"$dir/docs/knowledge-index.yaml\"; echo \"=== END knowledge index ===\"; if [ -f \"$dir/docs/knowledge-index-detail.yaml\" ]; then echo \"(For per-doc summary / decisions / key_findings, read docs/knowledge-index-detail.yaml on demand.)\"; fi; exit 0; fi; dir=\"$(dirname \"$dir\")\"; done; echo \"No docs/knowledge-index.yaml found in this project tree. Run /knowledge-index to scan and create one.\""
+      }
+    ]
+  }
+]
+```
+
+What it does:
+- Walks up the directory tree from `$PWD` looking for `docs/knowledge-index.yaml`
+- If found, cats the **terse layer** (~5KB — title, type, kind, consumer_hint per doc)
+- If a `knowledge-index-detail.yaml` exists alongside, prints a one-line hint that agents can read it on demand for per-doc `summary`, `decisions:`, `key_findings:`, `supersession_note:`, `related[]`
+- If no index found, suggests running `/knowledge-index` to create one
+
+The detail layer is NOT loaded eagerly — that's the whole point of the two-layer design. Agents fetch it only when they need rich context on a specific doc.
+
 ---
 
 ## Repo Layout
