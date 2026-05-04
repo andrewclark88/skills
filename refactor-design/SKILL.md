@@ -101,8 +101,8 @@ PLAN each refactor as a discrete, testable step with current/target code and acc
 ### Phase 6: Order and Write
 ORDER by dependency and priority, then WRITE the refactor plan.
 
-### Phase 7: Update the Knowledge Index
-Append an entry to `docs/knowledge-index.yaml` for the refactor plan with `type: refactor-plan`. This makes the plan discoverable to future sessions evaluating refactor opportunities.
+### Phase 7: Regenerate the Knowledge Index
+Run `/knowledge-index` to regenerate the index from frontmatter. The refactor plan must have conformant frontmatter (`description`, `type: refactor-plan`, `kind: planning`, `summary`, `decisions`, `updated`). Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact.
 
 ## Output
 

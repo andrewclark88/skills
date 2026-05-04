@@ -214,19 +214,30 @@ Write an auto-loading reference skill at `.claude/skills/{topic-slug}/SKILL.md`:
 - Key API patterns, code examples, pitfalls
 - Under 200 lines
 
-### 4c. Update Knowledge Index
+### 4c. Regenerate Knowledge Index
 
-After writing the brief, update `docs/knowledge-index.yaml`:
+After writing the brief, **run `/knowledge-index`** to regenerate the index from frontmatter.
+
+Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact. Frontmatter is the
+only source of truth. See `/dev/skills/knowledge-index/SKILL.md` for the full schema and
+field semantics.
+
+Required frontmatter on the brief:
 
 ```yaml
-  - path: <path to brief>
-    title: <brief title>
-    type: brief
-    description: <one-line description>
-    updated: <today's date>
+---
+description: <one-line "when do I read this?" hook — frame as the question this doc answers>
+type: brief
+kind: research
+research_method: /research
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on what's in the brief>
+key_findings:
+  - <3-7 bullets on what the research showed>
+status: draft
+---
 ```
-
-Create the file if it doesn't exist.
 
 ## Anti-Patterns
 
@@ -237,7 +248,8 @@ Create the file if it doesn't exist.
 - **NEVER produce a brief without source citations.** Every claim must be verifiable.
 - **NEVER produce generic findings.** Ground everything in this project's specific needs.
 - **NEVER skip AskUserQuestion checkpoints.** Wrong research direction wastes effort.
-- **NEVER forget to update the knowledge index.** Future sessions depend on it.
+- **NEVER forget to run `/knowledge-index`** after writing the brief. Future sessions depend on the regenerated index.
+- **NEVER hand-edit `docs/knowledge-index.yaml`.** It's derived from frontmatter; edits will be overwritten on the next regenerate.
 
 ## Completion Criteria
 

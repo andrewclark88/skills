@@ -136,11 +136,15 @@ Apply the approved changes to `roadmap.md`:
 - New phases get the same level of detail as existing ones (not stubs)
 - If the dependency graph changed, redraw it
 
-## Phase 5: Update the Knowledge Index
+## Phase 5: Regenerate the Knowledge Index
 
-Update `docs/knowledge-index.yaml`:
-- Roadmap entry: update `description` (phase count, current phase) and `updated` date
-- If new blocking briefs were identified, note them (they'll be written via `/brief` before the phase starts)
+Run `/knowledge-index` to regenerate the index from the (now-modified) roadmap frontmatter.
+Do NOT hand-edit `docs/knowledge-index.yaml`. Update the roadmap's `description`,
+`summary`, `decisions`, and `updated` fields in its frontmatter — the regenerator picks
+those up.
+
+If new blocking briefs were identified, those will be written via `/brief` before the phase
+starts; their entries appear in the index automatically once written.
 
 ## Phase 6: Summary
 

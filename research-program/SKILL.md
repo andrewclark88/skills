@@ -206,7 +206,7 @@ Standard dimensions: program coverage, program coherence, cross-campaign contrad
 
 ### Phase 9: Write Output
 
-Write all outputs to the program directory. Update knowledge index with entries per brief + program-level entries. Use `type: program-parent` for `program.md` and `content_type: program-synthesis` for `super-parent.md`.
+Write all outputs to the program directory. Run `/knowledge-index` to regenerate the index — do NOT hand-edit `docs/knowledge-index.yaml`. Each brief, parent, and report must have conformant frontmatter (`description`, `type`, `kind: research`, `summary`, `key_findings`, `research_method: /research-program`, `updated`). Use `type: program-parent` for `program.md` and `content_type: program-synthesis` for `super-parent.md`.
 
 ### Phase 10: Handoff
 

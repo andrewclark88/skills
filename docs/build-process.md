@@ -120,10 +120,11 @@ KNOWLEDGE INDEX (essential infrastructure, maintained automatically):
 
   Doc-producing skills (/ideate, /scout, /research, /deep-research,
   /research-program, /architecture, /brief, /roadmap, /refactor-design,
-  /feature, /extract-patterns, /expand) update docs/knowledge-index.yaml
-  after writing.
-  Doc-maintaining skills (/update-documentation, /doc-review) update
-  the index when they create, modify, or fix docs.
+  /feature, /extract-patterns, /expand) emit conformant frontmatter and
+  call /knowledge-index to regenerate the index. The index is fully
+  derived from frontmatter — never hand-edited.
+  Doc-maintaining skills (/update-documentation, /doc-review) call
+  /knowledge-index after creating, modifying, or fixing docs.
   Skills that consume context (/design, /implement, /brief, etc.)
   should check the index FIRST before researching from scratch or
   duplicating work.
@@ -138,18 +139,17 @@ Every project accumulates knowledge — briefs, architecture docs, research find
 **The knowledge index is essential infrastructure, not optional polish.** Skipping it leads to: duplicated research, contradicted prior decisions, agents flying blind on context that's already available, and architectural drift. Every project past day one should have a knowledge index, and every session past day one should consult it.
 
 **How it works:**
-- `/knowledge-index` — scans the project and presents all available knowledge. **Run at the start of every non-fresh session.**
-- Every skill that writes a doc (`/ideate`, `/scout`, `/research`, `/deep-research`, `/research-program`, `/architecture`, `/brief`, `/roadmap`, `/refactor-design`, `/feature`, `/extract-patterns`, `/expand`) appends an entry to the index after writing.
+- `/knowledge-index` — regenerates the index from frontmatter and presents available knowledge. Two-layer output: terse `knowledge-index.yaml` (always loaded at session start) + rich `knowledge-index-detail.yaml` (on-demand). Inline lint pass catches drift.
+- The index is fully **derived from frontmatter**. Sibling skills write conformant frontmatter on the docs they produce; `/knowledge-index` regenerates. Nothing else writes to the index files.
 - Skills that consume context (`/design`, `/implement`, `/brief`, `/architecture`, etc.) check the index BEFORE doing any work that might already be done.
-- The index is a YAML file listing each doc's path, title, type, description, last updated date, and (where relevant) which phase it blocks.
 
 **The rules:**
-1. **Session start: load it.** First thing in any non-fresh session is `/knowledge-index`. The agent's first action should not be searching the codebase — it should be checking what's already known.
+1. **Session start: load it.** The terse `knowledge-index.yaml` auto-loads. The agent's first action should not be searching the codebase — it should be checking what's already known.
 2. **Before researching: check it.** A `/research` invocation should not begin without confirming a relevant brief doesn't already exist.
 3. **Before designing: check it.** `/design` reads the index for blocking briefs before producing a design doc.
-4. **After writing a doc: update it.** Every doc-producing skill must append/update its entry. Hand-written planning docs require manual entry (or a `/knowledge-index` regeneration).
+4. **After writing a doc: regenerate it.** Every doc-producing skill calls `/knowledge-index` after writing. Hand-written planning docs trigger the same regeneration. Never hand-edit `knowledge-index.yaml` or `knowledge-index-detail.yaml` — they're derived artifacts.
 
-**Doc frontmatter convention:** Every indexable planning doc (north-star, architecture, roadmap, brief, primer, features) declares `description`, `type`, and `updated` in its frontmatter. This is what makes `/knowledge-index` regeneration reliable. See `knowledge-index/SKILL.md` → "Indexable Doc Frontmatter Convention" for the full spec. Doc-producing skills emit this format automatically; hand-written planning docs follow it explicitly.
+**Doc frontmatter convention:** Every indexable doc declares `description`, `type`, `updated`, `summary`, `kind` (often derived from `type`+`status`), and either `decisions:` (planning) or `key_findings:` (research). See `knowledge-index/SKILL.md` for the full schema and `knowledge-index/REDESIGN-SKETCH.md` for design rationale.
 
 ---
 

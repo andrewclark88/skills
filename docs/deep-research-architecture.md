@@ -617,7 +617,7 @@ Your responsibilities:
 5. Monitor progress; handle failures (timeout → retry once → partial results).
 6. After all complete: hand off to Synthesis Agent.
 7. After synthesis: hand off to Evaluator Agent.
-8. Write final output; update knowledge index.
+8. Write final output; run `/knowledge-index` to regenerate the index from frontmatter (do NOT hand-edit `docs/knowledge-index.yaml`).
 
 Do NOT:
 - Research content yourself (specialists do that)

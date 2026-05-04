@@ -243,19 +243,27 @@ Ask the user where to put the landscape brief before writing (usually `docs/` or
   relate to the scope expansion.
 - **When called standalone:** Present research recommendations directly to the user.
 
-**6c. Update Knowledge Index**
+**6c. Regenerate Knowledge Index**
 
-After writing the landscape brief, update `docs/knowledge-index.yaml`:
+After writing the landscape brief, **run `/knowledge-index`** to regenerate the index from
+frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on the landscape brief:
 
 ```yaml
-  - path: <path to landscape brief>
-    title: "Scout Landscape: {Project Name}"
-    type: landscape
-    description: <one-line summary>
-    updated: <today's date>
+---
+description: <one-line "when do I read this?" hook>
+type: landscape
+kind: research
+research_method: /scout
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on the prior-art landscape covered>
+key_findings:
+  - <3-7 bullets on what the landscape revealed and what's worth pursuing>
+status: draft
+---
 ```
-
-Create the file if it doesn't exist.
 
 ---
 

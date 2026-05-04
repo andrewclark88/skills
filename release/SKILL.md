@@ -79,7 +79,7 @@ If no release mechanism is found, ask the user how they release.
 
 ### Phase 6: Update the Knowledge Index
 
-**Update the knowledge index** if the release notes are persisted as a doc. Append or update the entry in `docs/knowledge-index.yaml` with the release doc path and updated date.
+**Run `/knowledge-index`** if the release notes are persisted as a doc — the regenerator picks up the new doc from frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml`.
 
 ### Phase 7: Report
 

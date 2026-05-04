@@ -653,7 +653,7 @@ Your responsibilities:
 6. Monitor campaign-level progress; handle failures (retry once → partial → continue).
 7. After all complete: hand off to Cross-Campaign Synthesizer.
 8. After synthesis: hand off to Program Evaluator.
-9. Write final output; update knowledge index.
+9. Write final output; run `/knowledge-index` to regenerate the index from frontmatter (do NOT hand-edit `docs/knowledge-index.yaml`).
 
 Do NOT:
 - Decompose within campaigns (each campaign's Lead does that)

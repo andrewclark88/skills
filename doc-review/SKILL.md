@@ -321,20 +321,17 @@ The exit condition (0 Critical, 0 High) MUST be confirmed by a fresh full audit 
 
 If the prior iteration had any C/H findings, run a fresh audit. Period. The cost of one extra audit pass is far lower than the cost of an undetected regression slipping through.
 
-## Phase 5: Update Knowledge Index
+## Phase 5: Regenerate Knowledge Index
 
-After fixing any issues, check whether the knowledge index (`docs/knowledge-index.yaml`)
-needs repairs:
+After fixing any issues, **run `/knowledge-index`** to regenerate the index from frontmatter.
+The index is fully derived; any moves, renames, deletions, or frontmatter changes the doc-review
+loop made are picked up automatically.
 
-1. **Broken entries** — if a doc was moved, renamed, or deleted during fixes, update or
-   remove its index entry.
-2. **Stale timestamps** — if a doc was substantially modified during fixes, update its
-   `updated` date in the index.
-3. **Missing entries** — if Phase 1 discovered docs on disk that aren't in the index,
-   add entries for them.
-4. **Index timestamp** — update the `# Last updated:` comment at the top of the index.
+Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact. If the regenerator's
+lint pass surfaces issues (missing frontmatter, broken `superseded_by:` chains, broken
+`related[]`), fix them in the source frontmatter and re-run.
 
-Skip this phase if no knowledge index exists in the project.
+Skip this phase if the project doesn't yet use `/knowledge-index`.
 
 ---
 

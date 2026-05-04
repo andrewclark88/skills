@@ -140,9 +140,25 @@ After updating, present each changed document to the user for review.
 
 Commit the updated foundation docs.
 
-## Phase 6: Update the Knowledge Index
+## Phase 6: Regenerate the Knowledge Index
 
-**Update the knowledge index.** Append an entry to `docs/knowledge-index.yaml` for the expansion doc with `type: expansion`. Ensure the doc has standard frontmatter (`description`, `type`, `updated`).
+**Run `/knowledge-index`** to regenerate the index from frontmatter. Do NOT hand-edit
+`docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on the expansion doc:
+
+```yaml
+---
+description: <one-line "when do I read this?" hook>
+type: expansion
+kind: planning
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on what scope was expanded and why>
+decisions:
+  - <commitments the expansion locks in: new scope items, retired items, deferred items>
+---
+```
 
 ## Anti-Patterns
 

@@ -177,15 +177,25 @@ as new architecture docs are added.
 **Contains:** Modules, data flow, conventions, dependencies, what's deferred.
 **Does NOT contain:** Vision/principles (north star), phase status (roadmap).
 
-### Phase 5: Update Knowledge Index
+### Phase 5: Regenerate Knowledge Index
 
-After writing the architecture doc, update `docs/knowledge-index.yaml`:
+After writing the architecture doc, **run `/knowledge-index`** to regenerate the index from
+frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact. See
+`/dev/skills/knowledge-index/SKILL.md` for the full schema.
+
+Required frontmatter on the architecture doc:
+
 ```yaml
-  - path: <path to architecture.md>
-    title: "Architecture: {Project Name}"
-    type: architecture
-    description: <one-line summary>
-    updated: <today's date>
+---
+description: <one-line "when do I read this?" hook>
+type: architecture
+kind: planning
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on what's in the doc>
+decisions:
+  - <5-9 highest-leverage architectural commitments at index-readable depth>
+---
 ```
 
 ### Phase 6: Run Doc Review

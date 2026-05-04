@@ -178,22 +178,34 @@ Present the completed brief. Highlight:
 
 Iterate until approved, then write to disk.
 
-### Step 6: Update Knowledge Index
+### Step 6: Regenerate the Knowledge Index
 
-After writing the brief, update the project's knowledge index at `docs/knowledge-index.yaml`.
+After writing the brief, **run `/knowledge-index`** to regenerate the index from frontmatter.
 
-Append an entry:
+Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact (per the redesign at
+`/dev/skills/knowledge-index/REDESIGN-SKETCH.md`). Frontmatter is the only source of truth;
+your job is to write conformant frontmatter on the brief, then run `/knowledge-index`.
+
+Required frontmatter on the brief (see `/dev/skills/knowledge-index/SKILL.md` for the full
+schema):
+
 ```yaml
-  - path: <path to the brief>
-    title: <brief title>
-    type: brief
-    description: <one-line description>
-    updated: <today's date>
-    blocks_phase: <phase number if applicable>
+---
+description: <one-line "when do I read this?" hook — frame as the question this doc answers>
+type: brief
+kind: research                                    # usually derived from type; set explicitly to override
+research_method: /brief
+updated: <today's date YYYY-MM-DD>
+blocks_phase: <phase number if applicable>
+summary: |
+  <1-2 sentences on what's in the brief>
+key_findings:
+  - <what the research showed; 3-7 bullets>
+status: draft
+---
 ```
 
-If the index file doesn't exist, create it. This ensures `/knowledge-index` can find the
-brief in future sessions.
+If the project doesn't yet have a knowledge index, `/knowledge-index` will create it.
 
 ---
 

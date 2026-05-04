@@ -1,89 +1,302 @@
 ---
 name: knowledge-index
 description: >
-  Show all accumulated project knowledge — briefs, architecture docs, and other project knowledge.
-  Auto-loads at session start so the agent knows what context is available before doing work.
-  Run at the start of any session, or anytime you need to find relevant project knowledge.
-  Use when starting work on a project, looking for existing research, or checking what briefs exist.
+  Regenerate the project knowledge index from frontmatter — produces a terse always-loaded
+  layer (knowledge-index.yaml) and a rich on-demand layer (knowledge-index-detail.yaml).
+  Runs an inline lint pass that catches drift, broken supersession chains, and missing
+  required fields. Auto-loads the terse layer at session start. Run at the start of any
+  session, or anytime you've added or modified docs.
 user-invocable: true
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 
 # Knowledge Index
 
-You surface all accumulated project knowledge so the agent (and user) knows what context
-is available before doing work. This is the "what do we already know?" check that should
-happen at the start of every build session.
+You regenerate the project knowledge index from frontmatter and run lint. Frontmatter is the
+**only** source of truth — both index files (terse + detail) are fully derived on every
+invocation. Sibling skills (`/research`, `/brief`, `/architecture`, `/roadmap`) write
+frontmatter; this skill regenerates the index.
+
+## Why this design
+
+Earlier versions of this skill let sibling skills *append* to the index. That caused drift:
+each skill appended but none reconciled, header claimed "auto-generated" but nothing
+regenerated, stale descriptions persisted across migrations. Frontmatter-as-source-of-truth
+plus regeneration kills that drift class entirely.
+
+Two-layer output trades load cost for content depth — most sessions only need the terse
+hint of "what exists and when do I read it?", and pay for the rich layer (summaries,
+decisions, findings) only when a topic match triggers it.
 
 ## Model Assignment
 
 Per [model-selection-pattern.md](../docs/model-selection-pattern.md):
 
-- **Index scanner (this skill's main loop)** — Volume / structured extraction. Sonnet medium. Runs in parent context.
+- **Index regenerator (this skill's main loop)** — Volume / structured extraction. Sonnet medium. Runs in parent context.
 
-File scanning and catalog presentation are well-defined structured work — Sonnet is cost-effective. Haiku would also work but Sonnet's better instruction-following is worth the small cost bump given this runs at every session start. No sub-agents.
+Frontmatter parsing, lint, and YAML emission are mechanical structured work — Sonnet handles
+this cleanly. No sub-agents.
 
 ## When This Runs
 
-- **Start of any session** where work will be done on a project
-- **Before writing a brief** — check if one already exists
-- **Before researching** — check if a brief already covers the topic
-- **Anytime** you need to find relevant context
+- **Start of any session** where work will be done on a project (auto-loads terse layer)
+- **After any skill produces a new doc** (`/research`, `/brief`, `/architecture`, `/roadmap`, `/ideate`) — those skills no longer touch the index file; they call this one
+- **After manual doc edits** that change frontmatter
+- **`--lint-only`** — CI mode, no writes, exits non-zero on errors
 
 ## Workflow
 
-### Step 1: Find the Knowledge Index
+### Step 1: Discover all knowledge docs
 
-Look for `docs/knowledge-index.yaml` in the project root. If it exists, read it and
-present the contents.
+Glob `docs/**/*.md` recursively. Exclude:
+- `docs/_archive/**/*` (archived)
+- `docs/**/doc-review-report-*.md` (audit artifacts)
+- Any path matching `**/RESUME-STATE.md` or session artifacts (no frontmatter, by convention)
 
-If it doesn't exist, **scan the project** to build one:
+For each match, parse the YAML frontmatter (the block between leading `---` and the next `---`).
 
-### Step 2: Scan for Knowledge (if no index exists)
+### Step 2: Extract fields per doc
 
-Scan these locations for knowledge documents:
+| Field | Required? | Source |
+|-------|-----------|--------|
+| `path` | required | filesystem path |
+| `description` | required | frontmatter `description:` (becomes `consumer_hint` in terse layer) |
+| `type` | required | frontmatter `type:` |
+| `updated` | required | frontmatter `updated:` |
+| `summary` | required for the rich layer | frontmatter `summary:` |
+| `kind` | derivable | frontmatter `kind:` if set, else derived (see Step 3) |
+| `decisions` | required for `kind: planning`; optional for `kind: research`; forbidden for `kind: historical` | frontmatter `decisions:` |
+| `key_findings` | required for `kind: research`; optional for `kind: planning`; forbidden for `kind: historical` | frontmatter `key_findings:` |
+| `supersession_note` | optional | frontmatter `supersession_note:` |
+| `title` | optional | frontmatter `title:` → first `# heading` |
+| `status` | optional | frontmatter `status:` (`draft | locked | superseded | legacy | in-progress`) |
+| `superseded_by` | optional | frontmatter `superseded_by:` |
+| `research_method` | optional | frontmatter `research_method:` |
+| `blocks_phase` | optional | frontmatter `blocks_phase:` |
+| `related` | optional | frontmatter `related:` (list of `{slug, relationship, note?}`) |
+
+**Unknown frontmatter fields** (e.g., `content_type:`, `tags:`, `audience:`, `sources:`, `confidence:`, project-specific fields) are silently ignored — they don't appear in the index output but don't cause lint errors. Project-specific extensions live in source frontmatter freely; only the indexable fields above flow through.
+
+**Slug resolution in `related[]`.** The canonical slug form in source frontmatter and index output is the **absolute path** `docs/<path>.md` rooted at the repo root. The regenerator also accepts and normalizes:
+- Bare sibling filename (e.g., `parent`, `program`) — resolved against the doc's own directory; `.md` appended if missing
+- Relative path (e.g., `../dashboarding-for-ai-agent-platform/parent`, `../../architecture/north-star-ds-engine`) — resolved against the doc's directory; `.md` appended if missing
+
+After resolution, the target file MUST exist on disk. Resolution failures are errors (see Step 4). The detail-layer output always uses the canonical absolute form regardless of how the source was written. To avoid relying on resolution, prefer absolute slugs in source.
+
+### Step 3: Derive `kind:` if not set
 
 ```
-docs/briefs/              ← domain briefs
-docs/architecture/        ← architecture docs, north star
-docs/*/briefs/            ← module-specific briefs (e.g., docs/ds-engine/briefs/)
-docs/*/architecture/      ← module-specific architecture docs
-*.md in docs/             ← any markdown in the docs tree
+if status in ('legacy', 'superseded'):
+    kind = 'historical'
+elif type in ('north-star', 'architecture', 'roadmap', 'design', 'features',
+              'ideate', 'workon', 'module-rules', 'pattern', 'refactor-plan',
+              'feature', 'expansion'):
+    kind = 'planning'
+elif type in ('brief', 'program-parent', 'program-report', 'landscape'):
+    kind = 'research'
+else:
+    kind = None  # lint warning
 ```
 
-For each document found, extract these fields. **Frontmatter is the source of truth — fall back to body content only when frontmatter is missing.**
+If `kind:` is set explicitly in frontmatter, use that and validate against the derivation
+(lint warning if they disagree).
 
-| Field | Source (in priority order) |
-|-------|---------------------------|
-| **path** | The file path |
-| **title** | Frontmatter `title` → first `# heading` |
-| **description** | Frontmatter `description` → first paragraph |
-| **type** | Frontmatter `type` → inferred from path (`docs/architecture/` → architecture, `docs/briefs/` → brief, files starting with `north-star-` → north-star) |
-| **updated** | Frontmatter `updated` → git last-modified date → file mtime |
-| **blocks_phase** | Frontmatter `blocks_phase` (optional) |
+### Step 4: Run lint pass
 
-### Indexable Doc Frontmatter Convention
+**Lint mode is determined by the `schema_version` field at the top of `docs/knowledge-index.yaml`** (or the project's CLAUDE.md if the index doesn't yet exist):
 
-Doc-producing skills (`/ideate`, `/research`, `/architecture`, `/brief`, `/roadmap`) and any hand-written planning doc should include this minimum frontmatter:
+- **`schema_version: 1`** — grace mode. Missing v2 fields produce **warnings**, not errors. Use during migration.
+- **`schema_version: 2`** — enforce mode. Missing v2 fields produce **errors** that block regeneration. Use once a project has fully backfilled.
+- **No `schema_version` field** — defaults to `1` (grace mode). New projects scaffolded by `/init-project` start at `2`.
+
+Errors (block regeneration):
+- Missing v1-baseline frontmatter (`description`, `type`, `updated`) — always an error regardless of mode
+- Missing `summary:` — error in v2, warning in v1 (grace)
+- Missing `decisions:` for `kind: planning` — error in v2, warning in v1 (grace)
+- Missing `key_findings:` for `kind: research` — error in v2, warning in v1 (grace)
+- `decisions:` or `key_findings:` present on `kind: historical` — always an error (these are forbidden, not optional)
+- Broken `superseded_by:` chain (target file does not exist, except `TBD-*` placeholders) — always an error
+- Broken `related[]` reference — slug fails resolution per Step 2 rules (target file does not exist after relative-path normalization)
+- `related[]` item using `type:` key instead of `relationship:` — always an error (legacy authoring convention; rename to `relationship:`)
+- `kind:` set explicitly but disagrees with derivation — always an error (signals author intent that doesn't match reality)
+
+**Note on `kind: historical`:** missing `decisions:` and `key_findings:` is the CORRECT state — these fields are forbidden, so absence is expected and produces no warning or error. Lint must not warn on missing-decisions/key_findings for historical docs.
+
+Warnings (print; do not block):
+- `decisions:` count > 12 (cap guidance: 5–9 highest-leverage)
+- `updated:` more than 60 days behind git mtime (`git log -1 --format=%cs -- <file>`) — skipped silently for files not yet in git history (untracked files have no mtime to compare against; not stale by definition)
+- `status:` value not in the known enum (`draft | locked | superseded | legacy | in-progress`) — warning; suggest normalization to the closest enum value (e.g., `APPROVED — execution starts...` → `in-progress`; `COMPLETE — basis for...` → `locked`)
+- `status: superseded` but no `supersession_note:` and no `superseded_by:`
+- Doc on disk has no frontmatter (orphan; falls back to inference)
+- `blocks_phase:` references a phase that doesn't exist in `docs/architecture/roadmap.md` (if roadmap exists)
+
+If `--lint-only`, print the report and exit. Otherwise continue.
+
+If errors are present and `--no-lint` is NOT passed: stop, print errors, do not regenerate.
+If `--no-lint`: print warnings but proceed.
+
+### Step 5: Write `docs/knowledge-index.yaml` (terse layer)
+
+Full overwrite. Format:
+
+```yaml
+# Auto-generated. DO NOT EDIT BY HAND. Run /knowledge-index to regenerate.
+# Frontmatter is the source of truth — edit each doc's frontmatter and re-run.
+#
+# schema_version controls lint mode:
+#   1 = grace (missing v2 fields produce warnings, not errors)
+#   2 = enforce (missing v2 fields are errors)
+# Set to 2 once the project's docs are fully backfilled to v2 frontmatter.
+schema_version: 2
+generated_at: <ISO 8601 timestamp>
+generated_from: frontmatter
+total_docs: <count>
+
+documents:
+  # Group by kind: planning first, then research, then historical
+  # Within each group, sort by type then by path
+  - path: <path>
+    title: <title>
+    type: <type>
+    kind: <kind>
+    updated: <date>
+    # Optional fields surface only if set:
+    status: <status>
+    research_method: <method>
+    blocks_phase: <phase>
+    superseded_by: <path>
+    consumer_hint: <description>
+  ...
+```
+
+Per entry: ~5–8 lines. Total file for ~50 docs: ~5KB.
+
+### Step 6: Write `docs/knowledge-index-detail.yaml` (rich layer)
+
+Full overwrite. Format:
+
+```yaml
+# Auto-generated. DO NOT EDIT BY HAND.
+# On-demand layer — load when surfacing a specific doc's full context.
+generated_at: <ISO 8601 timestamp>
+generated_from: frontmatter
+schema_version: 2
+
+documents:
+  <path>:
+    summary: |
+      <multi-line summary>
+    decisions:
+      - <decision>
+    key_findings:
+      - <finding>
+    supersession_note: |
+      <multi-line note, if present>
+    related:
+      - {slug: <path>, relationship: <type>}
+  ...
+```
+
+Keyed by path for O(1) lookup. Total for ~50 docs: ~25KB.
+
+### Step 7: Print summary
+
+```
+📋 Knowledge Index regenerated
+=============================
+Project: <project name>
+Total docs: <N>
+By kind: planning=<n>, research=<n>, historical=<n>
+
+Lint:
+  Errors:   <count>
+  Warnings: <count>
+
+Files written:
+  docs/knowledge-index.yaml         (terse, ~<size>KB)
+  docs/knowledge-index-detail.yaml  (detail, ~<size>KB)
+```
+
+If lint warnings or errors are present, print them grouped by severity with actionable
+"Fix:" suggestions.
+
+## Frontmatter Convention (what authors must provide)
+
+Every indexable doc must have:
 
 ```yaml
 ---
-description: One-line summary used in the knowledge index and search results
-type: north-star | architecture | roadmap | brief | primer | features | ideate | workon
-updated: 2026-04-13
-# Optional fields:
-title: Override for the title field (defaults to first # heading)
-blocks_phase: "5b"           # if this brief gates a specific roadmap phase
+description: |
+  One-line "when do I read this?" hook. Frame as the question this doc answers,
+  not as a content list. (Becomes consumer_hint in the terse index.)
+type: north-star | architecture | roadmap | brief | program-parent | program-report | design | features | ideate | workon
+updated: 2026-05-03
+
+summary: |
+  1-2 sentences on what's in the doc. Different from description: this tells you
+  what's IN it; description tells you WHEN to read it.
+
+# decisions: required for kind: planning, optional for kind: research, forbidden for kind: historical
+# Cap: 5-9 highest-leverage commitments at index-readable depth.
+decisions:
+  - "Three-rung tier model with refused-by-default Tier 3"
+  - "Cloud Tasks (not Cloud Scheduler) for scheduler dedup"
+
+# key_findings: required for kind: research, optional for kind: planning, forbidden for kind: historical
+key_findings:
+  - "Vega-Lite + vega-embed is the lowest-friction agent-authored viz path"
+
+# Optional: supersession_note: when parts are stale but the doc remains load-bearing
+supersession_note: |
+  Authored 2026-05-02 before the X migration. The "Y" section is superseded; the
+  cross-cutting themes and recommendations remain authoritative.
+
+# Optional standard fields
+title: Override for first # heading
+kind: planning | research | historical    # usually derived; set only to override
+status: draft | locked | superseded | legacy | in-progress
+superseded_by: path/to/successor.md
+research_method: /research | /deep-research | /research-program | hand-written | migrated
+blocks_phase: "5b"
+related:
+  - {slug: path/to/other.md, relationship: depends-on | extends | contradicts | refines | parallel-to}
 ---
 ```
 
-`description` and `type` and `updated` are required for clean indexing. The other fields enrich the index entry. If a doc lacks this frontmatter, the scan falls back to inference — but inferred values are lower-quality, so authoring tools should always emit the frontmatter.
+### Field guidance
+
+**`description:`.** Frame as a question, not a content list. Bad: "Module map, data flow,
+conventions, dependencies." Good: "Read when implementing or modifying any module — module
+map, data flow, conventions, dependencies, and load-bearing storage / PII / render decisions."
+
+**`summary:`.** What's in the doc. 1-2 sentences. Pipe-folded for multi-line.
+
+**`decisions:`.** Locked-in commitments at index-readable depth. **Cap at 5–9** highest-leverage.
+Sub-system details belong in their own architecture doc's `decisions:`, not propagated upward.
+Lint warns at >12.
+
+**`key_findings:`.** What the research showed (qualified, not yet committed). Required for
+`kind: research`. Empty/omitted is OK if the doc is purely a planning-stage research artifact
+that didn't reach findings.
+
+**Both `decisions:` AND `key_findings:` on the same doc.** Allowed and useful for research
+outputs that bottom-line a recommendation. `key_findings:` is what the research showed;
+`decisions:` is what's now committed because of it.
+
+**`supersession_note:`.** Use when parts of a doc are superseded but the doc as a whole
+remains load-bearing. Distinct from `superseded_by:` (which marks full supersession). The
+research outputs in ds-engine after the 2026-05-03 grimoire-separation migration are the
+canonical example.
+
+**Historical-kind summaries:** frame as "Captures X (as of authorship); not yet refreshed
+for Y." Distinguishes legacy summaries from their descriptions.
 
 ### Standard vs Extended Types
 
 **Standard types** (used across all projects):
-`north-star`, `architecture`, `roadmap`, `brief`, `primer`, `features`, `ideate`, `workon`, `module-rules`
+`north-star`, `architecture`, `roadmap`, `brief`, `program-parent`, `program-report`,
+`design`, `features`, `ideate`, `workon`, `module-rules`
 
 **Extended types** (project-specific — valid when a project's domain warrants them):
 - `entity-brief` — auto-generated per-entity dossiers (e.g., entity profiles, product pages)
@@ -92,91 +305,42 @@ blocks_phase: "5b"           # if this brief gates a specific roadmap phase
 - `feature` — feature briefs (produced by `/feature`)
 - `expansion` — scope expansion docs (produced by `/expand`)
 
-Projects may add their own types as needed. Document new types in the project's knowledge-index.yaml header comment so future sessions know they're intentional, not typos. The skill accepts any string for `type` — lint validates against a known list but treats unknowns as warnings, not errors.
+Projects may add their own types. Document new types in the project's CLAUDE.md so future
+sessions know they're intentional. The skill accepts any string for `type:`; lint validates
+against a known list but treats unknowns as warnings, not errors.
 
-### Step 3: Present the Index
+## Migration from schema v1 to v2
 
-Organize by type and present:
+If a project's existing `knowledge-index.yaml` has no `schema_version` field or `schema_version: 1`, it's in **grace mode** — missing v2 fields emit warnings, not errors. Backfill incrementally; flip to enforce when ready.
 
-```
-📋 Project Knowledge Index
-==========================
+**Phase 1 — opt in to v2 (no backfill yet):**
+- Add `schema_version: 1` to the index header explicitly (signals intentional grace mode, not legacy oversight)
+- Run `/knowledge-index` — regenerator produces v2-shaped output where possible, falls back gracefully on v1-only frontmatter
+- Existing `description:` is reused as `consumer_hint` automatically
+- Lint emits warnings for missing v2 fields; project keeps working
 
-Planning Docs:
-  • north-star.md — Vision, principles, domain model
-  • architecture.md — Modules, data flow, conventions
-  • roadmap.md — 14 phases, Phase 3 is NEXT
-  • knowledge-store.md — Knowledge store architecture
+**Phase 2 — backfill:**
+- For each doc, add `summary:` and `decisions:` or `key_findings:` to frontmatter (LLM-draft from doc body; human reviews — ~3 min/doc)
+- Rewrite `description:` from content-listing framing to question framing (consumer_hint style)
+- Add `supersession_note:` for any partially-stale doc
+- Re-run `/knowledge-index` periodically; track shrinking warning count
 
-Briefs (domain knowledge):
-  • domain-rules.md — Core domain rules, state machine, interaction patterns (411 lines)
-  • api-integration.md — External API access patterns and rate limits
-  • data-ingestion.md — All data source access patterns
-  • knowledge-retrieval-patterns.md — LLM Wiki, MemPalace, MCP ecosystem research
+**Phase 3 — flip to enforce:**
+- Once warning count is 0 (or remaining warnings are intentionally deferred), change `schema_version: 1` → `schema_version: 2` in the index header
+- Subsequent `/knowledge-index` runs treat the same conditions as **errors** that block regeneration
+- This prevents regression — new docs without proper frontmatter fail lint immediately
 
-Entity Briefs (auto-generated):
-  • 32 briefs in docs/briefs/entities/ — auto-generated entity profiles from data pipeline
-
-Module-Specific Briefs:
-  • docs/module-a/briefs/technique-inventory.md — 12 analysis techniques
-  • docs/module-a/briefs/decision-dag-design.md — DAG routing patterns
-```
-
-### Step 4: Recommend What to Read
-
-Based on the current conversation context (what the user is about to work on), recommend
-which documents to load:
-
-```
-For Phase 2a (core models), I recommend reading:
-  1. domain-rules.md — core rules the models must handle
-  2. api-integration.md — external data the models will consume
-  3. roadmap.md Phase 2a — exact scope and acceptance criteria
-```
-
-## Index File Format
-
-When the index is generated, write it to `docs/knowledge-index.yaml`:
-
-```yaml
-# Auto-generated knowledge index. Updated by /research, /brief, and /knowledge-index.
-# Last updated: 2026-04-10
-
-documents:
-  - path: docs/architecture/north-star.md
-    title: "North Star: My Project"
-    type: north-star
-    description: "Vision, principles, domain model for the project"
-    updated: 2026-04-08
-
-  - path: docs/briefs/domain-rules.md
-    title: "Brief: Domain Rules"
-    type: brief
-    description: "Core domain rules, state machine, interaction patterns"
-    updated: 2026-04-08
-    blocks_phase: "2b"
-
-  - path: docs/briefs/entities/example-entity.md
-    title: "Entity Brief: Example Entity"
-    type: entity-brief
-    description: "Auto-generated entity profile — stats, strategy, breakdown"
-    updated: 2026-04-08
-```
-
-## Keeping the Index Current
-
-The index is updated by every doc-producing skill:
-1. **`/ideate`** — adds north star entry
-2. **`/research`** — adds brief entry
-3. **`/architecture`** — adds architecture entry
-4. **`/roadmap`** — adds roadmap entry
-5. **`/brief`** — adds brief entry
-6. **`/knowledge-index`** — full rescan if the index is stale or missing. Use after manual doc creation or if entries are missing.
-
-Each skill appends to the YAML file after writing its doc.
+**For new projects** (`/init-project`): the scaffolded `knowledge-index.yaml` template starts at `schema_version: 2`. No grace period needed.
 
 ## Anti-Patterns
 
-- **Don't skip the index check.** If you're about to research something, check if a brief already exists.
-- **Don't present the full content of every doc.** The index is a catalog — show titles and descriptions. The user or agent reads full docs on demand.
-- **Don't forget to update the index.** When any skill produces a new knowledge document, it must add an entry.
+- **Don't hand-edit `knowledge-index.yaml` or `knowledge-index-detail.yaml`.** They are pure
+  derivations. Edit the source frontmatter and re-run.
+- **Don't let sibling skills append to the index.** Their job is to write conformant
+  frontmatter and call this skill (or document that the user should).
+- **Don't skip the lint pass to push through.** If lint flags errors, fix the underlying
+  frontmatter. `--no-lint` is for emergencies, not for routine use.
+- **Don't index `_archive/`, doc-review reports, or session-state artifacts.** They are
+  not knowledge.
+- **Don't skip the index check at session start.** If you're about to research something
+  or write a brief, check the terse layer first to see if it already exists.

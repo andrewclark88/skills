@@ -72,9 +72,25 @@ Iterate until the user approves.
 Write the brief to a location based on project conventions (e.g., `docs/features/`,
 `docs/`, or project root). Ask the user if unclear.
 
-## Phase 5: Update the Knowledge Index
+## Phase 5: Regenerate the Knowledge Index
 
-**Update the knowledge index.** Append an entry to `docs/knowledge-index.yaml` for the feature brief with `type: feature` (or `type: brief` if it's primarily research). Make sure the doc has frontmatter (`description`, `type`, `updated`).
+**Run `/knowledge-index`** to regenerate the index from frontmatter. Do NOT hand-edit
+`docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on the feature brief:
+
+```yaml
+---
+description: <one-line "when do I read this?" hook — usually "Read when implementing the X feature">
+type: feature        # or `brief` if primarily research
+kind: planning       # or `research` if primarily research
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on what feature this defines and the design's load-bearing choices>
+decisions:
+  - <commitments the feature locks in: API shape, data flow, dependency choices>
+---
+```
 
 ## Output
 

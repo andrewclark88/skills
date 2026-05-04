@@ -211,15 +211,24 @@ Present to the user:
 
 Iterate until approved, then write final version.
 
-### Phase 7: Update Knowledge Index
+### Phase 7: Regenerate Knowledge Index
 
-After writing the roadmap, update the project's `docs/knowledge-index.yaml`:
+After writing the roadmap, **run `/knowledge-index`** to regenerate the index from
+frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on the roadmap:
+
 ```yaml
-  - path: <path to roadmap.md>
-    title: "Roadmap: {Project Name}"
-    type: roadmap
-    description: <one-line summary with phase count>
-    updated: <today's date>
+---
+description: <one-line "when do I read this?" hook>
+type: roadmap
+kind: planning
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences: phase count, what's done, what's NEXT, key dependencies>
+decisions:
+  - <5-9 highest-leverage roadmap commitments — phase boundaries, sequencing, key blocking briefs>
+---
 ```
 
 ### Phase 8: Run Doc Review

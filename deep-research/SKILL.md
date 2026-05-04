@@ -325,7 +325,7 @@ groundedness, recommendations).
 2. Write specialist briefs (with synthesis's cross-references)
 3. Write `parent.md` (synthesis output)
 4. Write `campaign.md` (evaluator's report + campaign metadata)
-5. Update knowledge index with entries for each brief
+5. Run `/knowledge-index` to regenerate the index from frontmatter (do NOT hand-edit `docs/knowledge-index.yaml`). Each brief must have conformant frontmatter (`description`, `type: brief`, `kind: research`, `summary`, `key_findings`, `research_method: /deep-research`, `updated`)
 6. **Chain mode (`--continue-from` passed):** update the parent campaign's `parent.md` by
    appending (or extending) a `## Extended by child campaigns` section with a pointer to
    this child campaign directory, the anchor brief slug, and a one-line summary of what

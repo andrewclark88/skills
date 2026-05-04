@@ -103,7 +103,7 @@ For each task, spawn a **Sonnet agent** (`model: "sonnet"`) with a self-containe
 
 ## Phase 4b: Verify Frontmatter on Indexed Doc Types
 
-**Verify frontmatter on indexed-doc-types.** When updating a doc that should be in the knowledge index (north-star, architecture, roadmap, brief, primer, features), confirm it has the required frontmatter (`description`, `type`, `updated`). If frontmatter is missing or incomplete, add or repair it. Update the `updated` field on every modified doc to today's date. After the modification batch, ensure the entry in `docs/knowledge-index.yaml` reflects the changes (description, updated date).
+**Verify frontmatter on indexed-doc-types.** When updating a doc that should be in the knowledge index (north-star, architecture, roadmap, brief, primer, features), confirm it has the required frontmatter (`description`, `type`, `kind`, `summary`, `updated`, plus `decisions:` for `kind: planning` or `key_findings:` for `kind: research`). If frontmatter is missing or incomplete, add or repair it. Update the `updated` field on every modified doc to today's date. After the modification batch, run `/knowledge-index` to regenerate the index — do NOT hand-edit `docs/knowledge-index.yaml`.
 
 ## Phase 5: Review and Regenerate
 

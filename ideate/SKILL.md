@@ -219,17 +219,27 @@ Domains that need `/research` before `/architecture`.
 
 Ask the user where docs go before writing (usually `docs/architecture/`).
 
-### Phase 5: Update Knowledge Index
+### Phase 5: Regenerate Knowledge Index
 
-After writing the north star, update the project's `docs/knowledge-index.yaml`:
+After writing the north star, **run `/knowledge-index`** to regenerate the index from
+frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on the north star:
+
 ```yaml
-  - path: <path to north-star.md>
-    title: "North Star: {Project Name}"
-    type: north-star
-    description: <one-line summary>
-    updated: <today's date>
+---
+description: <one-line "when do I read this?" hook — usually "Read first when joining {project}">
+type: north-star
+kind: planning
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on the project's vision and component list>
+decisions:
+  - <5-9 categorical commitments — language/runtime, deployment shape, key architectural choices>
+---
 ```
-Create the file if it doesn't exist.
+
+`/knowledge-index` will create the index file if it doesn't yet exist.
 
 ### Phase 6: Summary + Next Steps
 

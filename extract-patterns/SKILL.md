@@ -151,9 +151,24 @@ For each identified pattern (3+ occurrences in codebase):
 
    Update the available patterns list to include all current pattern files.
 
-### Phase 4: Update the Knowledge Index
+### Phase 4: Regenerate the Knowledge Index
 
-If the project has a `docs/knowledge-index.yaml`, append entries for any pattern-documentation files produced. Use `type: pattern` (a new type — extending the convention is fine). Include path, title, description, and updated date.
+If the project has a `docs/knowledge-index.yaml`, **run `/knowledge-index`** to regenerate the index from frontmatter. Do NOT hand-edit `docs/knowledge-index.yaml` — it's a derived artifact.
+
+Required frontmatter on each pattern file:
+
+```yaml
+---
+description: <one-line "when do I read this?" hook>
+type: pattern
+kind: planning
+updated: <YYYY-MM-DD>
+summary: |
+  <1-2 sentences on what the pattern captures and when it applies>
+decisions:
+  - <commitments the pattern locks in: API shape, naming, structural rule>
+---
+```
 
 ## Output
 

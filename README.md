@@ -124,9 +124,28 @@ PROJECT START (truly new project)
 
 ### 1. The knowledge index ties everything together
 
-Every project has a `docs/knowledge-index.yaml` that catalogs every brief, architecture doc, roadmap, and research finding. Every session starts by loading it. No session ever flies blind.
+Every project has a two-layer knowledge index, fully **derived from frontmatter**:
 
-**Doc-producing skills** update the index automatically. **Doc-consuming skills** check it first. The indexed frontmatter convention (`description`, `type`, `updated`, `research_method`) is standardized across all skills — `research_method` is auto-stamped by `/brief`, `/research`, `/deep-research`, and `/research-program`, and `/doc-review` audits the corpus by tool of origin to surface implicitly deprecated briefs. See [`docs/build-process.md#knowledge-index`](docs/build-process.md).
+- `docs/knowledge-index.yaml` (terse, ~5KB) — auto-loaded at session start. Title, type, kind, `consumer_hint` ("when do I read this?") for every doc.
+- `docs/knowledge-index-detail.yaml` (rich, ~25KB) — on-demand. `summary`, `decisions:`/`key_findings:`, `supersession_note:`, `related[]` cross-references.
+
+**Sibling skills don't write to the index.** They emit conformant frontmatter on the docs they produce and call `/knowledge-index`, which regenerates both layers from frontmatter and runs an inline lint pass. This kills append-drift entirely — the index can't go stale relative to source.
+
+**Frontmatter convention (v2, redesigned 2026-05-03):**
+- `description:` — "when do I read this?" hook (becomes `consumer_hint` in terse layer)
+- `type:` — north-star | architecture | roadmap | brief | program-parent | program-report | design | features | ideate | workon | module-rules | …
+- `kind:` — `planning` | `research` | `historical` (usually derived from `type:` + `status:`)
+- `summary:` — 1-2 sentences on what's in the doc
+- `decisions:` — required for `kind: planning` (5-9 highest-leverage commitments)
+- `key_findings:` — required for `kind: research` (3-7 bullets); both fields allowed on syntheses that bottom-line a recommendation
+- `supersession_note:` — optional, for partially-stale docs
+- `research_method:` — auto-stamped by `/brief`, `/research`, `/deep-research`, `/research-program`
+
+**Lint mode is controlled by `schema_version` in the index header:** `1` = grace mode (warnings only — for projects mid-migration), `2` = enforce mode (errors block regeneration). New projects scaffolded by `/init-project` start at `2`.
+
+The lint pass catches: missing required fields, broken `superseded_by:` and `related[]` chains, `kind:` ↔ derivation disagreements, stale `updated:` vs git mtime, unrecognized `status:` values, `decisions:` cap violations.
+
+See [`knowledge-index/SKILL.md`](knowledge-index/SKILL.md) for the full spec, [`knowledge-index/REDESIGN-SKETCH.md`](knowledge-index/REDESIGN-SKETCH.md) for design rationale, and [`docs/build-process.md`](docs/build-process.md) for how the index threads through every skill.
 
 ### 2. First-principles thinking layer
 
