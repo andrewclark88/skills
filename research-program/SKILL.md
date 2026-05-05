@@ -107,6 +107,39 @@ All briefs enter at `confidence: speculative, status: draft`. Promotion manual i
 3. **Knowledge index** — run `/knowledge-index` or read the project's index
 4. **Existing campaigns and programs** — crucial reuse check. Prior campaigns/programs get cited, not re-run (saves $6-15 per cited campaign)
 5. **Project docs** — CLAUDE.md, north stars, architecture
+6. **Spawned-agent write preflight** — see Phase 1.5
+
+### Phase 1.5: Spawned-Agent Write Preflight (MANDATORY — DO NOT SKIP)
+
+**Before dispatching any campaign, smoke-test that spawned agents can write to the program output directory.** This catches a known infrastructure failure mode where spawned agents have a stricter permission profile than the parent session — observed multiple times in production (2026-05-04, 2026-05-05). When it fires, every campaign agent burns its full Opus budget (~$10-15 each) on research it can never persist.
+
+**Procedure:**
+
+1. From the parent session, create the program directory: `mkdir -p docs/programs/<program-slug>/campaigns/`
+2. Write a smoke-test marker from the parent session: `<program-dir>/.write-preflight`. If this fails, fix permissions before continuing — the parent can't write, so the campaigns can't either.
+3. Dispatch a tiny smoke-test Agent (Sonnet, low budget — ~5 cents) whose entire job is:
+   - Try to Write a smoke-test file at `<program-dir>/.spawned-write-preflight`
+   - If Write succeeds, report `OK`
+   - If Write fails (permission denied, sandbox block, anything), report `BLOCKED` with the exact error
+4. **Block dispatch until preflight passes.** If `BLOCKED`, surface to the user immediately:
+   ```
+   Spawned-agent writes are denied for <program-dir>. Campaigns cannot persist their outputs.
+   Options:
+     (a) grant write permission to the spawned-agent profile and retry preflight
+     (b) abort and resume in a fresh session where the permission profile is correct
+     (c) proceed with "return-content-inline" mode — each campaign returns its full file
+         set as inline text in its result message; the parent session writes the files.
+         This costs ~30-60K tokens of result-message content per program but works around
+         the block.
+   ```
+5. Pass the preflight outcome forward to campaign-Lead prompts. If running in `(c) inline` mode, every campaign Lead's prompt MUST instruct: "Do NOT call Write. Return the full content of every output file inline as fenced markdown blocks in your final response, labeled with the file path. The parent session will persist the files."
+
+**Why this is mandatory:**
+- A failure here wastes $50-75 of Opus across 5 parallel campaigns before the parent notices
+- The smoke test costs ~5 cents and 30 seconds
+- The asymmetry is overwhelming — preflight always wins
+
+**Do NOT skip this even on a "known-good" project.** Permission profiles change session-to-session. The smoke test is fast.
 
 ### Phase 2: Program Decomposition
 
