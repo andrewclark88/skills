@@ -150,7 +150,50 @@ If `--lint-only`, print the report and exit. Otherwise continue.
 If errors are present and `--no-lint` is NOT passed: stop, print errors, do not regenerate.
 If `--no-lint`: print warnings but proceed.
 
-### Step 5: Write `docs/knowledge-index.yaml` (terse layer)
+### Step 5: Write `docs/knowledge-index-nav.yaml` (navigator layer)
+
+Full overwrite. This is the **layer auto-loaded at session start** — the harness inlines hook output up to 10,000 characters, so the navigator stays under that cap by carrying only aggregates + curated subsets, not per-doc records. Format:
+
+```yaml
+# Auto-generated. DO NOT EDIT BY HAND. Run /knowledge-index to regenerate.
+# Navigator layer — auto-loaded at session start (capped at 10KB by harness).
+# Provides corpus situational awareness only. Read knowledge-index.yaml for full index.
+
+schema_version: 3
+generated_at: <ISO 8601 timestamp>
+generated_from: frontmatter
+total_docs: <count>
+
+by_kind:
+  planning: <n>
+  research: <n>
+  historical: <n>
+
+# Top 15 most-recently-updated high-signal docs (planning + super-parent.md +
+# program-report.md + program.md only — specialist briefs and campaign parents
+# skipped to avoid Run-day flooding the recent list).
+recent:
+  - path: <path>
+    title: <title>
+    kind: <kind>
+    updated: <date>
+  # ... up to 15 entries
+
+# Docs flagged with nav_priority: high in frontmatter — explicit load-bearing list.
+load_bearing:
+  - path: <path>
+    title: <title>
+    kind: <kind>
+  # ... typically 5-15 docs
+
+# On-demand layers (Read tool):
+full_index_path: docs/knowledge-index.yaml
+detail_index_path: docs/knowledge-index-detail.yaml
+```
+
+**Size check:** warn at 8KB, error at 10KB. If the file exceeds 8KB, reduce the number of docs flagged `nav_priority: high` or shorten titles. If it exceeds 10KB, the SessionStart hook will truncate it and the auto-load degrades.
+
+### Step 6: Write `docs/knowledge-index.yaml` (terse layer)
 
 Full overwrite. Format:
 
@@ -180,13 +223,14 @@ documents:
     research_method: <method>
     blocks_phase: <phase>
     superseded_by: <path>
+    nav_priority: <high>
     consumer_hint: <description>
   ...
 ```
 
-Per entry: ~5–8 lines. Total file for ~50 docs: ~5KB.
+Per entry: ~5-9 lines (~500-800 bytes including consumer_hint). Total file size scales with doc count — typically ~5KB for ~50 docs, ~50KB for ~150 docs, ~200KB+ for ~300+ docs. Loaded on-demand via Read; the navigator (Step 5) handles session-start auto-load.
 
-### Step 6: Write `docs/knowledge-index-detail.yaml` (rich layer)
+### Step 7: Write `docs/knowledge-index-detail.yaml` (rich layer)
 
 Full overwrite. Format:
 
@@ -212,9 +256,9 @@ documents:
   ...
 ```
 
-Keyed by path for O(1) lookup. Total for ~50 docs: ~25KB.
+Keyed by path for O(1) lookup. Size scales with doc count and summary depth — typically ~25KB for ~50 docs, several MB for ~300+ docs. Read on-demand for topic matches.
 
-### Step 7: Print summary
+### Step 8: Print summary
 
 ```
 📋 Knowledge Index regenerated
@@ -228,12 +272,12 @@ Lint:
   Warnings: <count>
 
 Files written:
+  docs/knowledge-index-nav.yaml     (navigator, ~<size>KB — auto-loaded at session start)
   docs/knowledge-index.yaml         (terse, ~<size>KB)
   docs/knowledge-index-detail.yaml  (detail, ~<size>KB)
 ```
 
-If lint warnings or errors are present, print them grouped by severity with actionable
-"Fix:" suggestions.
+If navigator size exceeds 8KB, print a warning. If it exceeds 10KB, print an error explaining that the harness will truncate it. If lint warnings or errors are present, print them grouped by severity with actionable "Fix:" suggestions.
 
 ## Frontmatter Convention (what authors must provide)
 

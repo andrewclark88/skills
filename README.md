@@ -1,6 +1,6 @@
 # skills
 
-**A complete, opinionated software development workflow suite for Claude Code — 27 skills covering the full lifecycle, two auto-loading principle packs, three foundational primers (thinking, design, lateral), a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
+**A complete, opinionated software development workflow suite for Claude Code — 29 skills covering the full lifecycle, two auto-loading principle packs, three foundational primers (thinking, design, lateral), a model-selection framework, a three-scale research family, and cross-project knowledge patterns.**
 
 Use this when you want agents that ship real projects: ideation → research → architecture → roadmap → per-phase build, with doc-review, refactor, security, and release baked in. Every step is a skill. Every skill is opinionated about what it produces. Every doc is indexed so future sessions never start blind.
 
@@ -12,7 +12,7 @@ Full methodology: [`docs/build-process.md`](docs/build-process.md)
 
 | Layer | What it is | Where to look |
 |-------|-----------|---------------|
-| **27 skills** | Full software lifecycle — 19 directly invocable as slash commands, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
+| **29 skills** | Full software lifecycle — 19 directly invocable as slash commands, 2 auto-loading principle packs, 8 invoked programmatically from other skills | Top-level directories (`ideate/`, `research/`, etc.) |
 | **Project template** | Canonical scaffold dropped into new projects — `docs/` folders, `knowledge-index.yaml`, lean `CLAUDE.md`, portable `.claude/rules` | [`templates/project/`](templates/project/) (applied by `/init-project`) |
 | **Research skills family** | Three scales of the same fractal pattern: `/research` (question) → `/deep-research` (domain) → `/research-program` (megatopic) | [`docs/research-skills-overview.md`](docs/research-skills-overview.md) |
 | **Thinking layer** | First-principles primer loaded by thinking-heavy skills | [`docs/first-principles.md`](docs/first-principles.md) |
@@ -124,12 +124,15 @@ PROJECT START (truly new project)
 
 ### 1. The knowledge index ties everything together
 
-Every project has a two-layer knowledge index, fully **derived from frontmatter**:
+Every project has a **three-layer** knowledge index, fully **derived from frontmatter**:
 
-- `docs/knowledge-index.yaml` (terse, ~5KB) — auto-loaded at session start. Title, type, kind, `consumer_hint` ("when do I read this?") for every doc.
-- `docs/knowledge-index-detail.yaml` (rich, ~25KB) — on-demand. `summary`, `decisions:`/`key_findings:`, `supersession_note:`, `related[]` cross-references.
+- `docs/knowledge-index-nav.yaml` (**navigator, ~5-8KB**) — auto-loaded at session start within the harness's 10KB hook-output cap. Corpus counts by `kind`, top 15 most-recently-updated high-signal docs, and docs flagged `nav_priority: high` in frontmatter. Cheap situational awareness.
+- `docs/knowledge-index.yaml` (terse, scales with doc count — typically 5KB-250KB) — on-demand via Read. Title, type, kind, `consumer_hint` ("when do I read this?") for every doc. Auto-loaded for small projects where it fits under 10KB; on-demand thereafter.
+- `docs/knowledge-index-detail.yaml` (rich, on-demand) — `summary`, `decisions:` / `key_findings:`, `supersession_note:`, `related[]` cross-references. Loaded when a topic match triggers it.
 
-**Sibling skills don't write to the index.** They emit conformant frontmatter on the docs they produce and call `/knowledge-index`, which regenerates both layers from frontmatter and runs an inline lint pass. This kills append-drift entirely — the index can't go stale relative to source.
+**Why three layers:** as a corpus grows past ~100-150 docs, the terse layer alone exceeds the harness's 10,000-character inline hook-output cap, and the SessionStart hook silently degrades to a truncated preview + file pointer. The navigator restores cheap passive context: it stays under the cap by representing the corpus through aggregates + curated subsets rather than per-doc records. The full per-doc index is one `Read` away.
+
+**Sibling skills don't write to the index.** They emit conformant frontmatter on the docs they produce and call `/knowledge-index`, which regenerates all three layers from frontmatter and runs an inline lint pass (including a navigator-size check: warn at 8KB, error at 10KB). This kills append-drift entirely — the index can't go stale relative to source.
 
 **Frontmatter convention (v2, redesigned 2026-05-03):**
 - `description:` — "when do I read this?" hook (becomes `consumer_hint` in terse layer)
@@ -385,7 +388,7 @@ The cross-cutting docs under `docs/` are referenced by absolute path from SKILL.
 
 ### Configure session auto-load (recommended)
 
-The knowledge-index design assumes the terse layer auto-loads at session start. This is provided by a `SessionStart` hook in your user-level `~/.claude/settings.json`. Without it, you'd have to run `/knowledge-index` manually each session.
+The knowledge-index design assumes the **navigator layer** auto-loads at session start. This is provided by a `SessionStart` hook in your user-level `~/.claude/settings.json`. Without it, you'd have to run `/knowledge-index` manually each session.
 
 Add this to the `hooks` section of `~/.claude/settings.json`:
 
@@ -396,7 +399,7 @@ Add this to the `hooks` section of `~/.claude/settings.json`:
     "hooks": [
       {
         "type": "command",
-        "command": "dir=\"$PWD\"; while [ \"$dir\" != \"/\" ]; do if [ -f \"$dir/docs/knowledge-index.yaml\" ]; then echo \"=== Project knowledge index ($dir) ===\"; cat \"$dir/docs/knowledge-index.yaml\"; echo \"=== END knowledge index ===\"; if [ -f \"$dir/docs/knowledge-index-detail.yaml\" ]; then echo \"(For per-doc summary / decisions / key_findings, read docs/knowledge-index-detail.yaml on demand.)\"; fi; exit 0; fi; dir=\"$(dirname \"$dir\")\"; done; echo \"No docs/knowledge-index.yaml found in this project tree. Run /knowledge-index to scan and create one.\""
+        "command": "dir=\"$PWD\"; while [ \"$dir\" != \"/\" ]; do if [ -f \"$dir/docs/knowledge-index-nav.yaml\" ]; then echo \"=== Project knowledge navigator ($dir) ===\"; cat \"$dir/docs/knowledge-index-nav.yaml\"; echo \"=== END navigator ===\"; echo \"(For full per-doc index: Read docs/knowledge-index.yaml on demand. For summaries / decisions / key_findings: Read docs/knowledge-index-detail.yaml.)\"; exit 0; elif [ -f \"$dir/docs/knowledge-index.yaml\" ]; then echo \"=== Project knowledge index ($dir) — NAVIGATOR MISSING; run /knowledge-index to regenerate for cheaper auto-load ===\"; cat \"$dir/docs/knowledge-index.yaml\"; echo \"=== END knowledge index ===\"; if [ -f \"$dir/docs/knowledge-index-detail.yaml\" ]; then echo \"(For per-doc summary / decisions / key_findings, read docs/knowledge-index-detail.yaml on demand.)\"; fi; exit 0; fi; dir=\"$(dirname \"$dir\")\"; done; echo \"No knowledge index found in this project tree. Run /knowledge-index to scan and create one.\""
       }
     ]
   }
@@ -404,12 +407,12 @@ Add this to the `hooks` section of `~/.claude/settings.json`:
 ```
 
 What it does:
-- Walks up the directory tree from `$PWD` looking for `docs/knowledge-index.yaml`
-- If found, cats the **terse layer** (~5KB — title, type, kind, consumer_hint per doc)
-- If a `knowledge-index-detail.yaml` exists alongside, prints a one-line hint that agents can read it on demand for per-doc `summary`, `decisions:`, `key_findings:`, `supersession_note:`, `related[]`
-- If no index found, suggests running `/knowledge-index` to create one
+- Walks up the directory tree from `$PWD` looking for `docs/knowledge-index-nav.yaml` first
+- If the navigator is found, cats it (~5-8KB — corpus counts, recent docs, load-bearing docs) and prints pointers to the on-demand terse and detail layers
+- If only `docs/knowledge-index.yaml` is found (project hasn't regenerated since the three-layer rollout), falls back to the terse layer with a warning suggesting `/knowledge-index` regeneration — this keeps older projects working
+- If no index is found, suggests running `/knowledge-index` to create one
 
-The detail layer is NOT loaded eagerly — that's the whole point of the two-layer design. Agents fetch it only when they need rich context on a specific doc.
+The terse and detail layers are NOT loaded eagerly — that's the whole point of the three-layer design. Agents fetch them only when they need the full per-doc index or rich context on a specific doc. The navigator stays under the harness's 10,000-character inline cap by design.
 
 ---
 
@@ -435,35 +438,35 @@ skills/
 │   ├── first-principles-north-star.md + first-principles-architecture.md
 │   ├── brief-first-principles-frameworks.md
 │   └── knowledge-edge-north-star.md
-├── knowledge-index/              ← skills (each has SKILL.md)
-├── ideate/
-├── scout/
-├── research/
-├── deep-research/                ← parallel-agent campaigns (+ chain mode)
-├── research-program/             ← multi-campaign megatopic research
-├── architecture/
-├── roadmap/
-├── brief/
-├── update-roadmap/
-├── design/
-├── implement/
-├── implement-orchestrator/
-├── update-documentation/
-├── doc-review/
-├── refactor-design/
-├── extract-patterns/
-├── test-quality/
-├── security-review/
-├── cruft-cleaner/
-├── bold-refactor/
-├── feature/
-├── expand/
-├── repo-eval/
-├── e2e-test-design/
-├── release/
+├── knowledge-index/              ← session-start: catalogs project knowledge (3-layer)
+├── init-project/                 ← scaffold new project with build-process knowledge layer
+├── ideate/                       ← define vision, principles, domain model
+├── scout/                        ← breadth-first prior art discovery
+├── research/                     ← single-question research (≤3 specialists)
+├── deep-research/                ← parallel-agent campaigns (3-7 specialists, + chain mode)
+├── research-program/             ← multi-campaign megatopic research (3-7 campaigns)
+├── architecture/                 ← design module map, data flow, conventions
+├── roadmap/                      ← decompose into phased build plan
+├── brief/                        ← write domain briefs for blocked phases
+├── update-roadmap/               ← revisit roadmap after building phases
+├── design/                       ← per-phase design (programmatic)
+├── implement/                    ← per-phase implementation (programmatic)
+├── implement-orchestrator/       ← orchestrates implement (programmatic)
+├── update-documentation/         ← align docs to code after a change (programmatic)
+├── doc-review/                   ← audit planning docs for consistency
+├── refactor-design/              ← refactor design before refactor code
+├── extract-patterns/             ← identify repeated patterns across codebase
+├── test-quality/                 ← audit test suite quality
+├── security-review/              ← security audit
+├── cruft-cleaner/                ← sweep AI-accumulated cruft
+├── bold-refactor/                ← high-confidence refactor
+├── feature/                      ← single-feature implementation
+├── expand/                       ← expand project scope after foundation
+├── repo-eval/                    ← multi-dimensional codebase evaluation
+├── e2e-test-design/              ← design end-to-end test suite
+├── release/                      ← release-time orchestration (programmatic)
 ├── engineering-principles/       ← auto-loaded design + code principles
-└── principles/
-    └── build-process/            ← auto-loaded methodology skill
+└── build-process/                ← auto-loaded methodology skill
 ```
 
 ---
