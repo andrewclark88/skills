@@ -1,10 +1,11 @@
 ---
 name: expand
 description: >
-  Expand a project's scope by updating its foundation documents. Reads existing VISION.md,
-  SPEC.md, ARCHITECTURE.md, and roadmap, understands the codebase state, then interviews
-  the user about the expansion. Updates foundation docs and roadmap so design can consume
-  them in the next phase. Use when adding a major capability, new subsystem, or architectural
+  Expand a project's scope by updating its foundation documents. Reads existing
+  north-star.md (or north-star-<project>.md), architecture.md, and roadmap.md,
+  understands the codebase state, then interviews the user about the expansion.
+  Updates foundation docs and roadmap so design can consume them in the next
+  phase. Use when adding a major capability, new subsystem, or architectural
   shift — not for small one-offs (use feature for those).
 user-invocable: true
 disable-model-invocation: true
@@ -43,8 +44,10 @@ Scope decisions touch foundation docs — the orchestrator warrants Opus. Codeba
 
 Before discussing the expansion, deeply understand the current project.
 
-1. Read all foundation docs: **VISION.md**, **SPEC.md**, **ARCHITECTURE.md**, roadmap,
-   and any domain-specific docs (UX.md, CONTRACT.md, etc.)
+1. Read all foundation docs: **`north-star.md`** (or **`north-star-<project>.md`** /
+   per-module north stars), **`architecture.md`**, **`roadmap.md`**, and any
+   domain-specific architecture docs (data-layer, UX, contract, etc.) the
+   project has produced.
 2. Use the Explore agent (`model: "sonnet"` for most cases, `"opus"` for large or complex codebases) to map the current codebase: directory structure,
    modules, key abstractions, what's been built so far
 3. Read **patterns** if they exist — understand established conventions
@@ -121,13 +124,18 @@ Update each affected document. For each one:
    level of detail
 
 **What to update per doc type:**
-- **VISION.md** — extend scope, add new capabilities to the project definition,
-  update success criteria if they've changed
-- **SPEC.md** — add new technical constraints, interfaces, non-functional requirements
-- **ARCHITECTURE.md** — add new components, update data flow, document new boundaries
-  and integration points
-- **Roadmap** — add new phases with descriptions, reorder if needed
-- **Domain-specific docs** — update or create as needed (UX.md, CONTRACT.md, etc.)
+- **`north-star.md`** — extend scope, add new capabilities to the project
+  definition / vision, update principles or success criteria if they've changed.
+  (If the project uses per-module north stars like `north-star-<module>.md`,
+  update the relevant ones.)
+- **`architecture.md`** — add new modules / components, update data flow,
+  document new boundaries and integration points, add new technical constraints
+  and interfaces.
+- **`roadmap.md`** — add new phases with `Input` / `Output` / `Tests`,
+  declare blocking briefs if any, reorder if needed.
+- **Domain-specific architecture docs** — update or create as needed (e.g.,
+  `architecture/north-star-data.md`, `architecture/dag-design.md`,
+  `design/<topic>.md`, contract docs, etc.).
 
 After updating, present each changed document to the user for review.
 

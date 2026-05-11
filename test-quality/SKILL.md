@@ -1,6 +1,7 @@
 ---
 name: test-quality
 description: "Improve test quality by deriving tests from specs, designs, and contracts — not from existing code. Use when you want to find gaps in test coverage, design tests for interfaces and behavioral contracts, or systematically cover edge cases and branches from a specification perspective."
+user-invocable: false
 disable-model-invocation: true
 allowed-tools: Read, Write, Glob, Grep, Bash, Task
 model: opus

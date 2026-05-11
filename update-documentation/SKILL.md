@@ -5,6 +5,7 @@ description: >
   config key, new CLI command, new flag, or any non-trivial code change. Invoke proactively
   when finishing implementation — not only when the user asks. Discovers the project's doc
   structure dynamically rather than assuming fixed paths.
+user-invocable: false
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 model: opus
 ---

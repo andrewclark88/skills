@@ -5,6 +5,7 @@ description: >
   completing a significant feature, when repeated structures appear across files, when starting
   a new project phase and want to codify conventions, or when other agents would benefit from
   documented patterns for consistency.
+user-invocable: false
 disable-model-invocation: true
 allowed-tools: Read, Write, Glob, Grep, Task
 model: sonnet
