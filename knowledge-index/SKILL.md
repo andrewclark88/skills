@@ -1,11 +1,15 @@
 ---
 name: knowledge-index
 description: >
-  Regenerate the project knowledge index from frontmatter — produces a terse always-loaded
-  layer (knowledge-index.yaml) and a rich on-demand layer (knowledge-index-detail.yaml).
-  Runs an inline lint pass that catches drift, broken supersession chains, and missing
-  required fields. Auto-loads the terse layer at session start. Run at the start of any
-  session, or anytime you've added or modified docs.
+  Regenerate the project knowledge index from frontmatter — produces a three-layer model.
+  Layer 1: knowledge-index-nav.yaml (~5-8KB, auto-loaded at session start within the
+  harness's 10KB hook-output cap; surfaces corpus counts + 15 most-recent docs + docs
+  flagged with nav_priority: high in frontmatter). Layer 2: knowledge-index.yaml (terse
+  full per-doc index, on-demand via Read). Layer 3: knowledge-index-detail.yaml (rich
+  layer with summaries / decisions / key_findings / related, on-demand). Runs an inline
+  lint pass that catches drift, broken supersession chains, and missing required fields.
+  Navigator size warned at 8KB / errored at 10KB. Run at the start of any session, or
+  anytime you've added or modified docs.
 user-invocable: true
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
@@ -25,9 +29,19 @@ each skill appended but none reconciled, header claimed "auto-generated" but not
 regenerated, stale descriptions persisted across migrations. Frontmatter-as-source-of-truth
 plus regeneration kills that drift class entirely.
 
-Two-layer output trades load cost for content depth — most sessions only need the terse
-hint of "what exists and when do I read it?", and pay for the rich layer (summaries,
-decisions, findings) only when a topic match triggers it.
+Three-layer output is sized for the harness's 10KB hook-output cap. The navigator layer
+(`knowledge-index-nav.yaml`, ~5-8KB) is auto-loaded at session start and gives corpus
+situational awareness only: counts by `kind`, top 15 most-recently-updated docs, and
+docs explicitly flagged with `nav_priority: high` in frontmatter. The terse layer
+(`knowledge-index.yaml`) carries the full per-doc index and is read on-demand. The
+detail layer (`knowledge-index-detail.yaml`) carries summaries / decisions /
+key_findings / related and is read on-demand when a topic match triggers it.
+
+Why three layers: as the corpus grows past ~100-150 docs, the terse layer itself
+exceeds the harness's 10KB inline cap and the SessionStart hook degrades to a
+preview-plus-pointer. The navigator restores cheap passive context without requiring a
+larger payload — see `docs/design/knowledge-retrieval.md` (in the consuming project) for
+the design rationale and the dev-time vs production-retrieval distinction.
 
 ## Model Assignment
 
@@ -40,7 +54,7 @@ this cleanly. No sub-agents.
 
 ## When This Runs
 
-- **Start of any session** where work will be done on a project (auto-loads terse layer)
+- **Start of any session** where work will be done on a project (auto-loads the **navigator** layer; full index is on-demand)
 - **After any skill produces a new doc** (`/research`, `/brief`, `/architecture`, `/roadmap`, `/ideate`) — those skills no longer touch the index file; they call this one
 - **After manual doc edits** that change frontmatter
 - **`--lint-only`** — CI mode, no writes, exits non-zero on errors

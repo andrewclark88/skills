@@ -302,7 +302,7 @@ def main():
             "kind": kind,
             "updated": str(fm.get("updated")) if fm.get("updated") else None,
         }
-        for opt in ("status", "research_method", "blocks_phase", "superseded_by"):
+        for opt in ("status", "research_method", "blocks_phase", "superseded_by", "nav_priority"):
             if fm.get(opt):
                 entry[opt] = fm[opt]
         if fm.get("description"):
@@ -411,6 +411,102 @@ def main():
     )
     (DOCS / "knowledge-index-detail.yaml").write_text(detail_text, encoding="utf-8")
 
+    # ── Navigator layer (schema_version: 3) ────────────────────────────────
+    # Auto-loaded at session start by the SessionStart hook. The Claude Code
+    # harness caps inline hook output at 10,000 characters, so the navigator
+    # is a thin summary (counts + recent + load-bearing pointers), NOT the
+    # full index. See docs/design/knowledge-retrieval.md for the design.
+    def emit_nav():
+        # Flatten all entries (planning + research + historical) for recent-sort.
+        flat = []
+        for k in ("planning", "research", "historical"):
+            flat.extend(by_kind.get(k, []))
+        # Filter to docs with updated dates; sort by updated desc.
+        with_dates = [e for e in flat if e.get("updated")]
+        with_dates.sort(key=lambda e: e["updated"], reverse=True)
+        # Recent: top 15 high-signal docs only (planning + program-level outputs).
+        # Skip specialist briefs and campaign parents — too granular for session-start
+        # situational awareness. Goal is "what just landed at the top level?", not
+        # "show me every brief that touched today".
+        def is_high_signal(e):
+            if e.get("kind") == "historical":
+                return False
+            if e.get("kind") == "planning":
+                return True
+            # research kind: include only program-level outputs
+            path = e.get("path", "")
+            basename = path.rsplit("/", 1)[-1]
+            return basename in ("super-parent.md", "program-report.md", "program.md")
+        recent = []
+        for e in with_dates:
+            if not is_high_signal(e):
+                continue
+            recent.append({
+                "path": e["path"],
+                "title": e.get("title"),
+                "kind": e.get("kind"),
+                "updated": e.get("updated"),
+            })
+            if len(recent) >= 15:
+                break
+        # Load-bearing: docs with nav_priority: high in frontmatter.
+        load_bearing = []
+        for k in ("planning", "research"):
+            for e in by_kind.get(k, []):
+                if e.get("nav_priority") == "high":
+                    load_bearing.append({
+                        "path": e["path"],
+                        "title": e.get("title"),
+                        "kind": e.get("kind"),
+                    })
+        # Counts.
+        counts = {k: len(by_kind.get(k, [])) for k in ("planning", "research", "historical")}
+        # Emit as plain text (custom format, matching terse layer style).
+        lines = [
+            "# Auto-generated. DO NOT EDIT BY HAND. Run /knowledge-index to regenerate.",
+            "# Navigator layer — auto-loaded at session start (capped at 10KB by harness).",
+            "# Provides corpus situational awareness only. Read knowledge-index.yaml for full index.",
+            "",
+            "schema_version: 3",
+            f"generated_at: {now}",
+            "generated_from: frontmatter",
+            f"total_docs: {sum(counts.values())}",
+            "",
+            "by_kind:",
+            f"  planning: {counts['planning']}",
+            f"  research: {counts['research']}",
+            f"  historical: {counts['historical']}",
+            "",
+            "# Top 15 most-recently-updated docs (planning + research only).",
+            "recent:",
+        ]
+        for e in recent:
+            t = (e.get("title") or "").replace('"', '\\"')
+            lines.append(f"  - path: {e['path']}")
+            lines.append(f"    title: \"{t}\"")
+            lines.append(f"    kind: {e.get('kind')}")
+            lines.append(f"    updated: {e.get('updated')}")
+        lines.append("")
+        lines.append("# Docs flagged with nav_priority: high in frontmatter — read at session start.")
+        lines.append("load_bearing:")
+        if not load_bearing:
+            lines.append("  []  # no docs flagged with nav_priority: high — flag essential docs to populate")
+        else:
+            for e in load_bearing:
+                t = (e.get("title") or "").replace('"', '\\"')
+                lines.append(f"  - path: {e['path']}")
+                lines.append(f"    title: \"{t}\"")
+                lines.append(f"    kind: {e.get('kind')}")
+        lines.append("")
+        lines.append("# On-demand layers (Read tool):")
+        lines.append("full_index_path: docs/knowledge-index.yaml")
+        lines.append("detail_index_path: docs/knowledge-index-detail.yaml")
+        return "\n".join(lines) + "\n"
+
+    nav_text = emit_nav()
+    (DOCS / "knowledge-index-nav.yaml").write_text(nav_text, encoding="utf-8")
+    nav_kb = len(nav_text.encode()) / 1024
+
     total = sum(len(v) for v in by_kind.values())
     terse_kb = len(terse_text.encode()) / 1024
     detail_kb = len(detail_text.encode()) / 1024
@@ -421,8 +517,16 @@ def main():
     print(f"By kind: planning={len(by_kind.get('planning', []))}, research={len(by_kind.get('research', []))}, historical={len(by_kind.get('historical', []))}")
     print()
     print("Files written:")
+    print(f"  docs/knowledge-index-nav.yaml     (navigator, ~{nav_kb:.1f}KB — auto-loaded at session start)")
     print(f"  docs/knowledge-index.yaml         (terse, ~{terse_kb:.1f}KB)")
     print(f"  docs/knowledge-index-detail.yaml  (detail, ~{detail_kb:.1f}KB)")
+    print()
+    # Navigator size check — harness inlines hook output up to 10,000 characters.
+    if nav_kb > 10:
+        print(f"⛔ Navigator size {nav_kb:.1f}KB EXCEEDS 10KB harness cap — hook output will be truncated.")
+        print(f"   Reduce nav_priority: high flags or trim recent list. See docs/design/knowledge-retrieval.md.")
+    elif nav_kb > 8:
+        print(f"⚠ Navigator size {nav_kb:.1f}KB approaching 10KB harness cap (warn threshold 8KB).")
 
 if __name__ == "__main__":
     main()
