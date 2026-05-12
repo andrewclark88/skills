@@ -77,14 +77,17 @@ PROJECT START (truly new project — no existing docs)
 │
 │  ┌── EVERY 2-4 PHASES ──────────────────────────────────────┐
 │  │                                                           │
-│  ├─ Quality Checkpoint                                       │
-│  │  ├─ /doc-review         → audit planning docs for          │
-│  │  │                        consistency and drift             │
-│  │  ├─ /refactor-design    → find duplication, missing       │
-│  │  │                        abstractions → implement fixes   │
-│  │  ├─ /extract-patterns   → document reusable patterns      │
-│  │  └─ /test-quality       → spec-driven test gap analysis   │
-│  │                                                           │
+│  ├─ Quality Checkpoint (every 2-4 phases)                    │
+│  │  ├─ /quality-checkpoint → orchestrator; runs the four     │
+│  │  │                        below on a shared scope and      │
+│  │  │                        produces a consolidated summary  │
+│  │  │  ├─ /doc-review      → planning-doc consistency        │
+│  │  │  ├─ /refactor-design → duplication / abstractions      │
+│  │  │  ├─ /extract-patterns→ document reusable patterns      │
+│  │  │  └─ /test-quality    → spec-driven test gaps           │
+│  │  │                                                         │
+│  │  └─ Or run any of the four individually if the full        │
+│  │     checkpoint isn't warranted                              │
 │  └───────────────────────────────────────────────────────────┘
 │
 │  ┌── PRE-DEPLOY ────────────────────────────────────────────┐
@@ -367,7 +370,11 @@ After each phase, sync all docs to the code changes just made. Catches drift bet
 
 ### Quality Checkpoints (every 2-4 phases)
 
-After 2-4 implementation phases, pause and run a quality pass:
+After 2-4 implementation phases, pause and run a quality pass. Two equivalent paths:
+
+**Path A (preferred): `/quality-checkpoint`** — orchestrates the four sub-skills below on a shared scope (defaults to the latest completed roadmap phase), produces a consolidated summary, and asks what to act on.
+
+**Path B: run sub-skills individually** — when you only need one, or want full control over scope per sub-skill:
 
 - **`/doc-review`** — audit planning docs for consistency (run first — doc issues reveal code issues)
 - **`/refactor-design`** — find duplication, missing abstractions. Produces a refactor plan. Implement it.
@@ -681,6 +688,7 @@ Each roadmap phase ships tests. CI runs them all, not just the new phase's tests
 | `/implement` | Step 7 (per phase, <20 files) | Code + tests |
 | `/implement-orchestrator` | Step 7 (per phase, 20+ files) | Code + tests (parallel agents) |
 | `/update-documentation` | Step 9 (after each phase) | Updated docs synced to code |
+| `/quality-checkpoint` | Quality checkpoint (every 2-4 phases) | Orchestrator — runs the four below on a shared scope and produces a consolidated summary |
 | `/doc-review` | Quality checkpoint + after major design changes | Doc consistency report |
 | `/refactor-design` | Quality checkpoint (every 2-4 phases) | Refactor plan |
 | `/extract-patterns` | Quality checkpoint | Pattern documentation |
