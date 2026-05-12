@@ -235,6 +235,15 @@ Standard dimensions: program coverage, program coherence, cross-campaign contrad
 
 **Program-specific dimensions:**
 - **Severity reassessment** — synthesis's severity is input, not verdict. Reassess independently. Demo data: ~50% of campaigns involve at least one severity reassessment.
+  - **Conditional-severity support (Q-Ev3 process change, ratified 2026-05-12):** Master-trap entries may carry **either** a scalar `severity: <enum>` **or** a conditional `severity_conditional: {condition: <expr>, true: <severity>, false: <severity>}` block. On reassessment:
+    - **Read both forms.** Walk every master-trap entry; recognize both scalar and conditional structures as valid inputs.
+    - **Preserve input structure.** Scalar input → scalar output; conditional input → conditional output (with potentially-revised severities for one or both branches and rationale per branch).
+    - **May propose promotions.** When reasoning concludes a scalar-severity master warrants conditional severity (e.g., severity depends on `production_deployment` / `decision_relevant` / `evaluation_mode` / similar dispatch-context predicate), emit a **CLAIM-tagged promotion proposal** — DO NOT auto-apply. Adjudication of proposed promotions is downstream (calibration session, not the Evaluator).
+    - **Output schema.** Per-master output includes a `severity_model_proposed:` block in one of three shapes:
+      - `{kind: "scalar", severity: <enum>, rationale: <str>}` — preserves scalar input or reassesses scalar.
+      - `{kind: "conditional", condition: <expr>, true: <severity>, false: <severity>, rationale_true: <str>, rationale_false: <str>}` — preserves conditional input or reassesses conditional.
+      - `{kind: "promotion_proposed", from: "scalar", to: "conditional", condition: <expr>, true: <severity>, false: <severity>, rationale: <str>, claim: true}` — flags a proposed promotion for downstream adjudication.
+    - **Reference** — canonical conditional-severity model lives in the consuming project's rules (e.g. ds-engine `ratified-rules.md` Rule 6); the Evaluator does not redefine semantics, only applies them. Canonical predicates seen in evidence: `production_deployment`, `decision_relevant`, `evaluation_mode ∈ {production, report, preview}`, `forecasts_published`, `alert_system_downstream`, `multi_step_labels OR strong_autocorr_detected`, `novel_distribution`, `use_case ∈ {anomaly, forecast}`. New predicates are allowed when evidence supports them.
 - **Verify resolution claims, don't trust them** — for each claimed resolution, walk the specific failure mode and independently judge `resolved | partial | unresolved` with rationale.
 
 ### Phase 9: Write Output
