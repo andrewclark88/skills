@@ -1,8 +1,8 @@
 ---
 name: test-quality
 description: "Improve test quality by deriving tests from specs, designs, and contracts — not from existing code. Use when you want to find gaps in test coverage, design tests for interfaces and behavioral contracts, or systematically cover edge cases and branches from a specification perspective."
-user-invocable: false
-disable-model-invocation: true
+user-invocable: true
+disable-model-invocation: false
 allowed-tools: Read, Write, Glob, Grep, Bash, Task
 model: opus
 ---
@@ -21,7 +21,7 @@ Mapping specs to tests and identifying coverage gaps requires judgment about wha
 
 ## Context
 
-- Target: {{target}}
+- **Target:** whatever the user specifies after the slash command (e.g. `/test-quality src/tools/data-shape/`, `/test-quality "PII scrub paths in the tool response flow"`). If no target is given, scope to the most recently changed surface (use `git log --name-only -20`); if the project has a roadmap, default to the latest completed phase. Confirm scope with the user before exploring if it isn't obvious.
 
 ## Core Principle
 

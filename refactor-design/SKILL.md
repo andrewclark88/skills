@@ -5,8 +5,8 @@ description: >
   when architectural violations exist (e.g. domain importing infrastructure), when quality-gate
   recommends structural improvements, or when a large area needs restructuring before further
   feature work. Do NOT use for small inline cleanups — those belong in fix or implement.
-user-invocable: false
-disable-model-invocation: true
+user-invocable: true
+disable-model-invocation: false
 allowed-tools: Read, Write, Glob, Grep, Task
 model: opus
 ---
@@ -27,7 +27,7 @@ Refactor plan quality depends on seeing cross-cutting duplication and abstractio
 
 ## Context
 
-- Target: {{target}}
+- **Target:** whatever the user specifies after the slash command (e.g. `/refactor-design src/tools/`, `/refactor-design "Phase 5 data-shape surface"`). If no target is given, default to "the most recently changed surface" — use `git log --name-only -20` to scope. If the project has a roadmap, treat the latest completed phase as the implicit target. Confirm scope with the user before exploring if it isn't obvious.
 - Model tier: Opus-level reasoning required
 
 ## You MUST read these files before starting

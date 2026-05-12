@@ -5,8 +5,8 @@ description: >
   completing a significant feature, when repeated structures appear across files, when starting
   a new project phase and want to codify conventions, or when other agents would benefit from
   documented patterns for consistency.
-user-invocable: false
-disable-model-invocation: true
+user-invocable: true
+disable-model-invocation: false
 allowed-tools: Read, Write, Glob, Grep, Task
 model: sonnet
 ---
@@ -24,7 +24,7 @@ Pattern discovery is scoped synthesis work across known code structures — Sonn
 
 ## Context
 
-- Target: {{target}}
+- **Target:** whatever the user specifies after the slash command (e.g. `/extract-patterns src/tools/`, `/extract-patterns "the warehouse + data-shape tool families"`). If no target is given, scan the most recently changed code (use `git log --name-only -20`); if the project has a roadmap, default to the latest completed phase. Confirm scope with the user before exploring if it isn't obvious.
 
 ## You MUST read these files before starting
 
