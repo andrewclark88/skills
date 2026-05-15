@@ -5,8 +5,8 @@ description: >
   multiple files or modules, when scope is unclear before coding, when the user provides a
   vision or roadmap and wants a plan before implementation, or when implementing would require
   too many upfront decisions to make inline. Skip if the task is small enough to implement directly.
-user-invocable: false
-disable-model-invocation: true
+user-invocable: true
+disable-model-invocation: false
 allowed-tools: Read, Write, Glob, Grep, Task
 model: opus
 ---
